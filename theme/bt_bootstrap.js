@@ -8,7 +8,7 @@
     (function(){
 
       /*****************************************************************
-       * You can change these lines                    *
+       * You can change these lines                                    *
        *****************************************************************/
       BlogToc.theme( 'bootstrap', 'css/bootstrap/bt_bootstrap.css', {
         "id": "bootstrap",
@@ -27,7 +27,7 @@
         "pagination disabled": "disabled"
       });
       /*****************************************************************
-       * End changing lines                        *
+       * End changing lines                                            *
        *****************************************************************/
 
     })();
