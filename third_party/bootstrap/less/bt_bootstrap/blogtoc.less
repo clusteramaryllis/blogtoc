@@ -1,175 +1,175 @@
 // BlogToc Header class
 .blogtoc_header {
-	text-align: center;
-	margin-bottom: 2px;
+  text-align: center;
+  margin-bottom: 2px;
 
-	select {
-		display: block !important;
-  		width: 100%;
-  		min-height: @inputHeight;
-  		text-align: center;
-  		.box-sizing(border-box);
-	}
+  select {
+    display: block !important;
+      width: 100%;
+      min-height: @inputHeight;
+      text-align: center;
+      .box-sizing(border-box);
+  }
 
-	button {
-		margin: 2px 5px;
-	}
+  button {
+    margin: 2px 5px;
+  }
 }
 
 // BlogToc Filter class
 .blogtoc_filter {
-	margin-top: 5px;
+  margin-top: 5px;
 
-	select {
-		width: auto;
-	}
+  select {
+    width: auto;
+  }
 }
 
 // BlogToc Table class
 .blogtoc_table {
 
-	th {
-		color: @linkColor;
+  th {
+    color: @linkColor;
 
-		a {
-			display: block;
-		}
+    a {
+      display: block;
+    }
 
-		span {
-			padding-top: 3px;
-			display: block;
-			float: right;		
-		}
-	}
+    span {
+      padding-top: 3px;
+      display: block;
+      float: right;   
+    }
+  }
 
-	td {
-		vertical-align: middle;
+  td {
+    vertical-align: middle;
 
-		.icon {
-			font-size: 16px;
-			vertical-align: text-bottom;
-		}
-	}
+    .icon {
+      font-size: 16px;
+      vertical-align: text-bottom;
+    }
+  }
 
-	.blogtoc_norecords {
-		text-align: center;
-		// width: 100%;
-		// font-weight: bold;
-	}
+  .blogtoc_norecords {
+    text-align: center;
+    // width: 100%;
+    // font-weight: bold;
+  }
 
-	.blogtoc_thumbnail {
-		padding: 4px;
-	}
+  .blogtoc_thumbnail {
+    padding: 4px;
+  }
 
-	.blogtoc_authorthumbnail {
-		text-align: center;
-		
-		img {
-			padding: 3px;
-		}
+  .blogtoc_authorthumbnail {
+    text-align: center;
+    
+    img {
+      padding: 3px;
+    }
 
-		span {
-			display: block;
-		}
-	}
+    span {
+      display: block;
+    }
+  }
 
-	.bt-thumb {
-		line-height: @baseLineHeight;
-		border: 1px solid #ddd;
-		.border-radius(@baseBorderRadius);
-		.box-shadow(0 1px 3px rgba(0,0,0,.055));
-		.transition(all .2s ease-in-out);
-		
-		&:hover {
-			border-color: @linkColor;
-			.box-shadow(0 1px 4px rgba(0,105,214,.25));
-		}
-	}
+  .bt-thumb {
+    line-height: @baseLineHeight;
+    border: 1px solid #ddd;
+    .border-radius(@baseBorderRadius);
+    .box-shadow(0 1px 3px rgba(0,0,0,.055));
+    .transition(all .2s ease-in-out);
+    
+    &:hover {
+      border-color: @linkColor;
+      .box-shadow(0 1px 4px rgba(0,105,214,.25));
+    }
+  }
 
-	.blogtoc_badge {
-		margin-left: 5px
-	}
+  .blogtoc_badge {
+    margin-left: 5px
+  }
 }
 
 // BlogToc Footer class
 .blogtoc_footer {
-	.blogtoc_result {
-		padding-top: 8px;
-	}
+  .blogtoc_result {
+    padding-top: 8px;
+  }
 
-	.blogtoc_pagination {
-		margin: 0;
-	}
+  .blogtoc_pagination {
+    margin: 0;
+  }
 }
 
 .btn-pagination {
-	li {
-		a, 
-		span {
-			.buttonBackground(@btnBackground, @btnBackgroundHighlight, @grayDark, 0 1px 1px rgba(255,255,255,.75));
-			border: 1px solid @btnBorder;
-			*border: 0; // Remove the border to prevent IE7's black border on input:focus
-			border-bottom-color: darken(@btnBorder, 10%);
-			.box-shadow(~"inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05)");
-		}
+  li {
+    a, 
+    span {
+      .buttonBackground(@btnBackground, @btnBackgroundHighlight, @grayDark, 0 1px 1px rgba(255,255,255,.75));
+      border: 1px solid @btnBorder;
+      *border: 0; // Remove the border to prevent IE7's black border on input:focus
+      border-bottom-color: darken(@btnBorder, 10%);
+      .box-shadow(~"inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05)");
+    }
 
-		a {
-			// Hover/focus state
-			&:hover,
-			&:focus {
-				color: @grayDark;
-    			text-decoration: none;
-    			background-position: 0 -15px;
-    			.transition(background-position .1s linear);
-			}
+    a {
+      // Hover/focus state
+      &:hover,
+      &:focus {
+        color: @grayDark;
+        text-decoration: none;
+        background-position: 0 -15px;
+        .transition(background-position .1s linear);
+      }
 
-			// Focus state for keyboard and accessibility
-		    &:focus {
-		    	.tab-focus();
-		    }
+      // Focus state for keyboard and accessibility
+      &:focus {
+        .tab-focus();
+      }
 
-		    // Active state
-		    &.active,
-		    &:active {
-		    	background-image: none;
-		    	outline: 0;
-		    	.box-shadow(~"inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05)");
-		    }
+      // Active state
+      &.active,
+      &:active {
+        background-image: none;
+        outline: 0;
+        .box-shadow(~"inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05)");
+      }
 
-		    // Disabled state
-		    &.disabled,
-		    &[disabled] {
-		    	cursor: default;
-		    	background-image: none;
-		    	.opacity(65);
-		    	.box-shadow(none);
-		    }
+      // Disabled state
+      &.disabled,
+      &[disabled] {
+        cursor: default;
+        background-image: none;
+        .opacity(65);
+        .box-shadow(none);
+      }
 
-			&:hover, &:focus, &:active, &.active, &.disabled, &[disabled] {
-    			background-color: @btnBackgroundHighlight !important;
-    			*background-color: darken(@btnBackgroundHighlight, 5%) !important;
-  			}
-		}
+      &:hover, &:focus, &:active, &.active, &.disabled, &[disabled] {
+        background-color: @btnBackgroundHighlight !important;
+        *background-color: darken(@btnBackgroundHighlight, 5%) !important;
+      }
+    }
 
-		&.active {
-			span {
-				color: @grayDark;
-    			text-decoration: none;
-    			background-position: 0 -15px;
-    			.transition(background-position .1s linear);
-				background-image: none;
-		    	outline: 0;
-		    	.box-shadow(~"inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05)");	
-		    	background-color: @btnBackgroundHighlight !important;
-    			*background-color: darken(@btnBackgroundHighlight, 5%) !important;
-			}
-		}
+    &.active {
+      span {
+        color: @grayDark;
+        text-decoration: none;
+        background-position: 0 -15px;
+        .transition(background-position .1s linear);
+        background-image: none;
+        outline: 0;
+        .box-shadow(~"inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05)"); 
+        background-color: @btnBackgroundHighlight !important;
+        *background-color: darken(@btnBackgroundHighlight, 5%) !important;
+      }
+    }
 
-		&.disabled {
-			span {
-				color: @grayDark;
-    			.opacity(65);
-			}
-		}
-	}
+    &.disabled {
+      span {
+        color: @grayDark;
+        .opacity(65);
+      }
+    }
+  }
 }
