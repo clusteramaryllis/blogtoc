@@ -2,7 +2,7 @@
 
   'use strict'
 
-  var loadApp = function( /*BlogToc*/ ) {
+  var loadApp = function() {
     
     (function() {
 
@@ -32,7 +32,7 @@
       var defaultLanguage = 'en-US',
         defaultTheme = 'bootstrap';
 
-      var bootmetroCSS = 'css/bootmetro-icons.css';
+      var bootmetroCSS = '//cdn.jsdelivr.net/bootmetro/1.0.0a1/css/bootmetro-icons.min.css';
       
       var BlogTocApps = function ( element, option ) {
       
@@ -146,7 +146,7 @@
                 authorSize: 36,
                 authorThumbnail: true
               },
-              url: 'www.moretechtips.net'
+              url: 'googleblog.blogspot.com'
             };
 
             // extend user options
@@ -2419,16 +2419,19 @@
    
   }
 
-  /*window.BlogToc = {};*/
-
-  if ( typeof window !== 'undefined' /*&& window.BlogToc*/ ) {
+  if ( typeof window !== 'undefined' ) {
     
-    loadApp( /*window.BlogToc*/ );
+    loadApp();
 
     /********************************************************************
      * SET DEFAULT LANGUAGE                                             *
      ********************************************************************/
     BlogToc.addJS('lang/en-US.js');
+
+    /********************************************************************
+     * SET DEFAULT THEME                                                *
+     ********************************************************************/
+    BlogToc.addJS('theme/bt_bootstrap.js');
   }
 
 })();

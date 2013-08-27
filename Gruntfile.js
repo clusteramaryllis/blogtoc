@@ -67,7 +67,7 @@ module.exports = function( grunt ) {
 		  '* Licensed under the <%= _.pluck(pkg.licenses, "name").join(", ") %>\n' +
 		  '* <%= _.pluck(pkg.licenses, "url").join(", ") %>\n' +
 		  '* \n' +
-		  '* An advanced table of contents for blogspot service.\n' + 
+		  '* A javascript plugin to make table of contents for blogspot using Blogger Feed API.\n' + 
 		  '*/\n',
 		clean: {
 			release: ['<%= pkg.name %>.js']
