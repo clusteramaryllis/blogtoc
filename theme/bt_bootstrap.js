@@ -23,6 +23,7 @@
         "footer": "clearfix",
         "result": "pull-left",
         "pagination": "pull-right pagination",
+        /*"pagination ul": "",*/
         "pagination current": "active",
         "pagination disabled": "disabled"
       });
