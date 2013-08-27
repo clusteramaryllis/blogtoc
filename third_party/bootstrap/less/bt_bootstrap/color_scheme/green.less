@@ -1,0 +1,17 @@
+@import "../../variables.less";
+@import "../color_mixins.less";
+@colorName: ~'green';
+@customLinkColor: #6fe01e;
+@customLinkColorHover: darken(@customLinkColor, 15%);
+@customBtnColor: #fff;
+@customBtnTextShadowColor: 0 -1px 0 rgba(0,0,0,.25);
+@customBtnPrimaryBackground: lighten(@customLinkColor, 5%);
+@customBtnPrimaryBackgroundHighlight: darken(@customBtnPrimaryBackground, 5%);
+@customInputFocusBorderColor: rgba(red(@customLinkColor), green(@customLinkColor), blue(@customLinkColor), .8);
+@customInputBoxShadowColor: rgba(red(@customLinkColor), green(@customLinkColor), blue(@customLinkColor), .6);
+@customThumbnailBoxShadowColor: rgba(red(@customLinkColor), green(@customLinkColor), blue(@customLinkColor), .25);
+@colorClassName: ~'.@{colorName}-theme';
+
+@{colorClassName} {
+	@import "../color_forms_buttons.less";
+}
