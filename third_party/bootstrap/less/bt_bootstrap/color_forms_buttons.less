@@ -9,7 +9,7 @@ a:focus {
 
 // THead
 th {
-  color: @customLinkColor !important;	
+  color: @customLinkColor !important; 
 }
 
 // Forms
@@ -42,7 +42,7 @@ input[type="color"],
   color: @customLinkColor;
 
   &:hover, &:focus, &:active, &.active, &.disabled, &[disabled] { 
-		color: @customLinkColorHover;
+    color: @customLinkColorHover;
   }
 }
 
@@ -60,18 +60,18 @@ input[type="color"],
 
 // Thumbnail
 .bt-thumb {
-	&:hover {
-		border-color: @customLinkColor !important;
-		.box-shadow(0 1px 4px @customThumbnailBoxShadowColor) !important;
-	}
+  &:hover {
+    border-color: @customLinkColor !important;
+    .box-shadow(0 1px 4px @customThumbnailBoxShadowColor) !important;
+  }
 }
 
 // Pagination
 
 // Mixins
 .btnCustomActive(@color) {
-	background-color: @color !important;
-    *background-color: darken(@color, 5%) !important;
+  background-color: @color !important;
+  *background-color: darken(@color, 5%) !important;
 }
 
 .btnCustomBackground(@startColor, @endColor, @textColor, @textShadow) {
@@ -84,32 +84,32 @@ input[type="color"],
 
 // Style
 .btn-pagination {
-	li {
-		a,
-		span {
-			color: @customLinkColor;
-		}
+  li {
+    a,
+    span {
+      color: @customLinkColor;
+    }
 
-		a {
-			&:hover, &:focus, &:active, &.active, &.disabled, &[disabled] {
-				.btnCustomBackground(@customBtnPrimaryBackground, @customBtnPrimaryBackgroundHighlight, @customBtnColor, @customBtnTextShadowColor);
-			}
-		}
+    a {
+      &:hover, &:focus, &:active, &.active, &.disabled, &[disabled] {
+        .btnCustomBackground(@customBtnPrimaryBackground, @customBtnPrimaryBackgroundHighlight, @customBtnColor, @customBtnTextShadowColor);
+      }
+    }
 
-		span {
-			&:hover, &.hover {
-				color: @customLinkColor;		
-			}
-		}
+    span {
+      &:hover, &.hover {
+        color: @customLinkColor;    
+      }
+    }
 
-		&.active {
-			span {
-				.btnCustomBackground(@customBtnPrimaryBackground, @customBtnPrimaryBackgroundHighlight, @customBtnColor, @customBtnTextShadowColor);
-			}
-		}	
+    &.active {
+      span {
+        .btnCustomBackground(@customBtnPrimaryBackground, @customBtnPrimaryBackgroundHighlight, @customBtnColor, @customBtnTextShadowColor);
+      }
+    } 
 
-		&.disabled {
-			span { color: @customLinkColorHover; } 
-		}
-	}
+    &.disabled {
+      span { color: @customLinkColorHover; } 
+    }
+  }
 }
