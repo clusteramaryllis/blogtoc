@@ -43,8 +43,8 @@
       
       var BlogTocApps = function ( element, option ) {
 
-        // already an app, don't process
-        if ( element.BTAPP ) {
+        // already loaded, don't process
+        if ( element.BTLoaded ) {
           return;
         }
       
@@ -668,6 +668,9 @@
                 _self.displayAlphabet( config.currentAlphabet, null, null, true );
               }
             }
+
+            // Tells that apps already loaded
+            _parent.BTLoaded = true;
 
             // Clear any references
             window[ 'BTJSONCallback_' + root.id ] = null;
@@ -2250,17 +2253,12 @@
        * @param  : <HTMLElement>el
        ********************************************************************/    
       var _resetState = function( el ) {
-        var child,
-          _root = el.BTID,
+        var _root = el.BTID,
           _loader = _root.firstChild,
           _header = _nextElement( _loader ),
           _filter = _nextElement( _header ),
           _tabler = _nextElement( _filter ),
           _footer = _nextElement( _tabler );
-
-        /*if ( child = el.firstChild ) {
-          el.removeChild( child );
-        }*/
 
         _loader.innerHTML = '';
         _header.innerHTML = '';
@@ -2271,8 +2269,6 @@
         _root.style.display = 'block';
         _loader.style.display = 'block';
         _tabler.style.display = 'none';
-
-        /*el.appendChild( _root );*/
       };
       
       /* Test the connection image on the fly service
@@ -2372,6 +2368,7 @@
         }
 
         _resetState( element );
+        element.BTLoaded = false;
         element.BTAPP.run( element.BTOptions );
 
         return this;
