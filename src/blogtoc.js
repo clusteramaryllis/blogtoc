@@ -2328,7 +2328,7 @@
       /* Reset
        ********************************************************************/
       BlogToc.reset = function( element ) {
-        _prepareHtml( element, element.BTID.id );
+        _prepareHtml( element.parentNode, element.BTID.id );
         element.BTAPP.run( element.BTOptions );
 
         return this;
