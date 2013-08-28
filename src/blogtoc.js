@@ -31,8 +31,6 @@
 
       var defaultLanguage = 'en-US',
         defaultTheme = 'bootstrap';
-
-      var bootmetroCSS = '//cdn.jsdelivr.net/bootmetro/1.0.0a1/css/bootmetro-icons.min.css';
       
       var BlogTocApps = function ( element, option ) {
       
@@ -40,7 +38,7 @@
           opts, config, feed,
           root, loader, header, filter, tabler, footer, resulter, paging;
 
-        var _alpha = alphabet.slice(0);
+        var _alpha;
         
         _parent.BTAPP = {
       
@@ -172,9 +170,6 @@
             _BTBuildLang( opts.language.setup, languages, opts.language.custom );
             // Build theme starter
             _BTBuildTheme( opts.theme.setup, themes, opts.extendClass );
-            // add bootmetro icon stylesheet
-            // @link http://aozora.github.io/bootmetro
-            _addCSSOnce( bootmetroCSS );
             
             // save necessary element
             root = _parent.BTID;
@@ -194,10 +189,6 @@
             
             // init progressbar / loader
             opts.progress.render( loader, 0 );
-            // set id
-            if ( opts.blogtocId ) { 
-              root.id = opts.blogtocId; 
-            }
 
             // cache the request
             config.cache.req = new Array();
@@ -306,6 +297,8 @@
               feed.label.unshift( opts.language.custom.labelAll ); 
             }
             // add alphabet label all
+            _alpha = alphabet.slice(0);
+
             if ( opts.label.includeAlphabetLabelAll ) {
               _alpha.unshift( opts.language.custom.labelAll );
             }
@@ -493,7 +486,7 @@
                     setTimeout( function() {
                       loader.style.display = 'none';
                       _self.buildUI();
-                    }, 800 );
+                    }, 1 );
                   }
                 
                 }, 1 );
@@ -1731,7 +1724,9 @@
 
           var head = document.getElementsByTagName('head')[0];
           if ( !top ) {
-            head.appendChild( stylesheet );
+            setTimeout(function(){
+              head.appendChild( stylesheet );
+            }, 1000 );
           } else {
             head.insertBefore( stylesheet, head.childNodes[ head.childNodes.length - 1 ] );
           }
@@ -2107,7 +2102,7 @@
         };
 
         _appends( option, templateFn( theme[ def ].options ) );
-        _addCSSOnce( theme[ def ].url );
+        _addCSSOnce( theme[ def ].url, true );
       };
       
       /* Queue & Lazy Load image for BlogToc
@@ -2210,9 +2205,10 @@
       
       /* Generate First HTML for apps
        * @param  : <HTMLElement>element
+       * @param  : <string>setId
        ********************************************************************/    
-      var _prepareHtml = function( el, prevId ) {
-        var blogTocId = prevId ? prevId : 'blogtoc_' + _uniqueNumber();
+      var _prepareHtml = function( el, setId ) {
+        var blogTocId = setId ? setId : 'blogtoc_' + _uniqueNumber();
 
         // IE7 workaround
         // style = zoom : 1;
@@ -2234,6 +2230,35 @@
           document.write( text );
         }       
         return _getId( blogTocId );
+      };
+
+      /* Reset to first HTML State
+       * @param  : <HTMLElement>el
+       ********************************************************************/    
+      var _resetState = function( el ) {
+        var child,
+          _root = el.BTID,
+          _loader = _root.firstChild,
+          _header = _nextElement( _loader ),
+          _filter = _nextElement( _header ),
+          _tabler = _nextElement( _filter ),
+          _footer = _nextElement( _tabler );
+
+        /*if ( child = el.firstChild ) {
+          el.removeChild( child );
+        }*/
+
+        _loader.innerHTML = '';
+        _header.innerHTML = '';
+        _filter.innerHTML = '';
+        _tabler.innerHTML = '';
+        _footer.innerHTML = '';
+
+        _root.style.display = 'block';
+        _loader.style.display = 'block';
+        _tabler.style.display = 'none';
+
+        /*el.appendChild( _root );*/
       };
       
       /* Test the connection image on the fly service
@@ -2288,11 +2313,11 @@
           }
 
         } else if ( _isHTMLElement( element ) ) { // Node
-          element.BTID = _prepareHtml( element );
+          element.BTID = _prepareHtml( element, options.blogtocId );
           BlogTocApps( element, options );
 
         } else {
-          var p = _prepareHtml();
+          var p = _prepareHtml( null, options.blogtocId );
           
           element = p.parentNode;
           element.BTID = p;
@@ -2328,7 +2353,11 @@
       /* Reset
        ********************************************************************/
       BlogToc.reset = function( element ) {
-        _prepareHtml( element.parentNode, element.BTID.id );
+        if ( !element.BTID ) { 
+          return this;
+        }
+
+        _resetState( element );
         element.BTAPP.run( element.BTOptions );
 
         return this;
@@ -2432,6 +2461,11 @@
   if ( typeof window !== 'undefined' ) {
     
     loadApp();
+
+    /********************************************************************
+     * ADD EXTERNAL ICON SET                                            *
+     ********************************************************************/
+    BlogToc.addCSS('//cdn.jsdelivr.net/bootmetro/1.0.0a1/css/bootmetro-icons.min.css');
 
     /********************************************************************
      * SET DEFAULT LANGUAGE                                             *
