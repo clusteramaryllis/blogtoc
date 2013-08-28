@@ -1,5 +1,5 @@
 /**!
-* BlogToc v1.0.0
+* BlogToc v1.1.0
 * Copyright 2013 Cluster Amaryllis
 * Licensed under the Apache License v2.0
 * http://www.apache.org/licenses/LICENSE-2.0
