@@ -450,7 +450,7 @@
                   }
 
                   // comments count section
-                  obj.comment = ( 'thr$total' in entry ) ? +entry.thr$total.$t : '';
+                  obj.comment = ( 'thr$total' in entry ) ? +entry.thr$total.$t : 0;
                   
                   // author information section
                   obj.author = entry.author[0].name.$t;
@@ -596,7 +596,7 @@
                 node = document.createTextNode( opts.language.custom[ mData ] );
               } else {
                 span = _createElement( 'span', null, null, 'icon-menu' );
-                node = _createElement( 'a', { href: "#", onclick: sortFn }, opts.language.custom[ mData ] );
+                node = _createElement( 'a', { href: "javascript:void(0)", onclick: sortFn }, opts.language.custom[ mData ] );
                 
                 node.appendChild( span );
                 
@@ -1718,9 +1718,9 @@
        ********************************************************************/
       /* Insert Stylesheet to Head Section
        * @param  : <string>src
-       * @param  : <boolean>bottom
+       * @param  : <boolean>top
        ********************************************************************/ 
-      var _addCSS = function( src, bottom ) {
+      var _addCSS = function( src, top ) {
         if ( document.createStyleSheet ) {
           document.createStyleSheet( _sanitizeURL( src ), 0 );
         } else {
@@ -1730,19 +1730,19 @@
           stylesheet.href = _sanitizeURL( src );
 
           var head = document.getElementsByTagName('head')[0];
-          if ( bottom ) {
+          if ( !top ) {
             head.appendChild( stylesheet );
           } else {
-            head.insertBefore( stylesheet, head.firstChild );
+            head.insertBefore( stylesheet, head.childNodes[ head.childNodes.length - 1 ] );
           }
         }
       };
 
       /* Insert Stylesheet to Head Section only one time
        * @param  : <string>src
-       * @param  : <boolean>bottom
+       * @param  : <boolean>top
        ********************************************************************/ 
-      var _addCSSOnce = function( src, bottom ) {
+      var _addCSSOnce = function( src, top ) {
         var head = document.getElementsByTagName('head')[0],
           link = head.getElementsByTagName('link'),
           len = link.length,
@@ -1755,7 +1755,7 @@
           }
         }
 
-        _addCSS( src, bottom );
+        _addCSS( src, top );
       };
 
       /* Insert Javascript to Head Section
@@ -1974,7 +1974,7 @@
       var _BTMakePageList = function( page, text, tag, id, className ) {
         var map = {
           a: { 
-            href: "#", 
+            href: "javascript:void(0)",
             onclick: "BlogToc.page(" + page + ", document.getElementById('" + id + "')); return false;" 
           },
           span: null
@@ -2393,8 +2393,8 @@
 
       /* Utilities
        ********************************************************************/  
-      BlogToc.addCSS = function( src, bottom ) {
-        _addCSSOnce( src, bottom );
+      BlogToc.addCSS = function( src, top ) {
+        _addCSSOnce( src, top );
 
         return this;
       };
