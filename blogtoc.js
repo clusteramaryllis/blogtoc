@@ -42,6 +42,11 @@
         defaultTheme = 'bootstrap';
       
       var BlogTocApps = function ( element, option ) {
+
+        // already an id, don't process
+        if ( element.BTID ) {
+          return;
+        }
       
         var _parent = element,
           opts, config, feed,
