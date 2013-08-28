@@ -240,7 +240,7 @@
             var url = opts.url.replace( httpRegex, '' ),
               scriptID = url + '_' + _uniqueNumber();
 
-            url = 'http://' + url + 
+            url = '//' + url + 
               '/feeds/posts/summary/?' + 
               'max-results=0&' + 
               'alt=json-in-script&' + 
@@ -329,7 +329,7 @@
               url = opts.url.replace( httpRegex, '' ),
               scriptID;
 
-            url = 'http://' + url + 
+            url = '//' + url + 
               '/feeds/posts/'+ opts.feedType +
               '/?' + 
               'max-results=500&' + 
@@ -1927,7 +1927,7 @@
       var _sanitizeURL = function( url ) {
 
         var urlRegex = new RegExp(
-          '^((ftp|https?):\\/\\/)?((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|((\\d{1,3}\\.){3}\\d{1,3}))(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*(\\?[;&a-z\\d%_.~+=-]*)?(\\#[-a-z\\d_]*)?$','i'
+          '^((ftp|https?)?:?\\/\\/)?((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|((\\d{1,3}\\.){3}\\d{1,3}))(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*(\\?[;&a-z\\d%_.~+=-]*)?(\\#[-a-z\\d_]*)?$','i'
         );
 
         if ( !urlRegex.test( url ) ) {
