@@ -9,7 +9,7 @@
 
 !(function() {
 
-  'use strict'
+  'use strict';
 
   var loadApp = function() {
     
@@ -17,7 +17,7 @@
 
       var VERSION = '1.0.0';
 
-      var BASE_URL = '//googledrive.com/host/0B9XH_yaaSNgTUktSRmFHVFVMQm8/' + VERSION + '/';
+      var BASE_URL = '//googledrive.com/host/0B-ME4OmVndQzMFNaMWpqVzVYUFE/' + VERSION + '/';
 
       var alphabet = '#|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z'.split('|'),
         days = 'Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday'.split('|'),
@@ -1580,7 +1580,7 @@
        ********************************************************************/
       var _getId = function( id ) {
         return document.getElementById( id );
-      }
+      };
 
       /* Check whether element has certain class name
        * @param  : <HTMLElement>el
@@ -2319,7 +2319,7 @@
         __BlogTocBuilder( options, this.element );
 
         return this;
-      }
+      };
 
       /* Build
        ********************************************************************/
@@ -2331,7 +2331,7 @@
         __BlogTocBuilder( options, element );
 
         return this;
-      }
+      };
       
       /* Display
        ********************************************************************/    
