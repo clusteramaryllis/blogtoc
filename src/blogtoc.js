@@ -2211,12 +2211,13 @@
       /* Generate First HTML for apps
        * @param  : <HTMLElement>element
        ********************************************************************/    
-      var _prepareHtml = function( el ) {
+      var _prepareHtml = function( el, prevId ) {
+        var blogTocId = prevId ? prevId : 'blogtoc_' + _uniqueNumber();
+
         // IE7 workaround
         // style = zoom : 1;
         // @link http://stackoverflow.com/a/15092773
-        var blogTocId = 'blogtoc_' + _uniqueNumber(),
-          text = [
+        var text = [
             '<div id="' + blogTocId + '" style="zoom: 1; display: none;">',
             '<div class="blogtoc_loader"></div>',
             '<div class="blogtoc_header"></div>',
@@ -2323,7 +2324,16 @@
 
         return this;
       };
-      
+
+      /* Reset
+       ********************************************************************/
+      BlogToc.reset = function( element ) {
+        _prepareHtml( element, element.BTID.id );
+        element.BTAPP.run( element.BTOptions );
+
+        return this;
+      };
+
       /* Display
        ********************************************************************/    
       BlogToc.display = function( val, element ) {
