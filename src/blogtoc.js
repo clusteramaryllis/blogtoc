@@ -6,7 +6,7 @@
     
     (function() {
 
-      var VERSION = '1.0.0';
+      var VERSION = '1.1.0';
 
       var BASE_URL = '//googledrive.com/host/0B-ME4OmVndQzMFNaMWpqVzVYUFE/' + VERSION + '/';
 
