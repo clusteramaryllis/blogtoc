@@ -43,8 +43,8 @@
       
       var BlogTocApps = function ( element, option ) {
 
-        // already an id, don't process
-        if ( element.BTID ) {
+        // already an app, don't process
+        if ( element.BTAPP ) {
           return;
         }
       
