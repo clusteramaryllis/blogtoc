@@ -80,7 +80,19 @@ module.exports = function( grunt ) {
 			color: colorScheme
 		},
 		less: {
-			production: theme
+			release: theme
+		},
+		jshint: {
+			options: {
+				"browser": true,
+				"debug": false,
+				"eqeqeq": false,
+				"eqnull": false,
+				"evil": false,
+				"expr": false,
+				"nonew": false
+			},
+			release: [ '<%= pkg.name %>.js', 'lang/**/*.js', 'theme/**/*.js' ]
 		},
 		uglify: {
 			options: {
@@ -102,14 +114,22 @@ module.exports = function( grunt ) {
 					src: [ '<%= pkg.name %>.js' ]
 				}
 			}
+		},
+		watch: {
+			jshint: {
+				files: '<%= jshint.release %>',
+				tasks: ['jshint']
+			}
 		}
 	});
 
 	grunt.loadNpmTasks('grunt-banner');
 	grunt.loadNpmTasks('grunt-contrib-clean');
 	grunt.loadNpmTasks('grunt-contrib-concat');
+	grunt.loadNpmTasks('grunt-contrib-jshint');
 	grunt.loadNpmTasks('grunt-contrib-less');
 	grunt.loadNpmTasks('grunt-contrib-uglify');
+	grunt.loadNpmTasks('grunt-contrib-watch');
 
 	grunt.registerTask( 'default', [ 'clean', 'concat', 'usebanner', 'less', 'uglify' ] );
 }
