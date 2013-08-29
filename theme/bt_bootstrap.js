@@ -32,7 +32,7 @@
        *****************************************************************/
 
     })();
-  }
+  };
 
   if ( typeof window !== 'undefined' && window.BlogToc ) {
     loadTheme( window.BlogToc );

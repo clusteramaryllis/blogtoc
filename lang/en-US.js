@@ -42,7 +42,7 @@
        *****************************************************************/
 
     })();
-  }
+  };
 
   if ( typeof window !== 'undefined' && window.BlogToc ) {
     loadLang( window.BlogToc );
