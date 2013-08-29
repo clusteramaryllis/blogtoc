@@ -109,13 +109,12 @@
               },
               progress: {
                 render : function( elem, progress ) {
-                  
                   var span;
                   
                   // check the span container for proggress time
                   // if it's already there, update the container
                   // if it's not, create new html wrapper
-                  if ( span = elem.getElementsByTagName('span')[0] ) {
+                  if ( ( span = elem.getElementsByTagName('span')[0] ) ) {
                     span.innerHTML = progress;
                   } else { 
                     elem.innerHTML = 'Loading <span>' + progress + '</span> %';
@@ -216,7 +215,7 @@
             // map the table header data
             config.mapper = opts.table.order.split(';');
             // setup for table header width
-            config.mapperWidth = new Array();
+            config.mapperWidth = [];
             // setup for thumbnail anchor inline-css
             config.tbwrapper = 'display:block;width:' + opts.thumbnail.size + 'px;height:'+ opts.thumbnail.size + 'px;';
             // setup for thumbnail image inline-css
@@ -283,11 +282,11 @@
 
               var define = opts.label.define, dLen = define.length,
                 exception = opts.label.exception,
-                i = 0, len = jfeed.category.length;
+                j = 0, len = jfeed.category.length;
 
-              for (; i < len; i++) {
+              for (; j < len; j++) {
                 
-                var category = jfeed.category[i].term;
+                var category = jfeed.category[ j ].term;
 
                 // check if options has specific label
                 if ( dLen ) {
@@ -297,7 +296,7 @@
                   }
                 }
 
-                feed.label.push( jfeed.category[i].term );
+                feed.label.push( jfeed.category[ j ].term );
               }
             }
 
@@ -424,7 +423,7 @@
                     obj.actualImage = obj.thumbnail.replace( thumbRegex, 's0' );
                     obj.thumbnail = obj.thumbnail.replace( '/s72-c/', '/s' + size + '-c/');
 
-                  } else if ( imgSrc = /<img [^>]*src=["|\']([^"|\']+)/gi.exec( fullSummary ) ) {
+                  } else if ( ( imgSrc = /<img [^>]*src=["|\']([^"|\']+)/gi.exec( fullSummary ) ) ) {
                     
                     obj.actualImage = imgSrc[1];
                     obj.thumbnail = _BTMakeThumbnail( obj.actualImage, size, server );
@@ -465,7 +464,7 @@
 
                   // posts categories section
                   if ( 'category' in entry ) {
-                    for ( var k = 0; k < entry.category.length; k++ ) {
+                    for ( k = 0; k < entry.category.length; k++ ) {
                       temp.push( entry.category[ k ].term );
                     }
                   }
@@ -579,7 +578,7 @@
             div.appendChild( label );
             filter.appendChild( div );
             
-            var j = 0, mLen = config.mapper.length, mData,
+            var mLen = config.mapper.length, mData,
               tableChild, thead, tr, th, node, span;
             
             // thead section
@@ -590,7 +589,7 @@
             thead = _createElement('thead');
             tr = _createElement('tr');
                 
-            for ( ; j < mLen; j++ ) {
+            for ( j = 0; j < mLen; j++ ) {
 
               mData = config.mapper[ j ];
               sortFn = "BlogToc.sort('"+ mData +"', document.getElementById('"+ root.id +"')); return false;";
@@ -603,7 +602,7 @@
                 node = document.createTextNode( opts.language.custom[ mData ] );
               } else {
                 span = _createElement( 'span', null, null, 'icon-menu' );
-                node = _createElement( 'a', { href: "javascript:void(0)", onclick: sortFn }, opts.language.custom[ mData ] );
+                node = _createElement( 'a', { href: 'javascript:void(0)', onclick: sortFn }, opts.language.custom[ mData ] );
                 
                 node.appendChild( span );
                 
@@ -631,7 +630,7 @@
 
             // don't show header if option showHeader is false
             if ( !opts.table.showHeader ) { 
-              _removeElement( thead )
+              _removeElement( thead );
             }
             
             // footer section
@@ -807,7 +806,7 @@
               ul.appendChild( li );
             }
             
-            if ( ulRecent = paging.getElementsByTagName('ul')[0] ) {
+            if ( ( ulRecent = paging.getElementsByTagName('ul')[0] ) ) {
               ul ?  
                 paging.replaceChild( ul, ulRecent ) :
                 paging.removeChild( ulRecent );
@@ -901,7 +900,7 @@
               total: len
             }, 
               output = opts.language.custom.result.replace( /\{(.*?)\}/gi, function ( match, p1 ) {
-                return "<b>" + lookup[ p1 ] + "</b>"
+                return "<b>" + lookup[ p1 ] + "</b>";
             });
             
             resulter.innerHTML = output;
@@ -916,20 +915,20 @@
           displayLabel: function( val, el, prevent, grab ) {
             
             var _self = this;
-            
+
             // option grab original data from cache
             if ( grab ) {
               feed.data = config.cache.original.slice(0);
-            }
-            
-            // synchronize data with current alphabet label
-            if ( grab && config.currentAlphabet != null ) {
-              _self.displayAlphabet( config.currentAlphabet, null, true );
             }
 
             // don't proccess if there is no current label exists
             if ( config.currentLabel == null ) {
               return;
+            }
+            
+            // synchronize data with current alphabet label
+            if ( grab && config.currentAlphabet != null ) {
+              _self.displayAlphabet( config.currentAlphabet, null, true );
             }
             
             // IE<=8 doesn't recognize button value
@@ -943,9 +942,9 @@
             if ( val !== 'All' ) {
               var temp = new Array();
               // filter data that only match with certain category
-              for ( var i = 0, len = feed.data.length; i < len; i++ ) {
-                if ( _inArray( val, feed.data[ i ].category ) ) {
-                  temp.push( feed.data[ i ] );
+              for ( var j = 0, len = feed.data.length; j < len; j++ ) {
+                if ( _inArray( val, feed.data[ j ].category ) ) {
+                  temp.push( feed.data[ j ] );
                 }
               }
               feed.data = temp.slice(0);
@@ -974,10 +973,12 @@
               
               var value;
 
-              if ( value = filter.getElementsByTagName('input')[0].value ) { 
+              if ( ( value = filter.getElementsByTagName('input')[0].value ) ) { 
                 _self.query( value );
               } else { 
                 _self.compile();
+                // reset feed position <bugs>
+                config.cache.feedLeft = opts.table.initDataLoad;
               }
             }
             
@@ -997,15 +998,15 @@
             if ( grab ) {
               feed.data = config.cache.original.slice(0);
             }
-            
-            // synchronize data with current label
-            if ( grab && config.currentLabel != null ) {
-              _self.displayLabel( config.currentLabel, null, true );
-            }
 
             // don't proccess if there is no current alphabet label exists
             if ( config.currentAlphabet == null ) {
               return;
+            }
+            
+            // synchronize data with current label
+            if ( grab && config.currentLabel != null ) {
+              _self.displayLabel( config.currentLabel, null, true );
             }
             
             // IE<=8 doesn't recognize button value
@@ -1028,9 +1029,9 @@
               }
               
               // filter data that only match with first alphabet
-              for ( var i = 0, len = feed.data.length; i < len; i++ ) {
-                if ( !!~feed.data[i].title.search( alphaRegex ) ) {
-                  temp.push( feed.data[ i ] );
+              for ( var j = 0, len = feed.data.length; j < len; j++ ) {
+                if ( !!~feed.data[ j ].title.search( alphaRegex ) ) {
+                  temp.push( feed.data[ j ] );
                 }
               }
               feed.data = temp.slice(0);
@@ -1060,10 +1061,12 @@
               
               var value;
               
-              if ( value = filter.getElementsByTagName('input')[0].value ) {
+              if ( ( value = filter.getElementsByTagName('input')[0].value ) ) {
                 _self.query( value );
               } else {
                 _self.compile();
+                // reset feed position <bugs>
+                config.cache.feedLeft = opts.table.initDataLoad;
               }
             }
           },
@@ -1288,9 +1291,9 @@
                 bOpts = id.BTOptions,
                 bFeed = id.BTFeed;
                 
-              var start = new Number( ( ( config.page - 1 ) * config.records ) + bConfig.cache.feedLeft ),
+              var start = ( ( bConfig.page - 1 ) * bConfig.records ) + bConfig.cache.feedLeft,
                 end = start + bOpts.table.initDataLoad,
-                records = config.page * bConfig.records,
+                records = bConfig.page * bConfig.records,
                 count = bFeed.data.length,
                 size = bOpts.thumbnail.authorSize,
                 j = start, idx = start, len = bConfig.mapper.length,
@@ -1354,7 +1357,7 @@
               if ( rootHeight - pageHeight - scrollPosition < 100 ) { 
                 appendData( bID, id ); 
               }
-            }
+            };
             
             // Make event handler
             var evtHandler = function() {
@@ -1370,13 +1373,13 @@
             _registerEvent( config.registeredEvent, window, 'resize', evtHandler );
           
             // if tbody already has content, replace with new one
-            if ( tbodyRecent = tabler.getElementsByTagName('tbody')[0] ) {
+            if ( ( tbodyRecent = tabler.getElementsByTagName('tbody')[0] ) ) {
               tabler.replaceChild( tbody, tbodyRecent );
             } else { // otherwise create new one
               tabler.appendChild( tbody );
             }
           }
-        }
+        };
 
         // Run
         var loadPlugin = function() {
@@ -1406,9 +1409,6 @@
       // @link https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/indexOf
       if ( !Array.prototype.indexOf ) {
         Array.prototype.indexOf = function ( searchElement /*, fromIndex */ ) {
-        
-          "use strict";
-          
           if ( this == null ) {
             throw new TypeError();
           }
@@ -1570,9 +1570,9 @@
         var rect = el.getBoundingClientRect();
 
         return (
-          rect.top >= 0
-          && rect.left >= 0
-          && rect.top <= ( window.innerHeight || document.documentElement.clientHeight )
+          rect.top >= 0 &&
+          rect.left >= 0 &&
+          rect.top <= ( window.innerHeight || document.documentElement.clientHeight )
         );
       };
 
@@ -1593,8 +1593,8 @@
         className = ' ' + className + ' ';
         
         return (
-          el.nodeType === 1 
-          && !!~(' ' + el.className + ' ').replace( /[\n\t\r]/g, ' ' ).indexOf( className )
+          el.nodeType === 1 &&
+          !!~(' ' + el.className + ' ').replace( /[\n\t\r]/g, ' ' ).indexOf( className )
         );
       };
 
@@ -1607,10 +1607,11 @@
         return (
           typeof HTMLElement === "object" ? 
             el instanceof HTMLElement : //DOM2
-            el && typeof el === "object" 
-            && el !== null 
-            && el.nodeType === 1 
-            && typeof el.nodeName === "string"
+            el &&
+            typeof el === "object" &&
+            el !== null &&
+            el.nodeType === 1 &&
+            typeof el.nodeName === "string"
         );
       };
 
@@ -1623,11 +1624,11 @@
         result = Object.prototype.toString.call( nodes );
 
         return (
-          typeof nodes === 'object'
-          && /^\[object (HTMLCollection|NodeList|Object)\]$/.test( result )
-          && typeof nodes.length === 'number'
-          && typeof nodes.item !== 'undefined'
-          && ( nodes.length === 0 || ( typeof nodes[0] === 'object' && nodes[0].nodeType > 0 ) )
+          typeof nodes === 'object' && 
+          /^\[object (HTMLCollection|NodeList|Object)\]$/.test( result ) && 
+          typeof nodes.length === 'number' &&
+          typeof nodes.item !== 'undefined' &&
+          ( nodes.length === 0 || ( typeof nodes[0] === 'object' && nodes[0].nodeType > 0 ) )
         );
       };
 
@@ -1697,7 +1698,7 @@
         arr.sort = function(){ return a - b; };
         
         return arr;
-      }
+      };
 
       /* Check if an item is a member of certain array
        * @param  : <object>needle
@@ -1793,7 +1794,7 @@
 
                 script.onreadystatechange = null;
               }
-            }
+            };
           } else {
             script.onerror = errorCallback;
           }
@@ -1880,9 +1881,9 @@
               def[ key ] = _pretends( def[ key ], config[ key ] );
             } else {
               // boolean & number aren't count
-              if( typeof def[ key ] !== 'boolean' 
-                  && typeof def[ key ] !== 'number' 
-                  && !def[ key ] ) {
+              if( typeof def[ key ] !== 'boolean' &&
+                  typeof def[ key ] !== 'number' && 
+                  !def[ key ] ) {
                 def[ key ] = config[ key ];
               }
             }
@@ -1971,7 +1972,7 @@
             "resize_w=" + prop + "&resize_h=" + prop + "&" +
             "url=" + img + "&" +
             "container=focus"
-        }
+        };
         
         return request[ server ];
       };
@@ -2083,7 +2084,7 @@
           }
         };
 
-        return ( ( type in obj ) && obj[ type ]() ) || obj['def']();
+        return ( ( type in obj ) && obj[ type ]() ) || obj.def();
       };
 
       /* Build Language Starter
@@ -2296,7 +2297,7 @@
           img.onerror = function() {
             i++;
             getCDN();
-          }
+          };
         };
 
         getCDN();
@@ -2467,7 +2468,7 @@
 
     })();
    
-  }
+  };
 
   if ( typeof window !== 'undefined' ) {
     
