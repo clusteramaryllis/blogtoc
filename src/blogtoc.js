@@ -74,16 +74,16 @@
               extendClass: {},
               feedType: 'default',
               label: { 
-                setup: 'All',
-                setupAlphabet: 'All',
                 define: [], 
                 exception: false,
                 showLabel: true,
-                cloudLabel: false,
-                showAlphabetLabel: true,
-                cloudAlphabetLabel: true,
                 includeLabelAll: true,
-                includeAlphabetLabelAll: true
+                setup: 'All',
+                cloudLabel: false,
+                showAlphabetLabel: false,
+                includeAlphabetLabelAll: true,
+                setupAlphabet: 'All',
+                cloudAlphabetLabel: false
               },
               language: {
                 setup: defaultLanguage,
@@ -124,11 +124,8 @@
               summary: {
                 wordLimit: 200
               },
-              theme: {
-                setup: defaultTheme
-              },
               table: {
-                order: 'index;thumbnail;title;publishDate;updateDate;author;comment',
+                order: ["index","thumbnail","title","publishDate","updateDate","author","comment"],
                 initDataLoad: 10,
                 showHeader: true,
                 indexWidthPoint : 2.5,
@@ -139,6 +136,9 @@
                 thumbnailWidthPoint : 7,
                 titleWidthPoint : 28,
                 updateDateWidthPoint : 12.5
+              },
+              theme: {
+                setup: defaultTheme
               },
               thumbnail: {
                 blank: blankThumb,
@@ -204,7 +204,8 @@
             // get resize image on the fly server, take a sample
             config.iotf = _testCDN( opts.thumbnail.sample );
             // map the table header data
-            config.mapper = opts.table.order.split(';');
+            // config.mapper = opts.table.order.split(';');
+            config.mapper = opts.table.order;
             // setup for table header width
             config.mapperWidth = [];
             // setup for thumbnail anchor inline-css
@@ -298,13 +299,13 @@
             
             // add label all
             if ( opts.label.includeLabelAll ) { 
-              feed.label.unshift( opts.language.custom.labelAll ); 
+              feed.label.unshift( opts.label.setup ); 
             }
             // add alphabet label all
             _alpha = alphabet.slice(0);
 
             if ( opts.label.includeAlphabetLabelAll ) {
-              _alpha.unshift( opts.language.custom.labelAll );
+              _alpha.unshift( opts.label.setupAlphabet );
             }
 
             // json callback
@@ -2161,7 +2162,7 @@
             };
             
             // image error
-            img[i].onerror = function() {
+            img[ i ].onerror = function() {
               // change attribute
               this.setAttribute( 'data-loaded', 'yes' );
               // change to Not Available image
