@@ -14,6 +14,8 @@
         "id": "bootstrap",
         /*"loader": "",*/
         /*"header": "",*/
+        /*"label": "",*/
+        /*"alphabet": "",*/
         "button": "btn",
         "filter": "clearfix",
         "display": "pull-left",
