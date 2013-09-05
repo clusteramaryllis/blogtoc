@@ -4640,6 +4640,12 @@
 .bootstrap .blogtoc_filter select {
   width: auto;
 }
+.bootstrap .blogtoc_filter .blogtoc_display span {
+  margin-left: 5px;
+}
+.bootstrap .blogtoc_filter .blogtoc_search span {
+  margin-right: 5px;
+}
 .bootstrap .blogtoc_table th {
   color: #0088cc;
 }
@@ -4811,4 +4817,91 @@
   color: #333333;
   opacity: 0.65;
   filter: alpha(opacity=65);
+}
+@media only screen and (max-width: 800px) {
+  .bootstrap .blogtoc_responsive_hide {
+    display: none !important;
+  }
+  .bootstrap .blogtoc_display {
+    float: none;
+  }
+  .bootstrap .blogtoc_display label {
+    position: relative;
+  }
+  .bootstrap .blogtoc_display label select {
+    width: 100%;
+  }
+  .bootstrap .blogtoc_display label span {
+    position: absolute;
+    right: 30px;
+    top: 5px;
+  }
+  .bootstrap .blogtoc_search {
+    float: none;
+  }
+  .bootstrap .blogtoc_search label {
+    position: relative;
+  }
+  .bootstrap .blogtoc_search label input {
+    display: block;
+    width: 100%;
+    min-height: 30px;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+  }
+  .bootstrap .blogtoc_search label span {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  .bootstrap .blogtoc_search label .blogtoc_query:empty:before {
+    content: attr(data-placeholder);
+  }
+  .bootstrap .blogtoc_search label .blogtoc_query:focus:empty:before {
+    content: "";
+  }
+  .bootstrap .blogtoc_table {
+    display: block;
+  }
+  .bootstrap .blogtoc_table thead,
+  .bootstrap .blogtoc_table tbody,
+  .bootstrap .blogtoc_table th,
+  .bootstrap .blogtoc_table td,
+  .bootstrap .blogtoc_table tr {
+    display: block;
+  }
+  .bootstrap .blogtoc_table thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  .bootstrap .blogtoc_table td {
+    position: relative;
+    padding-left: 50%;
+    white-space: normal;
+    text-align: left;
+  }
+  .bootstrap .blogtoc_table td:before {
+    position: absolute;
+    top: 6px;
+    left: 6px;
+    width: 45%;
+    padding-right: 10px;
+    white-space: nowrap;
+    text-align: left;
+    font-weight: bold;
+  }
+  .bootstrap .blogtoc_table td:before {
+    content: attr(data-title);
+  }
+  .bootstrap .blogtoc_result {
+    float: none;
+    text-align: center;
+    padding-bottom: 8px;
+  }
+  .bootstrap .blogtoc_pagination {
+    float: none;
+    text-align: center;
+  }
 }
