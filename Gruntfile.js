@@ -12,6 +12,12 @@ module.exports = function( grunt ) {
 			baseDir: 'css/bootstrap/',
 			dest: 'css/bootstrap/bt_bootstrap.css',
 			src: 'third_party/bootstrap/less/bt_bootstrap/bt_bootstrap.less'
+		},
+		todc_bootstrap: {
+			id: 'bt_todc-bootstrap',
+			baseDir: 'css/bootstrap/',
+			dest: 'css/todc-bootstrap/bt_todc-bootstrap.css',
+			src: 'third_party/todc-bootstrap/less/bt_todc-bootstrap/bt_todc-bootstrap.less'
 		}
 	};
 
@@ -79,18 +85,17 @@ module.exports = function( grunt ) {
 			},
 			color: colorScheme
 		},
-		less: {
-			release: theme
-		},
+		less: theme,
 		jshint: {
 			options: {
 				"browser": true,
-				"debug": false,
-				"eqeqeq": false,
-				"eqnull": false,
-				"evil": false,
-				"expr": false,
-				"nonew": false
+				"debug": true,
+				"evil": true,
+				"expr": true,
+				"nonew": true,
+				"-W009": true,
+				"-W107": true,
+				"-W041": true
 			},
 			release: [ '<%= pkg.name %>.js', 'lang/**/*.js', 'theme/**/*.js' ]
 		},
@@ -131,5 +136,6 @@ module.exports = function( grunt ) {
 	grunt.loadNpmTasks('grunt-contrib-uglify');
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
-	grunt.registerTask( 'default', [ 'clean', 'concat', 'usebanner', 'less', 'uglify' ] );
+	grunt.registerTask( 'default', [ 'clean', 'concat', 'usebanner', 'less', 'uglify', 'jshint' ] );
+	grunt.registerTask( 'js', [ 'clean', 'concat:release', 'usebanner', 'uglify' ] );
 }
