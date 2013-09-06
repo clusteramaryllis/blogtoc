@@ -2017,7 +2017,7 @@
         
         // @google-link http://carlo.zottmann.org/2013/04/14/google-image-resizer/ :)
         var request = {
-          boxsizer: "http://proxy.boxresizer.com/convert?" + 
+          boxresizer: "http://proxy.boxresizer.com/convert?" + 
             "resize=" + prop + "x" + prop + "&" +
             "source=" + img,
           sencha: "http://src.sencha.io" + 
@@ -2343,7 +2343,7 @@
           img = new Image();
         
         var cdn = [
-          [ "boxsizer", "http://proxy.boxresizer.com/convert?resize=1x1&source=" + imgTest ],
+          [ "boxresizer", "http://proxy.boxresizer.com/convert?resize=1x1&source=" + imgTest ],
           [ "google", "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?url=" + imgTest + "&container=focus&resize_w=1&resize_h=1" ],
           [ "sencha", "http://src.sencha.io/1/1/" + imgTest ],
         ];
