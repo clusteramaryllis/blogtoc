@@ -1,0 +1,1239 @@
+---
+layout: default
+title: BlogToc
+slug: demo
+language: [ 
+{ abbr: en-US, name: English - America }, 
+{ abbr: id, name: Indonesia }
+]
+customlanguage: [ 
+{ name: new-label, model: language.custom.newLabel },
+{ name: index, model: language.custom.index },
+{ name: thumbnail, model: language.custom.thumbnail },
+{ name: title, model: language.custom.title },
+{ name: author, model: language.custom.author},
+{ name: comment, model: language.custom.comment },
+{ name: publish-date, model: language.custom.publishDate },
+{ name: update-date, model: language.custom.updateDate },
+{ name: summary, model: language.custom.summary },
+{ name: display, model: language.custom.display },
+{ name: search, model: language.custom.search },
+{ name: no-records, model: language.custom.noRecords },
+{ name: first-page, model: language.custom.firstPage },
+{ name: last-page, model: language.custom.lastPage },
+{ name: next-page, model: language.custom.nextPage },
+{ name: previous-page, model: language.custom.prevPage } 
+]
+extendclass: [
+{ name: blogtoc_id, model: extendClass.blogtoc_id, desc: "div#[[renderIdText()]]"},
+{ name: blogtoc_loader, model: extendClass.blogtoc_loader, desc: div.blogtoc_loader},
+{ name: blogtoc_header, model: extendClass.blogtoc_header, desc: div.blogtoc_header},
+{ name: blogtoc_label, model: extendClass.blogtoc_label, desc: select|button.blogtoc_label},
+{ name: blogtoc_alphabet, model: extendClass.blogtoc_alphabet, desc: select|button.blogtoc_alphabet},
+{ name: blogtoc_button, model: extendClass.blogtoc_button, desc: button},
+{ name: blogtoc_filter, model: extendClass.blogtoc_filter, desc: div.blogtoc_filter},
+{ name: blogtoc_display, model: extendClass.blogtoc_display, desc: div.blogtoc_display},
+{ name: blogtoc_search, model: extendClass.blogtoc_search, desc: div.blogtoc_search},
+{ name: blogtoc_query, model: extendClass.blogtoc_query, desc: input.blogtoc_query},
+{ name: blogtoc_table, model: extendClass.blogtoc_table, desc: table.blogtoc_table},
+{ name: blogtoc_footer, model: extendClass.blogtoc_footer, desc: div.blogtoc_footer},
+{ name: blogtoc_pagination, model: extendClass.blogtoc_pagination, desc: div.blogtoc_pagination},
+{ name: blogtoc_pagination-ul, model: "extendClass['blogtoc_pagination ul']", desc: "div.blogtoc_pagination>ul"},
+{ name: blogtoc_pagination-current, model: "extendClass['blogtoc_pagination current']", desc: "div.blogtoc_pagination>li:current"},
+{ name: blogtoc_pagination-disabled, model: "extendClass['blogtoc_pagination disabled']", desc: "div.blogtoc_pagination>li:disabled"}
+]
+---
+<div class="tab-pane active">
+  <div class="row-fluid" id="demo-wrapper" ng-controller="DemoCtrl">
+    <div class="span3 demo-fluid">
+      <fieldset>
+        <legend>Options <span class="badge badge-important">Click Generate Button after done</span></legend>
+        <div class="accordion" id="options">
+          <!-- group choice -->
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <div class="accordion-toggle">
+                <label for="bt-cdn" class="checkbox">
+                  <input type="checkbox" name="bt-cdn" id="bt-cdn" ng-model="useCDN"> [[renderCDN()]] google drive URL
+                </label>
+              </div>
+            </div>
+          </div>
+          <!-- group main -->
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a href="#collapseMain" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+                Blogspot URL
+              </a>
+            </div>
+            <div id="collapseMain" class="accordion-body collapse in">
+              <div class="accordion-inner">
+                <!-- date day -->
+                <label for="bt-url">
+                  <span class="label label-important">Important!</span>
+                </label>
+                <input type="text" id="bt-url" name="bt-url" class="input-large" ng-model="preModel.url">
+                <span class="help-block">
+                  Your blogspot URL, <b>without</b> <code>http://</code> or <code>trailing slash</code> <i>e.g.</i> <br>
+                  <span class="badge badge-info">googleblog.blogspot.com</span>
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- group zero -->
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a href="#collapseZero" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+                BlogToc
+              </a>
+            </div>  
+            <div id="collapseZero" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <!-- date day -->
+                <label for="bt-blogtoc-id">
+                  <span class="label label-inverse">ID</span>
+                </label>
+                <input type="text" id="bt-blogtoc-id" name="bt-blogtoc-id" class="input-large" ng-model="preModel.blogtocId">
+                <span class="help-block">
+                  Add custom <code>ID</code> to your widget, Otherwise will generate random <code>ID</code>
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- group one -->
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a href="#collapseOne" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+                Date
+              </a>
+            </div>
+            <div id="collapseOne" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <!-- date day -->
+                <label for="bt-date-day">
+                  <span class="label label-inverse">Day</span>
+                </label>
+                <input type="text" id="bt-date-day" name="bt-date-day" ng-model="preModel.date.day" ui-select2="select2Options.dateDay" style="min-width:40%">
+                <span class="help-block">
+                  List of days. You can change the value. <i>e.g.</i> <code>Sun</code>,<code>Mon</code>,<code>Tue</code>,etc... (Days in 3 letter format) or <code>Sonntag</code>,<code>Montag</code>,<code>Dienstag</code>,etc... (The days name in your current language). But remember(!) the order are absolute, starting from <code>Sunday</code> to <code>Saturday</code>.
+                </span>
+                <!-- date month -->
+                <label for="bt-date-month">
+                  <span class="label label-inverse">Month</span>
+                </label>
+                <input type="text" id="bt-date-month" name="bt-date-month" ng-model="preModel.date.month" ui-select2="select2Options.dateMonth" style="min-width:40%">
+                <span class="help-block">
+                  List of months. Same as above, you can change the value according to your own taste. Starting from <code>January</code> to <code>December</code>.
+                </span>
+                <!-- date render -->
+                <label for="bt-date-render">
+                  <span class="label label-inverse">Render</span>
+                </label>
+                <textarea class="btn-block" name="bt-date-render" id="bt-date-render" ng-model="preModel.date.renderDateText"></textarea>
+                <span class="help-block">
+                  This is how the date will be displayed in your table. This is actually a callback function that requires 2 parameters ( <code>date</code> & <code>option</code> ) =>
+<pre class="prettyprint">
+callback( date, option ) {
+// render the date...
+}</pre>
+                  <code>option</code> is the user's option and <code>date</code> is JavaScript <a href="//developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date">date object</a>. The example above likely will output => <br><i>Friday, August 30 2013</i>
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- group two -->
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a href="#collapseTwo" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+                Display
+              </a>
+            </div>
+            <div id="collapseTwo" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <!-- display setup -->
+                <label for="bt-display-setup">
+                  <span class="label label-inverse">Setup</span>
+                </label>
+                <input type="text" id="bt-display-setup" name="bt-display-setup" ng-model="preModel.display.setup" class="input-small" typeahead="dst for dst in displayTemp | filter:$viewValue">
+                <span class="help-block">
+                  The initial setup how many records will be displayed (Must be a number or string value that indicates displaying all records).
+                </span>
+                <!-- display template -->
+                <label for="bt-display-template">
+                  <span class="label label-inverse">Template</span>
+                </label>
+                <input type="text" id="bt-display-template" name="bt-display-template" ng-model="preModel.display.template" ui-select2="select2Options.displayTemplate" style="min-width:30%">
+                <span class="help-block">
+                  The alternative options for displaying records, You can change the value according to your own taste. The <i>string</i> value => <code>All</code> indicates displaying all records, you can change these value too (All values that have type <i>string</i> will be treated for displaying all records).
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- group three -->
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a href="#collapseThree" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+                Extend Class
+              </a>
+            </div>
+            <div id="collapseThree" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <p>
+                  The main purpose of this option is mostly for custom styling by adding additional class to the structure of DOM that this application generate.
+                </p>
+                {% for item in page.extendclass %}
+                <!-- extend class {{ item.name | replace: '-',' ' }} -->
+                <label for="{{ item.name }}">
+                  <span class="label label-inverse">{{ item.name | replace: '-',' ' }}</span>
+                </label>
+                <input type="text" id="{{ item.name }}" name="{{ item.name }}" class="input-large" ng-model="preModel.{{ item.model }}">
+                <span class="help-block">
+                  Add additional class to 
+                  <code>{{ item.desc }}</code>
+                </span>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+          <!-- group four -->
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a href="#collapseFour" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+                Feed
+              </a>
+            </div>
+            <div id="collapseFour" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <!-- feed type -->
+                <label for="bt-feed-type">
+                  <span class="label label-inverse">Type</span>
+                </label>
+                <select name="bt-feed-type" id="bt-feed-type" ng-model="preModel.feedType">
+                  <option value="default">default</option>
+                  <option value="summary">summary</option>
+                </select>
+                <span class="help-block">
+                  The blogger feed type we're gonna using, either <code>default</code> or <code>summary</code>.
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- group five -->
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a href="#collapseFive" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+                Label
+              </a>
+            </div>
+            <div id="collapseFive" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <!-- label define -->
+                <label for="bt-label-define">
+                  <span class="label label-inverse">Define (filter)</span>
+                </label>
+                <input type="hidden" id="bt-label-define" name="bt-label-define" ng-model="preModel.label.define" ui-select2="select2Options.labelDefine" style="min-width:50%" ng-change="disableException()">
+                <span class="help-block">
+                  If it's not empty, include / exclude only specific label / categories based on the options below.
+                </span>
+                <!-- label exception -->
+                <label for="bt-label-exception">
+                  <span class="label label-inverse">Exception</span>
+                </label>
+                <label class="checkbox inline">
+                  <input type="checkbox" name="bt-label-exception" ng-model="preModel.label.exception" ng-disabled="!exceptionState"> [[preModel.label.exception]]
+                </label>
+                <span class="help-block">
+                  Trigger only when define option above is specified. Set to <code>true</code> <i>(Yes)</i>, will exclude the label. Set to <code>false</code> <i>(No)</i> will include the label.
+                </span>
+                <!-- label show label -->
+                <label for="bt-label-show-label">
+                  <span class="label label-inverse">Show Label</span>
+                </label>
+                <label class="checkbox inline">
+                  <input type="checkbox" name="bt-label-show-label" ng-model="preModel.label.showLabel" ng-click="disableLabel()"> [[preModel.label.showLabel]]
+                </label>
+                <span class="help-block">
+                  Show Label.
+                </span>
+                <!-- label include label all -->
+                <label for="bt-label-include-label-all">
+                  <span class="label label-inverse">Include Label All</span>
+                </label>
+                <label class="checkbox inline">
+                  <input type="checkbox" name="bt-label-include-label-all" ng-model="preModel.label.includeLabelAll" ng-disabled="!showLabelState"> [[preModel.label.includeLabelAll]]
+                </label>
+                <span class="help-block">
+                  Include the label that displaying all categories.
+                </span>
+                <!-- label setup -->
+                <label for="bt-label-setup">
+                  <span class="label label-inverse">Label "All Categories" text</span>
+                </label>
+                <input type="text" id="bt-label-setup" name="bt-label-setup" class="input-mini" ng-model="preModel.label.setup" ng-disabled="!showLabelState || !preModel.label.includeLabelAll">
+                <span class="help-block">
+                  The label text for displaying all categories.
+                </span>
+                <!-- label cloud label -->
+                <label for="bt-label-cloud-label">
+                  <span class="label label-inverse">Show Label in "Cloud" mode</span>
+                </label>
+                <label class="checkbox inline">
+                  <input type="checkbox" name="bt-label-cloud-label" ng-model="preModel.label.cloudLabel" ng-disabled="!showLabelState"> [[preModel.label.cloudLabel]]
+                </label>
+                <span class="help-block">
+                  Option for showing label / categories in <code>dropdown</code> or <code>cloud</code> mode.
+                </span>
+                <!-- label show label -->
+                <label for="bt-label-show-alphabet-label">
+                  <span class="label label-inverse">Show Alphabet Label</span>
+                </label>
+                <label class="checkbox inline">
+                  <input type="checkbox" name="bt-label-show-alphabet-label" ng-model="preModel.label.showAlphabetLabel" ng-click="disableAlphabetLabel()"> [[preModel.label.showAlphabetLabel]]
+                </label>
+                <span class="help-block">
+                  Show Alphabet Label.
+                </span>
+                <!-- label include label all -->
+                <label for="bt-label-include-alphabet-label-all">
+                  <span class="label label-inverse">Include Alphabet Label All</span>
+                </label>
+                <label class="checkbox inline">
+                  <input type="checkbox" name="bt-label-include-alphabet-label-all" ng-model="preModel.label.includeAlphabetLabelAll" ng-disabled="!showAlphabetLabelState"> [[preModel.label.includeAlphabetLabelAll]]
+                </label>
+                <span class="help-block">
+                  Include the label that displaying all data without filtered by alphabet.
+                </span>
+                <!-- label setup alphabet -->
+                <label for="bt-label-setup-alphabet">
+                  <span class="label label-inverse">Alphabet Label "All Data" text</span>
+                </label>
+                <input type="text" id="bt-label-setup-alphabet" name="bt-label-setup-alphabet" class="input-mini" ng-model="preModel.label.setupAlphabet" ng-disabled="!showAlphabetLabelState || !preModel.label.includeAlphabetLabelAll">
+                <span class="help-block">
+                  The alphabet label text for displaying all data without filtered by alphabet.
+                </span>
+                <!-- label cloud label -->
+                <label for="bt-label-cloud-alphabet-label">
+                  <span class="label label-inverse">Show Alphabet Label in "Cloud" mode</span>
+                </label>
+                <label class="checkbox inline">
+                  <input type="checkbox" name="bt-label-cloud-alphabet-label" ng-model="preModel.label.cloudAlphabetLabel" ng-disabled="!showAlphabetLabelState"> [[preModel.label.cloudAlphabetLabel]]
+                </label>
+                <span class="help-block">
+                  Option for showing alphabet label in <code>dropdown</code> or <code>cloud</code> mode.
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- group six -->
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a href="#collapseSix" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+                Language
+              </a>
+            </div>
+            <div id="collapseSix" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <!-- language setup -->
+                <label for="bt-language-setup">
+                  <span class="label label-inverse">Setup</span>
+                </label>
+                <select name="bt-language-setup" id="bt-language-setup" ng-model="preModel.language.setup">
+                  {% for item in page.language %}
+                  <option value="{{item.abbr}}">{{item.abbr}} - ( {{item.name}} )</option>
+                  {% endfor %}
+                </select>
+                <span class="help-block">
+                  The default language you're gonna using.
+                </span>
+                <!-- language custom -->
+                <label for="bt-language-custom">
+                  <span class="label label-inverse">Custom</span>
+                </label>
+                <p>
+                  Override the current language with your custom choice, because sometimes the default language library we provide doesn't match with your preferences. Checkout the <a href="//github.com/clusteramaryllis/blogtoc/tree/master/lang">language library</a> for more detail. Leave the field empty if you want to use the default settings.
+                </p>
+                <div class="row-fluid">
+                  <div class="span1"></div>
+                  <div class="span11">
+                    {% for item in page.customlanguage %}
+                    <!-- language custom {{ item.name | replace: '-',' ' }} -->
+                    <label for="bt-language-custom-{{ item.name }}">
+                      <span class="label label-inverse">{{ item.name | replace: '-',' ' |capitalize }}</span>
+                    </label>
+                    <input type="text" id="bt-language-custom-{{ item.name }}" name="bt-language-custom-{{ item.name }}" ng-model="preModel.{{ item.model }}">
+                    <span class="help-block">
+                      Override the language for <code>{{ item.name | replace: '-',' ' }}</code>.
+                    </span>
+                    {% endfor %}
+                    <!-- language custom result -->
+                    <label for="bt-language-custom-result">
+                      <span class="label label-inverse">Result</span>
+                    </label>
+                    <input type="text" id="bt-language-custom-result" name="bt-language-custom-result" ng-model="preModel.language.custom.result">
+                    <span class="help-block">
+                      Override the language for result. There's some language parsing here which are : <br>
+                      <code>{begin}</code> will be parsing to the first index number of the current showing records.<br>
+                      <code>{end}</code> will be parsing to the last index number of the current showing records.<br>
+                      <code>{total}</code> will be parsing to the total records (means total posts).<br>
+                      <i>e.g Showing <b>{begin}</b> to <b>{end}</b> out of <b>{total}</b>.</i> <br>
+                      will be parsing to<br>
+                      <i>Showing <b>1</b> to <b>10</b> out of <b>120</b>.</i>
+                    </span>
+                    <!-- language custom error message -->
+                    <label for="bt-language-custom-error-message">
+                      <span class="label label-inverse">Error Message</span>
+                    </label>
+                    <textarea class="btn-block" id="bt-language-custom-error-message" name="bt-language-custom-error-message" ng-model="preModel.language.custom.errorMessage"></textarea>
+                    <span class="help-block">
+                      Override the language for <code>error message</code>.
+                    </span>
+                  </div><!-- span2 -->
+                </div><!-- row-fluid -->
+              </div>
+            </div>
+          </div>
+          <!-- group seven -->
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a href="#collapseSeven" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+                New Badge
+              </a>
+            </div>  
+            <div id="collapseSeven" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <!-- new badge setup -->
+                <label for="bt-new-badge-setup">
+                  <span class="label label-inverse">Setup</span>
+                </label>
+                <input type="number" id="bt-new-badge-setup" name="bt-new-badge-setup" class="input-mini" ng-model="preModel.newBadge.setup">
+                <span class="help-block">
+                  The initial setup how many <span class="badge badge-info">New</span> label will be glued to the newest published post (Must be a number).
+                </span>
+                <!-- new badge render -->
+                <label for="bt-new-badge-render">
+                  <span class="label label-inverse">Render</span>
+                </label>
+                <textarea class="btn-block" name="bt-new-badge-render" id="bt-new-badge-render" ng-model="preModel.newBadge.renderBadgeText"></textarea>
+                <span class="help-block">
+                  This is how the <span class="badge badge-info">New</span> label will be displayed. This is actually a callback function that requires 1 parameters ( <code>language</code> ) =>
+<pre class="prettyprint">
+callback( language ) {
+// display the label
+}</pre>
+                  <code>language</code> is the language you set in language section option, refer to <a id="reveal-new-label" href="#bt-language-custom-new-label">this</a>.
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- group eight -->
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a href="#collapseEight" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+                Pagination
+              </a>
+            </div>
+            <div id="collapseEight" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <!-- new badge setup -->
+                <label for="bt-pagination-adjacents">
+                  <span class="label label-inverse">Adjacents</span>
+                </label>
+                <input type="number" id="bt-pagination-adjacents" name="bt-pagination-adjacents" class="input-mini" ng-model="preModel.pagination.adjacents">
+                <span class="help-block">
+                  The pagination adjacents (Must be a number).
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- group nine -->
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a href="#collapseNine" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+                Progress
+              </a>
+            </div>  
+            <div id="collapseNine" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <!-- progress -->
+                <label for="bt-progress-render">
+                  <span class="label label-inverse">Render</span>
+                </label>
+                <span class="help-block pull-right">
+                  <span class="label label-important">Need JavaScript knowledge</span>
+                </span>
+                <textarea class="btn-block" name="bt-progress-render" id="bt-progress-render" ng-model="preModel.progress.renderProgressText"></textarea>
+                <button class="btn btn-block" ng-click="bootstrapExample($event)">Example using bootstrap <br>progress bar</button>
+                <button class="btn btn-block" ng-click="imgExample($event)">Example using image loader from <br><a href="http://metroui.org.ua/">Metro UI</a></button>
+                <button class="btn btn-block" ng-click="defaultExample($event)">Reset Default Example</button>
+                <span class="help-block">
+                  Customize your waiting progress animation. This is actually a callback function that requires 2 parameters ( <code>elem</code> & <code>progress</code> ) =>
+<pre class="prettyprint">
+callback( elem, progress ) {
+// animate your waiting progress
+}</pre>
+                  <code>elem</code> is the element that the progress will be apended and <code>progress</code> is percentage value of progress ( current loading text state ).
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- group ten -->
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a href="#collapseTen" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+                Search
+              </a>
+            </div>  
+            <div id="collapseTen" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <!-- progress -->
+                <label for="bt-search-marker-render">
+                  <span class="label label-inverse">Marker Render</span>
+                </label>
+                <textarea class="btn-block" name="bt-search-marker-render" id="bt-search-marker-render" ng-model="preModel.search.renderSearchText"></textarea>
+                <span class="help-block">
+                  Mark the the string result that match with searching query. This is actually a callback function that requires 1 parameters ( <code>match</code> ) =>
+<pre class="prettyprint">
+callback( match ) {
+// mark the matching query
+}</pre>
+                  <code>match</code> is the matching query string. The example above will <b>bold</b> the matching query text.
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- group eleven -->
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a href="#collapseEleven" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+                Sorting
+              </a>
+            </div>
+            <div id="collapseEleven" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <!-- sorting key -->
+                <label for="bt-sorting-key">
+                  <span class="label label-inverse">Key</span>
+                </label>
+                <select name="bt-sorting-key" id="bt-sorting-key" ng-model="preModel.sorting.key" ng-options="cc for cc in sortingKey">
+                </select>
+                <span class="help-block">
+                  The initialization of sorting.
+                </span>
+                <!-- sorting order -->
+                <label for="bt-sorting-order">
+                  <span class="label label-inverse">Order</span>
+                </label>
+                <select name="bt-sorting-order" id="bt-sorting-order" ng-model="preModel.sorting.order">
+                  <option value="ascending">ascending</option>
+                  <option value="descending">descending</option>
+                </select>
+                <span class="help-block">
+                  The sorting order based on sorting key above, either <code>ascending</code> or <code>descending</code>.
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- group twelve -->
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a href="#collapseTwelve" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+                Summary
+              </a>
+            </div>
+            <div id="collapseTwelve" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <!-- new badge setup -->
+                <label for="bt-summary">
+                  <span class="label label-inverse">Word Limit</span>
+                </label>
+                <input type="number" id="bt-summary" name="bt-summary" class="input-mini" ng-model="preModel.summary.wordLimit">
+                <span class="help-block">
+                  Limit the summary text of your blog post (Must be a number).
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- group thirteen -->
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a href="#collapseThirteen" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+                Table
+              </a>
+            </div>
+            <div id="collapseThirteen" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <!-- table order -->
+                <label for="bt-table-order">
+                  <span class="label label-inverse">Order</span>
+                </label>
+                <input type="text" id="bt-table-order" name="bt-table-order" ui-select2="select2Options.tableOrder" style="min-width:30%" ng-model="preModel.table.order">
+                <span class="help-block">
+                  The order of data that will display in table
+                </span>
+                <div ng-repeat="cc in preModel.table.order">
+                  <!-- table [[ cc ]]-->
+                  <label for="bt-table-[[ cc ]]">
+                    <span class="label label-inverse">[[ cc ]] width point</span>
+                  </label>
+                  <input type="number" class="input-mini bt-point" name="bt-table-[[ cc ]]" id="bt-table-[[ cc ]]" ng-model="preModel.table[cc+'WidthPoint']" step="0.1">
+                  <span class="help-block">
+                    Calculate the width of <code>[[ cc ]] &lt;thead&gt;</code> by point.
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- group fourteen -->
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a href="#collapseFourteen" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+                Theme
+              </a>
+            </div>
+            <div id="collapseFourteen" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <!-- theme built -->
+                <label for="bt-theme-built">
+                  <span class="label label-inverse">Use Built in Theme</span>
+                </label>
+                <label class="checkbox inline">
+                  <input type="checkbox" name="bt-theme-built" ng-model="builtInMode"> [[builtInMode]]
+                </label>
+                <span class="help-block">
+                  Using built in theme or your own custom theme
+                </span>
+                <!-- theme setup -->
+                <label for="bt-theme-default">
+                  <span class="label label-inverse">Setup</span>
+                </label>
+                <select name="bt-theme-default" id="bt-theme-default" ng-model="preModel.theme.setup" ng-disabled="!builtInMode" class="input-large">
+                  <option value="bootstrap">bootstrap</option>
+                  <option value="todc-bootstrap">todc-bootstrap</option>
+                </select>
+                <!-- theme setup -->
+                <input type="text" id="bt-theme-custom" name="bt-theme-custom" ng-model="preModel.theme.setup" ng-disabled="builtInMode" class="input-large">
+                <span class="help-block">
+                  Select your theme. Our built in theme :
+                  <ul>
+                    <li><a href="http://getbootstrap.com/2.3.2/">Twitter bootstrap</a></li>
+                    <li><a href="http://todc.github.io/todc-bootstrap/">TODC bootstrap</a></li>
+                  </ul>
+                  If you use your custom theme. You might be have to write your own CSS for customing. <br>
+                  You can contribute at <a href="https://github.com/clusteramaryllis/blogtoc">github</a> page.
+                </span>
+              </div>
+            </div>
+          </div>
+          <!-- group fifteen -->
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a href="#collapseFifteen" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+                Thumbnail
+              </a>
+            </div>
+            <div id="collapseFifteen" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <!-- thumbnail blank -->
+                <label for="bt-thumbnail-blank">
+                  <span class="label label-inverse">Blank</span>
+                </label>
+                <input type="url" id="bt-thumbnail-blank" name="bt-thumbnail-blank" ng-model="preModel.thumbnail.blank" class="input-large">
+                <span class="help-block">
+                  <code>URL</code> for transparent blank image, use for lazyload.
+                </span>
+                <!-- thumbnail not found -->
+                <label for="bt-thumbnail-not-found">
+                  <span class="label label-inverse">Not Found</span>
+                </label>
+                <input type="url" id="bt-thumbnail-not-found" name="bt-thumbnail-not-found" ng-model="preModel.thumbnail.notFound" class="input-large">
+                <span class="help-block">
+                  <code>URL</code> for not found image, a fallback if thumbnail is not found.
+                </span>
+                <!-- thumbnail sample -->
+                <label for="bt-thumbnail-sample">
+                  <span class="label label-inverse">Sample</span>
+                </label>
+                <input type="url" id="bt-thumbnail-sample" name="bt-thumbnail-sample" ng-model="preModel.thumbnail.sample" class="input-large">
+                <span class="help-block">
+                  <code>URL</code> for sample image, use for test the image on the fly service.
+                </span>
+                <!-- thumbnail size -->
+                <label for="bt-thumbnail-size">
+                  <span class="label label-inverse">Blogpost Thumbnail Size</span>
+                </label>
+                <input type="number" id="bt-thumbnail-size" name="bt-thumbnail-size" class="input-mini" ng-model="preModel.thumbnail.size">
+                <span class="help-block">
+                  The thumbnail dimension size found in the blog post.
+                </span>
+                <!-- thumbnail author size -->
+                <label for="bt-thumbnail-author-size">
+                  <span class="label label-inverse">Author Thumbnail Size</span>
+                </label>
+                <input type="number" id="bt-thumbnail-author-size" name="bt-thumbnail-author-size" class="input-mini" ng-model="preModel.thumbnail.authorSize">
+                <span class="help-block">
+                  The thumbnail dimension size for the author who publish the post.
+                </span>
+                <!-- thumbnail author thumbnail -->
+                <label for="bt-thumbnail-author-thumb">
+                  <span class="label label-inverse">Show Author Thumbnail</span>
+                </label>
+                <label class="checkbox inline">
+                  <input type="checkbox" name="bt-thumbnail-author-thumb" ng-model="preModel.thumbnail.authorThumbnail"> [[preModel.thumbnail.authorThumbnail]]
+                </label>
+                <span class="help-block">
+                  Show the author thumbnail?
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </div><!-- span3 -->
+    <div class="span9 demo-fluid">
+      <fieldset>
+        <legend>Result</legend>
+        <div class="tabbable">
+          <ul class="nav nav-tabs">
+            <li class="active"><a href="#tab1" data-toggle="tab">Display</a></li>
+            <li><a href="#tab2" data-toggle="tab">How to use in your blog</a></li>
+          </ul>
+          <div class="tab-content">
+            <div class="tab-pane active" id="tab1">
+              <div id="blogtoc"></div>
+              <script>
+                // Set Base URL
+                BlogToc.baseURL( './' ); 
+                var myDiv = document.getElementById('blogtoc');
+                BlogToc( myDiv ).build();
+              </script>
+            </div>
+            <div class="tab-pane" id="tab2">
+              <p>Place this code somewhere in the <code>&lt;head&gt;&lt;/head&gt;</code> section</p>
+<pre class="prettyprint linenums" id="result-00">
+</pre>              
+              <p>Then add these codes below in your blog page or post <span class="help-inline">(these are just a pre-built example. You can change these codes manually)</span>.</p>
+<pre class="prettyprint linenums" id="result-01">
+</pre>
+<div id="result-01-hidden" style="display: none">
+[[modelOneRender()]]
+</div>              
+            </div>
+          </div>
+        </div>
+      </fieldset>
+    </div><!-- span9 -->
+  </div><!-- row-fluid -->
+</div>
+<div class="fixed-wrapper">
+  <button id="generate" class="btn btn-danger" type="button">Generate</button>
+</div>
+<script>
+  var _junk = {
+    label: {},
+    table: {},
+    other: {}
+  };
+  var _def = {
+    date: {},
+    display: {},
+    extendClass: {},
+    label: {},
+    language: {
+      custom: {}
+    },
+    newBadge: {},
+    pagination: {},
+    progress: {},
+    search: {},
+    sorting: {},
+    summary: {},
+    table: {},
+    theme: {},
+    thumbnail: {}
+  };
+  var _end = {};
+
+  _def.blogtocId = '';
+  _def.date.day = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  _def.date.month = 'January,February,March,April,May,June,July,August,September,October,November,December'.split(',');
+  _def.date.renderDateText = "option.date.day[ date.getDay() ] + ', ' + option.date.month[ date.getMonth() ] + ' ' + date.getDate() + ' ' + date.getFullYear()";
+  _def.display.setup = '10';
+  _def.display.template = ['5','10','25','50','All'];
+  _def.feedType = 'default';
+  _def.label.define = [];
+  _def.label.exception = false;
+  _def.label.showLabel = true;
+  _def.label.includeLabelAll = true;
+  _def.label.setup = "All";
+  _def.label.cloudLabel = false;
+  _def.label.showAlphabetLabel = false;
+  _def.label.includeAlphabetLabelAll = true;
+  _def.label.setupAlphabet = "All";
+  _def.label.cloudAlphabetLabel = false;
+  {% for item in page.extendclass %}_def.{{ item.model }} = '';
+  {% endfor %}
+  _def.language.setup = 'en-US';
+  {% for item in page.customlanguage %}_def.{{ item.model }} = '';
+  {% endfor %}
+  _def.language.custom.result = '';
+  _def.language.custom.errorMessage = '';
+  _def.newBadge.setup = 5;
+  _def.newBadge.renderBadgeText = '\'<span class="label">\' + language + \'</span>\'';
+  _def.pagination.adjacents = 2;
+  _def.progress.renderProgressText = "var span; if ( ( span = elem.getElementsByTagName('span')[0] ) ) { span.innerHTML = progress; } else { elem.innerHTML = 'Loading <span>' + progress + '</span> %'; }";
+  _def.search.renderSearchText = "'<b>' + match + '</b>'";
+  _def.sorting.key = 'title';
+  _def.sorting.order = 'ascending';
+  _def.summary.wordLimit = 200;
+  _def.table.order = ["index","thumbnail","title","publishDate","updateDate","author","comment"];
+  _def.theme.setup = 'bootstrap';
+  _def.thumbnail.blank = 'http://3.bp.blogspot.com/-trkoRRazZ7A/UdtEVufkxiI/AAAAAAAABxI/DOJ7jAUv1G4/s1600/blank.gif';
+  _def.thumbnail.notFound = 'http://3.bp.blogspot.com/-p7gZDNwTJbw/UdkqBnBb1bI/AAAAAAAAALI/hoCIpF74N80/s1600/image_not_available.jpg';
+  _def.thumbnail.sample = 'http://s20.postimg.org/7oz0eeuyx/blank.gif';
+  _def.thumbnail.size = 72;
+  _def.thumbnail.authorSize = 36;
+  _def.thumbnail.authorThumbnail = true;
+  _def.url = '';
+
+  _junk.label.define = [];
+  _junk.other.boot = "if( elem.className.lastIndexOf('progress') === -1 ) { elem.className += ' progress'; } if( ( div = elem.firstChild ) ) { div.style.width = progress + '%'; } else { div = document.createElement('div'); div.className = 'bar'; div.style.width = progress + '%'; elem.appendChild(div); }";
+  _junk.other.img = "var img; if ( !( img = elem.getElementsByTagName('img')[0] ) ) { elem.innerHTML = '<div style=\"text-align: center\"><img src=\"//metroui.org.ua/images/preloader-w8-cycle-black.gif\" /><div>'; }"
+  _junk.table.order = _def.table.order.slice(0);
+  _junk.table.order.push('summary');
+  _junk.table.idx = [2.5,7,26,12.5,12.5,10.5,11,25]
+
+  for(var i=0; i<_junk.table.order.length; i++) {
+    _def.table[_junk.table.order[i]+"WidthPoint"] = _junk.table.idx[i];
+  }
+
+  $(function(){
+
+    // get categories
+    $("#bt-url").on('blur',function(){
+
+      if ($(this).val() == '') return;
+
+      var url = $(this).val().replace(/.*?:\/\/|\/$/g, '');
+
+      $.ajax({
+        url : '//' + url + '/feeds/posts/summary/?max-results=0&alt=json-in-script',
+        dataType: 'jsonp',
+        success: function(data) {
+          var feed = data.feed;
+
+          if ('category' in feed) {
+            _junk.label.define = [];
+            for (var i=0,len=feed.category.length; i<len;i++) {
+              _junk.label.define.push( feed.category[i].term );
+            }
+          }
+        }
+      });
+    });
+
+    // autogrow
+    $("#bt-date-render").autogrow();
+    $("#bt-new-badge-render").autogrow();
+    $("#bt-progress-render").autogrow();
+
+    // filter input
+    $("#bt-new-badge-setup, #bt-pagination-adjacents, #bt-thumbnail-size, #bt-thumbnail-author-size").filter_input({regex: '[0-9]'});
+    $(".bt-point").filter_input({regex: '[0-9\.]'});
+
+    // misc
+    $("#reveal-new-label").on('click',function(e){
+      e.preventDefault();
+      $("#collapseSix").collapse('show');
+      $($(this).attr("href")).focus();
+    });
+
+    $("#generate").on('click',function(e){
+      e.preventDefault();
+      if ($("#bt-language-setup").val() !== 'en-US') {
+        BlogToc.addJS("lang/" + $("#bt-language-setup").val() + ".js");
+      }
+      if ($("#bt-theme-default").val() !== 'bootstrap') {
+        BlogToc.addJS("theme/bt_" + $("#bt-theme-default").val() + ".js");
+      }
+      BlogToc.reset( myDiv, true, _end );
+
+      $("#generate").attr("disabled",true);
+
+      var timing = function() {
+        setTimeout(function(){
+          if ( !myDiv.BTLoaded ) {
+            timing()
+          } else {
+            $("#generate").attr("disabled",false);
+          }
+        },100);
+      };
+
+      timing();
+    });
+
+  });
+
+  // Angular App
+  var docApp = angular.module('docApp', ['ui.select2', 'ui.bootstrap'/*, 'toggle-switch'*/], function($interpolateProvider) {
+      $interpolateProvider.startSymbol('[[');
+      $interpolateProvider.endSymbol(']]');
+  });
+
+  docApp.controller('DemoCtrl', function ($scope) {
+
+    // properties
+    $scope.preModel = {
+      blogtocId: _def.blogtocId,
+      date: {
+        day: _def.date.day,
+        month: _def.date.month,
+        renderDateText: _def.date.renderDateText
+      },
+      display: {
+        setup: _def.display.setup,
+        template: _def.display.template
+      },
+      extendClass: {},
+      feedType: _def.feedType,
+      label: {
+        define: _def.label.define,
+        exception: _def.label.exception,
+        showLabel: _def.label.showLabel,
+        includeLabelAll: _def.label.includeLabelAll,
+        setup: _def.label.setup,
+        cloudLabel: _def.label.cloudLabel,
+        showAlphabetLabel: _def.label.showAlphabetLabel,
+        includeAlphabetLabelAll: _def.label.includeAlphabetLabelAll,
+        setupAlphabet: _def.label.setupAlphabet,
+        cloudAlphabetLabel: _def.label.cloudAlphabetLabel
+      },
+      language: {
+        setup: _def.language.setup,
+        custom: {}
+      },
+      newBadge: {
+        setup: _def.newBadge.setup,
+        renderBadgeText: _def.newBadge.renderBadgeText
+      },
+      search: {
+        renderSearchText: _def.search.renderSearchText
+      },
+      sorting: {
+        key: _def.sorting.key,
+        order: _def.sorting.order
+      },
+      summary: {
+        wordLimit: 200
+      },
+      pagination: {
+        adjacents: _def.pagination.adjacents
+      },
+      progress: {
+        renderProgressText: _def.progress.renderProgressText
+      },
+      table: {
+        order: _def.table.order
+      },
+      theme: {
+        setup: _def.theme.setup
+      },
+      thumbnail: {
+        blank: _def.thumbnail.blank,
+        notFound: _def.thumbnail.notFound,
+        sample: _def.thumbnail.sample,
+        size: _def.thumbnail.size,
+        authorSize: _def.thumbnail.authorSize,
+        authorThumbnail: _def.thumbnail.authorThumbnail
+      },
+      url: _def.url
+    };
+
+    $scope.appVersion = "1.1.0";
+    $scope.resultModel = {};
+    $scope.objModel = {};
+
+    $scope.renderStr = '';
+    $scope.displayTemp = $scope.preModel.display.template;
+    $scope.sortingKey = removeArray( $scope.preModel.table.order.slice(0), "index", "thumbnail" );
+    $scope.exceptionState = false;
+    $scope.showLabelState = true;
+    $scope.builtInMode = true;
+    $scope.useCDN = true;
+    $scope.CDN = '';
+    $scope.addExternalLanguage = '';
+    $scope.addExternalTheme = '';
+    {% for item in page.extendclass %}$scope.preModel.{{ item.model }} = _def.{{ item.model }};
+    {% endfor %}
+    {% for item in page.customlanguage %}$scope.preModel.{{ item.model }} = _def.{{ item.model }};
+    {% endfor %}
+    $scope.preModel.language.custom.result = _def.language.custom.result;
+    $scope.preModel.language.custom.errorMessage = _def.language.custom.errorMessage;
+    for(var i=0; i<_junk.table.order.length; i++) {
+      $scope.preModel.table[_junk.table.order[i]+"WidthPoint"] = _def.table[_junk.table.order[i]+"WidthPoint"];
+    }
+
+    // select 2 options
+    $scope.select2Options = {
+      dateDay: {
+        'multiple': true,
+        'simple_tags': true,
+        'tags': _def.date.day,
+        'maximumSelectionSize': 7
+      },
+      dateMonth: {
+        'multiple': true,
+        'simple_tags': true,
+        'tags': _def.date.month,
+        'maximumSelectionSize': 12
+      },
+      displayTemplate: {
+        'multiple': true,
+        'simple_tags': true,
+        'tags': _def.display.template
+      },
+      labelDefine: {
+        'multiple': true,
+        'simple_tags': true,
+        tags: function() { return _junk.label.define; }
+      },
+      tableOrder: {
+        'multiple': true,
+        'simple_tags': true,
+        'locked': true,
+        'tags': _junk.table.order,
+        'maximumSelectionSize': 8
+      }
+    };
+
+    // method
+    $scope.modelOneRender = function() {
+      var str;
+
+      // jquery call
+      tagsDragging_( $("#bt-date-day") );
+      tagsDragging_( $("#bt-date-month") );
+      tagsDragging_( $("#bt-display-template") );
+      tagsDragging_( $("#bt-label-define") );
+      tagsDragging_( $("#bt-table-order") );
+
+
+      $scope.renderStr = $scope.pushDiff();
+      str = modelOne( $scope );
+      $scope.displayTemp = $scope.preModel.display.template;
+      $scope.sortingKey = removeArray( $scope.preModel.table.order.slice(0), "index", "thumbnail" );
+      _end = $scope.objModel;
+      if ( $scope.preModel.language.setup !== 'en-US' ) {
+        $scope.addExternalLanguage = "BlogToc.addJS(\"lang/" + $scope.preModel.language.setup + ".js\");\n\n";
+      } else {
+        $scope.addExternalLanguage = '';
+      }
+      if ( $scope.preModel.theme.setup !== 'bootstrap' && $scope.builtInMode ) {
+        $scope.addExternalTheme = "BlogToc.addJS(\"theme/bt_" + $scope.preModel.theme.setup + ".js\");\n\n";
+      } else {
+        $scope.addExternalTheme = '';
+      }
+
+      $("#result-00").text( "<script type=\"text/javascript\" src=\""+ $scope.CDN +"blogtoc.min.js\"><\/script>" );
+      $("#result-01").text( str );
+      prettyPrint();
+
+      return str;
+    };
+
+    $scope.pushDiff = function () {
+      $scope.resultModel = {};
+      $scope.objModel = {};
+
+      $scope.resultModel = changeDiffObj($scope.preModel, _def, _junk);
+      $scope.objModel = $.extend(true,{},$scope.resultModel);
+      if ( $scope.objModel.date &&  $scope.objModel.date.render ) {
+        $scope.objModel.date.render = eval('(' + $scope.objModel.date.render + ')');  
+      }
+      if ( $scope.objModel.newBadge &&  $scope.objModel.newBadge.render ) {
+        $scope.objModel.newBadge.render = eval('(' + $scope.objModel.newBadge.render + ')');
+      }
+      if ( $scope.objModel.progress &&  $scope.objModel.progress.render ) {
+        $scope.objModel.progress.render = eval('(' + $scope.objModel.progress.render + ')');
+      }
+      if ( $scope.objModel.search &&  $scope.objModel.search.markerRender ) {
+        $scope.objModel.search.markerRender = eval('(' + $scope.objModel.search.markerRender + ')');
+      }
+      
+
+      if ( isEmptyObj( $scope.resultModel ) ) {
+        return '';
+      }
+
+      var result = JSON.stringify( $scope.resultModel, function(key, value){
+        return ( typeof value === 'function' ) ? value.toString() : value;
+      }, 2 );
+
+      return result.replace(/\}\"/i,"}")
+        .replace(/\:\s*\"function/gi,": function")
+        .replace(/\u2028/g, "\\u2028")
+        .replace(/\u2029/g, "\\u2029")
+        .replace(/\\"/g, "\"")
+        .replace(/\\n/g, "\n")
+        .replace(/\\r/g, "\r")
+        .replace(/\\t/g, "\t");
+    };
+
+    $scope.bootstrapExample = function(e) {
+      e.preventDefault();
+      $scope.preModel.progress.renderProgressText = _junk.other.boot;
+    };
+
+    $scope.imgExample = function(e) {
+      e.preventDefault();
+      $scope.preModel.progress.renderProgressText = _junk.other.img;
+    };
+
+    $scope.defaultExample = function(e) {
+      e.preventDefault();
+      $scope.preModel.progress.renderProgressText = _def.progress.renderProgressText;
+    };
+
+    $scope.getAppVersion = function() {
+      return $scope.appVersion;
+    };
+
+    $scope.renderCDN = function() {
+      $scope.CDN = $scope.useCDN ? "//googledrive.com/host/0B-ME4OmVndQzMFNaMWpqVzVYUFE/" + $scope.appVersion + "/" : "";
+      return $scope.useCDN ? "Use" : "Don't use";
+    };
+
+    $scope.renderIdText = function() {
+      return $scope.preModel.blogtocId || '{blogtoc_id}';
+    };
+
+    $scope.disableException = function() {
+      if ( !$scope.preModel.label.define.length ) {
+        $scope.preModel.label.exception = $scope.exceptionState = false;
+      } else {
+        $scope.exceptionState = true;
+      }
+    };
+
+    $scope.disableLabel = function() {
+      if ( !$scope.preModel.label.showLabel ) {
+        $scope.preModel.label.includeLabelAll = false;
+        $scope.preModel.label.cloudLabel = false;
+        $scope.showLabelState = false;
+      } else {
+        $scope.showLabelState = true;
+      }
+    };
+
+    $scope.disableAlphabetLabel = function() {
+      if ( !$scope.preModel.label.showAlphabetLabel ) {
+        $scope.preModel.label.includeAlphabetLabelAll = true;
+        $scope.preModel.label.cloudAlphabetLabel = false;
+        $scope.showAlphabetLabelState = false;
+      } else {
+        $scope.showAlphabetLabelState = true;
+      }
+    };
+  });
+
+  function modelOne( scope ) {
+
+    var str = "<div id=\"blogtoc\"></div>\n\n" + 
+      "<script type=\"text/javascript\">\n" +
+      "var myDiv = document.getElementById('blogtoc');\n\n" +
+      scope.addExternalLanguage +
+      scope.addExternalTheme +
+      "BlogToc( myDiv ).build(" +
+      scope.renderStr + 
+      ");\n" +
+      "<\/script>";
+
+    return str;
+  }
+
+  function tagsDragging_( el ) {
+    el.on('change', function(){
+        el.html( el.val() );
+      })
+      .select2('container').find('ul.select2-choices')
+      .sortable({
+        container: 'parent',
+        start: function() {
+          el.select2('onSortStart');
+        },
+        update: function() {
+          el.select2('onSortEnd');
+        }
+      }); 
+  }
+
+  function isEmptyObj( obj ) {
+    for ( var key in obj ) {
+      return false;
+    }
+    return true;
+  }
+
+  function removeArray( arr ) {
+    
+    var what, a = arguments, L = a.length, ax;
+    
+    while ( L > 1 && arr.length ) {
+      what = a[--L];
+      while ( ( ax = arr.indexOf( what ) ) !== -1 ) {
+        arr.splice( ax, 1 );
+      }
+    }
+    return arr;
+  }
+
+  function changeDiffObj(obj, def) {
+
+    var result = {};
+
+    for (var key in obj ) {
+
+      if ( obj.hasOwnProperty(key) ) {
+        if ( !angular.equals( obj[key], def[key] ) ) {
+          
+          if ( angular.isArray(obj[key]) || !angular.isObject(obj[key]) ) {
+            if ( key === 'renderDateText' ) { 
+              result['render'] = 'function(date, option) { return ' + obj[key] + '; }'
+            } else if ( key === 'renderBadgeText' ) { 
+              result['render'] = 'function(language) { return ' + obj[key] + '; }'
+            } else if ( key === 'renderProgressText' ) { 
+              result['render'] = 'function(elem, progress) { ' + obj[key] + ' }'
+            } else if ( key === 'renderSearchText' ) { 
+              result['markerRender'] = 'function(match) { return ' + obj[key] + '; }'
+            } else if ( key === 'setup' ) {
+              if ( isNaN(obj[key]) ) {
+                result[key] = obj[key];
+              } else {
+                result[key] = +obj[key];
+              }
+            } else if ( key === 'template') {
+              var temp = [];
+
+              for (var i=0; i<obj[key].length; i++) {
+                if ( isNaN(obj[key][i]) ) {
+                  temp.push(obj[key][i]);
+                } else {
+                  temp.push(+obj[key][i]);
+                }
+              }
+
+              result[key] = temp;
+
+            } else {
+              result[key] = obj[key]; 
+            }
+          } else {
+            result[key] = changeDiffObj( obj[key], def[key] );
+          }
+        }
+      }
+    }
+
+    return result;
+  }
+</script>
