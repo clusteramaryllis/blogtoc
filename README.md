@@ -1,7 +1,6 @@
 # BlogToc
 
 A javascript plugin to make table of contents for blogspot using Blogger Feed API
-
 ### Basic Usage ###
 
 Place this code somewhere in the `<head></head>` section.
@@ -24,16 +23,16 @@ BlogToc( myDiv ).build({
 </script>
 ```
 
-### Demo ###
+## Demo ##
 http://clusteramaryllis.github.io/blogtoc/
 
-### Compatibility ###
+## Compatibility ##
 The Javascript Files are being tested in the latest versions of Chrome, Firefox, and IE6+
 
-### License ###
+## License ##
 http://www.apache.org/licenses/LICENSE-2.0
 
-### External Resources ###
+## External Resources ##
 BlogToc using some external service to generate image on the fly
 
 * [boxresizer](http://boxresizer.com/)
