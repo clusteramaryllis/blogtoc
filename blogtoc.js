@@ -2020,6 +2020,9 @@
           boxresizer: "http://proxy.boxresizer.com/convert?" + 
             "resize=" + prop + "x" + prop + "&" +
             "source=" + img,
+          mobify: "http://ir0.mobify.com/jpg100" + 
+            "/" + prop + "/" + prop + 
+            "/" + url,
           sencha: "http://src.sencha.io" + 
             "/" + prop + "/" + prop + 
             "/" + img,
@@ -2344,6 +2347,7 @@
         
         var cdn = [
           [ "boxresizer", "http://proxy.boxresizer.com/convert?resize=1x1&source=" + imgTest ],
+          [ "mobify", "http://ir0.mobify.com/jpg1/1/1/" + imgTest ],
           [ "google", "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?url=" + imgTest + "&container=focus&resize_w=1&resize_h=1" ],
           [ "sencha", "http://src.sencha.io/1/1/" + imgTest ],
         ];
@@ -2436,6 +2440,21 @@
           return this;
         }
 
+        var _runAfterBTLoaded = function() {
+          setTimeout(function(){
+            if ( !element.BTLoaded ) {
+              BlogToc.reset( element, newOption, options );
+            }
+          }, 1 );
+        };
+
+        _runAfterBTLoaded();
+
+        // force to stop
+        if ( !element.BTLoaded ) {
+          return this;
+        }
+
         if ( element.BTConfig ) {
           _unRegisterEvent( element.BTConfig.registeredEvent, window, 'scroll' );
           _unRegisterEvent( element.BTConfig.registeredEvent, window, 'resize' );
@@ -2448,10 +2467,8 @@
         } else {
           options = element.BTOptions;
         }
-        
 
         _resetState( element );
-
         element.BTLoaded = false;
 
         var settedLanguage = options.language && options.language.setup ? 
@@ -2460,7 +2477,6 @@
           settedTheme = options.theme && options.theme.setup ?
             options.theme.setup : 
             element.BTOptions.theme.setup;
-
 
         _runAfterPluginLoaded( element, settedLanguage, settedTheme, options );
 
