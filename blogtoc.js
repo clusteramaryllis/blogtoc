@@ -15,7 +15,7 @@
     
     (function() {
 
-      var VERSION = '1.1.0';
+      var VERSION = '1.2.0';
 
       var BASE_URL = '//googledrive.com/host/0B-ME4OmVndQzMFNaMWpqVzVYUFE/' + VERSION + '/';
 
@@ -2022,7 +2022,7 @@
             "source=" + img,
           mobify: "http://ir0.mobify.com/jpg100" + 
             "/" + prop + "/" + prop + 
-            "/" + url,
+            "/" + img,
           sencha: "http://src.sencha.io" + 
             "/" + prop + "/" + prop + 
             "/" + img,
