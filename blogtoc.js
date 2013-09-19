@@ -1,5 +1,5 @@
 /**!
-* BlogToc v1.1.0
+* BlogToc v1.2.0
 * Copyright 2013 Cluster Amaryllis
 * Licensed under the Apache License v2.0
 * http://www.apache.org/licenses/LICENSE-2.0
@@ -2021,7 +2021,7 @@
             "resize=" + prop + "x" + prop + "&" +
             "source=" + img,
           mobify: "http://ir0.mobify.com/jpg100" + 
-            "/" + prop + "/" + prop + 
+            "/" + prop + "/" + prop +
             "/" + img,
           sencha: "http://src.sencha.io" + 
             "/" + prop + "/" + prop + 
