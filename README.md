@@ -1,9 +1,8 @@
 # BlogToc
 
 A javascript plugin to make table of contents for blogspot using Blogger Feed API
-### Basic Usage ###
 
-##### Usage in Blogspot #####
+### Basic Usage ###
 
 Place this code somewhere in the `<head></head>` section.
 
@@ -19,31 +18,6 @@ Then add these codes below in your blog page or post
 <script type="text/javascript">
 var myDiv = document.getElementById('YOUR_ID');
  
-BlogToc( myDiv ).build({
-  url: "YOUR_BLOGSPOT_URL.blogspot.com"
-});
-</script>
-```
-
-##### Usage in website #####
-
-Place this code somewhere in the `<head></head>` section.
-
-```html
-<script type="text/javascript" src="blogtoc.min.js"></script>
-```
-
-Then add these codes
-
-```html
-<div id="YOUR_ID"></div>
- 
-<script type="text/javascript">
-var myDiv = document.getElementById('YOUR_ID');
-
-// set base url to relative dir where the blogtoc.js file
-BlogToc.baseURL('./');
-
 BlogToc( myDiv ).build({
   url: "YOUR_BLOGSPOT_URL.blogspot.com"
 });
