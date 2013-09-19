@@ -13,6 +13,12 @@ module.exports = function( grunt ) {
 			dest: 'css/bootstrap/bt_bootstrap.css',
 			src: 'third_party/bootstrap/less/bt_bootstrap/bt_bootstrap.less'
 		},
+		dark_bootstrap: {
+			id: 'bt_dark-bootstrap',
+			baseDir: 'css/bootstrap/',
+			dest: 'css/bootstrap/bt_dark-bootstrap.css',
+			src: 'third_party/bootstrap/less/bt_bootstrap/bt_dark-bootstrap.less'
+		},
 		todc_bootstrap: {
 			id: 'bt_todc-bootstrap',
 			baseDir: 'css/bootstrap/',
@@ -138,4 +144,5 @@ module.exports = function( grunt ) {
 
 	grunt.registerTask( 'default', [ 'clean', 'concat', 'usebanner', 'less', 'uglify', 'jshint' ] );
 	grunt.registerTask( 'js', [ 'clean', 'concat:release', 'usebanner', 'uglify' ] );
+	grunt.registerTask( 'theme', [ 'concat:color', 'less' ] );
 }

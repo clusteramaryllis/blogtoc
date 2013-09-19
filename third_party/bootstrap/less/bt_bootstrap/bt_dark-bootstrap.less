@@ -1,0 +1,149 @@
+/*!
+ * BT Dark Bootstrap v1.0.0
+ *
+ * Copyright 2013 Cluster Amarylis
+ * Licensed under the Apache License v2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Based off Twitter Bootstrap v2.3.2
+ * http://twbs.github.io/bootstrap/2.3.2 
+ */
+
+// Bootstrap Base Styling
+
+// Core variables and mixins
+@import "bt_dark-bootstrap_variables.less"; // Modify this for custom colors, font-sizes, etc
+@import "../mixins.less";
+
+// CSS Reset
+// @import "../reset.less";
+
+// Grid system and page structure
+@import "../grid.less";
+@import "../layouts.less";
+
+.dark-bootstrap {
+  font-family: @baseFontFamily;
+  font-size: @baseFontSize;
+  line-height: @baseLineHeight;
+  color: @textColor;
+  // background-color: @bodyBackground;
+
+  // Use Custom Scaffolding
+  @import "scaffolding.less";
+
+  // Bootstrap Base Styling
+
+  // Base CSS
+  @import "../type.less";
+  @import "../code.less";
+  @import "../forms.less";
+  @import "../tables.less";
+
+  // Components: common
+  // @import "../sprites.less";
+  @import "../dropdowns.less";
+  @import "../wells.less";
+  @import "../component-animations.less";
+  @import "../close.less";
+
+  // Components: Buttons & Alerts
+  @import "../buttons.less";
+  @import "../button-groups.less";
+  @import "../alerts.less"; // Note: alerts share common CSS with buttons and thus have styles in buttons.less
+
+  // Components: Nav
+  @import "../navs.less";
+  @import "../navbar.less";
+  @import "../breadcrumbs.less";
+  @import "../pagination.less";
+  @import "../pager.less";
+
+  // Components: Popovers
+  @import "../modals.less";
+  @import "../tooltip.less";
+  @import "../popovers.less";
+
+  // Components: Misc
+  @import "../thumbnails.less";
+  @import "../media.less";
+  @import "../labels-badges.less";
+  @import "../progress-bars.less";
+  @import "../accordion.less";
+  @import "../carousel.less";
+  @import "../hero-unit.less";
+
+  // Utility classes
+  @import "../utilities.less"; // Has to be last to override when necessary
+
+  // Forms
+  select,
+  textarea,
+  input[type="text"],
+  input[type="password"],
+  input[type="datetime"],
+  input[type="datetime-local"],
+  input[type="date"],
+  input[type="month"],
+  input[type="time"],
+  input[type="week"],
+  input[type="number"],
+  input[type="email"],
+  input[type="url"],
+  input[type="search"],
+  input[type="tel"],
+  input[type="color"],
+  code, 
+  pre,
+  .hero-unit,
+  .well {
+    .box-shadow(~"rgba(255, 255, 255, 0.1) 0 1px 0, rgba(0, 0, 0, 0.8) 0 1px 7px 0px inset");
+  }
+
+  code, 
+  pre {
+    background-color: @inputBackground;
+  }
+
+  hr {
+    .box-shadow(~"rgba(255, 255, 255, 0.07) 0 1px 0");
+    border-bottom: 1px solid rgba(18, 18, 18, 0.6);
+    border-top: none;
+  }
+
+  // Pager
+  .pager li > a,
+  .pager li > span {
+    background-color: @paginationBackground;
+    border: 1px solid @paginationBorder;
+  }
+
+  .pager li > a:hover,
+  .pager li > a:focus {
+    background-color: @paginationActiveBackground;
+  }
+
+  // Add ons
+  .input-prepend .add-on, 
+  .input-append .add-on {
+    background-color: @tableBackgroundHover;
+    border-color: @inputBorder;
+  }
+
+  // Modal
+  .modal {
+    background-color: @popoverBackground;
+  }
+
+  .modal-footer {
+    border-top: 1px solid darken(@popoverTitleBackground, 5%);
+    background-color: darken(@popoverBackground, 90%);
+  }
+
+  // Blogtoc classes
+  @import "blogtoc.less";
+
+}
+
+// Theme Color
+// @import "color.less";
