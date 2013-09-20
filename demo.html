@@ -608,10 +608,17 @@ callback( match ) {
                 </label>
                 <select name="bt-theme-default" id="bt-theme-default" ng-model="preModel.theme.setup" ng-disabled="!builtInMode" class="input-large">
                   <option value="bootstrap">bootstrap</option>
+                  <option value="dark-bootstrap">dark-bootstrap</option>
                   <option value="todc-bootstrap">todc-bootstrap</option>
                 </select>
                 <!-- theme setup -->
                 <input type="text" id="bt-theme-custom" name="bt-theme-custom" ng-model="preModel.theme.setup" ng-disabled="builtInMode" class="input-large">
+                <span class="help-block">Change background color</span>
+                <!-- change background color -->
+                <div class="input-append colorpicker-component cbsp" data-color="rgb(255, 255, 255)" data-color-format="rgb" id="cp3">
+                  <input type="text" value="rgb(255, 255, 255)">
+                  <span class="add-on"><i style="background-color: rgb(255, 255, 255)"></i></span>
+                </div>
                 <span class="help-block">
                   Select your theme. Our built in theme :
                   <ul>
@@ -829,6 +836,12 @@ callback( match ) {
           }
         }
       });
+    });
+
+    // colorpicker
+    $("#cp3").colorpicker().on('changeColor', function(ev){
+      //console.log(ev.color.toRGB());
+      $('#blogtoc').css('background',ev.color.toHex());
     });
 
     // autogrow
