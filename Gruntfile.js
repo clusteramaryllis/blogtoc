@@ -100,8 +100,8 @@ module.exports = function( grunt ) {
 				"expr": true,
 				"nonew": true,
 				"-W009": true,
-				"-W107": true,
-				"-W041": true
+				"-W041": true,
+				"-W107": true
 			},
 			release: [ '<%= pkg.name %>.js', 'lang/**/*.js', 'theme/**/*.js' ]
 		},
