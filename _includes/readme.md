@@ -3,7 +3,7 @@
 Place this code somewhere in the `<head></head>` section.
 
 ```html
-<script type="text/javascript" src="//googledrive.com/host/0B-ME4OmVndQzMFNaMWpqVzVYUFE/1.1.0/blogtoc.min.js"></script>
+<script type="text/javascript" src="//googledrive.com/host/0B-ME4OmVndQzMFNaMWpqVzVYUFE/1.2.0/blogtoc.min.js"></script>
 ```
 
 Then add these codes below in your blog page or post
@@ -20,16 +20,20 @@ BlogToc( myDiv ).build({
 </script>
 ```
 
-### Compatibility ###
+## Demo ##
+http://clusteramaryllis.github.io/blogtoc/
+
+## Compatibility ##
 The Javascript Files are being tested in the latest versions of Chrome, Firefox, and IE6+
 
-### License ###
+## License ##
 http://www.apache.org/licenses/LICENSE-2.0
 
-### External Resources ###
+## External Resources ##
 BlogToc using some external service to generate image on the fly
 
 * [boxresizer](http://boxresizer.com/)
+* [mobify](http://www.mobify.com/mobifyjs/v2/docs/image-resizer/)
 * [sencha](http://www.sencha.com/learn/how-to-use-src-sencha-io/)
 * [using google image resizer trick](http://carlo.zottmann.org/2013/04/14/google-image-resizer/)
 

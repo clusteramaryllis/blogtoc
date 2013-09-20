@@ -2195,7 +2195,7 @@ select:focus:required:invalid:focus {
   -moz-border-radius: 2px;
   border-radius: 2px;
 }
-.pagination ul {
+/*.pagination ul {
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
@@ -2343,7 +2343,7 @@ select:focus:required:invalid:focus {
   -moz-box-shadow: none;
   box-shadow: none;
   text-shadow: none;
-}
+}*/
 .modal-backdrop {
   background-color: #ffffff;
 }

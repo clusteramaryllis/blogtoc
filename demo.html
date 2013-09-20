@@ -706,6 +706,7 @@ callback( match ) {
           </ul>
           <div class="tab-content">
             <div class="tab-pane active" id="tab1">
+              <script src="blogtoc.js"></script>
               <div id="blogtoc"></div>
               <script>
                 // Set Base URL
@@ -845,9 +846,7 @@ callback( match ) {
     });
 
     // autogrow
-    $("#bt-date-render").autogrow();
-    $("#bt-new-badge-render").autogrow();
-    $("#bt-progress-render").autogrow();
+    $("#bt-date-render, #bt-new-badge-render, #bt-progress-render").autogrow();
 
     // filter input
     $("#bt-new-badge-setup, #bt-pagination-adjacents, #bt-thumbnail-size, #bt-thumbnail-author-size").filter_input({regex: '[0-9]'});
