@@ -4637,14 +4637,8 @@
 .dark-bootstrap input[type="url"],
 .dark-bootstrap input[type="search"],
 .dark-bootstrap input[type="tel"],
-.dark-bootstrap input[type="color"],
-.dark-bootstrap code,
-.dark-bootstrap pre,
-.dark-bootstrap .hero-unit,
-.dark-bootstrap .well {
-  -webkit-box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, rgba(0, 0, 0, 0.8) 0 1px 7px 0px inset;
-  -moz-box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, rgba(0, 0, 0, 0.8) 0 1px 7px 0px inset;
-  box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, rgba(0, 0, 0, 0.8) 0 1px 7px 0px inset;
+.dark-bootstrap input[type="color"] {
+  color: #eeeeee;
 }
 .dark-bootstrap code,
 .dark-bootstrap pre {
@@ -4677,6 +4671,30 @@
 .dark-bootstrap .modal-footer {
   border-top: 1px solid rgba(13, 13, 13, 0.3);
   background-color: rgba(25, 25, 25, 0.3);
+}
+.dark-bootstrap select,
+.dark-bootstrap textarea,
+.dark-bootstrap input[type="text"],
+.dark-bootstrap input[type="password"],
+.dark-bootstrap input[type="datetime"],
+.dark-bootstrap input[type="datetime-local"],
+.dark-bootstrap input[type="date"],
+.dark-bootstrap input[type="month"],
+.dark-bootstrap input[type="time"],
+.dark-bootstrap input[type="week"],
+.dark-bootstrap input[type="number"],
+.dark-bootstrap input[type="email"],
+.dark-bootstrap input[type="url"],
+.dark-bootstrap input[type="search"],
+.dark-bootstrap input[type="tel"],
+.dark-bootstrap input[type="color"],
+.dark-bootstrap code,
+.dark-bootstrap pre,
+.dark-bootstrap .hero-unit,
+.dark-bootstrap .well {
+  -webkit-box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, rgba(0, 0, 0, 0.8) 0 1px 7px 0px inset;
+  -moz-box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, rgba(0, 0, 0, 0.8) 0 1px 7px 0px inset;
+  box-shadow: rgba(255, 255, 255, 0.1) 0 1px 0, rgba(0, 0, 0, 0.8) 0 1px 7px 0px inset;
 }
 .dark-bootstrap .blogtoc_header {
   text-align: center;
