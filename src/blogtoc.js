@@ -246,7 +246,7 @@
                     _removeElement( root );
                   }) :
                   _waiting();
-              }, 1000 );
+              }, 100 );
             }; 
 
             _waiting();
@@ -489,7 +489,6 @@
                   // the end of total blog post, 
                   // build user interface & hide loader
                   if ( config.iterate >=  count ) {
-                    
                     setTimeout( function() {
                       loader.style.display = 'none';
                       _self.buildUI();
@@ -1214,7 +1213,6 @@
           },
           
           /* Adding badge
-           * @param : <int>val
            ****************************************************************/
           addBadge: function() {
             
@@ -1389,7 +1387,7 @@
       };
       
       /********************************************************************
-       * HACKY FUNCTIONS MOSTLY FOR IE                  *
+       * SOME POLYFILL FOR IE                                             *
        ********************************************************************/
       // taken from MSDN Mozilla
       // @link https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/indexOf
@@ -1429,13 +1427,13 @@
           }
           return -1;
         };
-        
-        // @link http://stackoverflow.com/a/498995
-        if ( !String.prototype.trim ) {
-          String.prototype.trim = function() { 
-            return this.replace(/^\s+|\s+$/g, '');
-          };
-        }
+      }
+
+      // @link http://stackoverflow.com/a/498995
+      if ( !String.prototype.trim ) {
+        String.prototype.trim = function() { 
+          return this.replace(/^\s+|\s+$/g, '');
+        };
       }
 
       /********************************************************************
@@ -1547,12 +1545,12 @@
         var p = document.createElement( tagName );
         
         if ( typeof attr === 'object' ) {
-          
           for ( var key in attr ) {
             if ( key == 'style' ) { // Attribute Style
               p.style.cssText = attr[ key ];
             } else if ( /^on/i.test( key ) ) { // Event Listener
-              p[ key ] = new Function( attr[ key ] ); // @link http://stackoverflow.com/a/748972
+              // @link http://stackoverflow.com/a/748972
+              p[ key ] = new Function( attr[ key ] ); 
             } else {
               if ( p.setAttribute ) {
                 p.setAttribute( key, attr[ key ] );
@@ -1948,7 +1946,7 @@
         return Math.floor( Math.random() * ( y - x + 1 ) + x );
       };
 
-      /* Generate a random number between interval x until y
+      /* Run apps after all needed plugins loaded
        * @param  : <node>elem
        * @param  : <string>lang
        * @param  : <string>theme
@@ -2295,7 +2293,8 @@
           el.innerHTML = text;
         } else {
           document.write( text );
-        }       
+        }
+
         return _getId( blogTocId );
       };
 
@@ -2369,11 +2368,7 @@
        ********************************************************************/    
       var blogtocBuilder = function( options, element ) {
 
-        if ( !options ) {
-          options = {
-            blogtocId: null
-          };
-        }
+        var opt = options ? options.blogtocId : null;
       
         if ( _isNodeList( element ) ) { // NodeList
           // id is only for one
@@ -2387,11 +2382,11 @@
           }
 
         } else if ( _isHTMLElement( element ) ) { // Node
-          element.BTID = _prepareHtml( element, options.blogtocId );
+          element.BTID = _prepareHtml( element, opt );
           appModule( element, options );
 
         } else {
-          var p = _prepareHtml( null, options.blogtocId );
+          var p = _prepareHtml( null, opt );
           
           element = p.parentNode;
           element.BTID = p;
@@ -2431,18 +2426,11 @@
           return this;
         }
 
-        var _runAfterBTLoaded = function() {
-          setTimeout(function(){
-            if ( !element.BTLoaded ) {
-              BlogToc.reset( element, newOption, options );
-            }
-          }, 1 );
-        };
-
-        _runAfterBTLoaded();
-
-        // force to stop
         if ( !element.BTLoaded ) {
+          setTimeout(function() {
+            BlogToc.reset( element, newOption, options );
+          }, 1 );
+
           return this;
         }
 
