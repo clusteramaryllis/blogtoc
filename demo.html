@@ -1034,6 +1034,7 @@ callback( match ) {
       str = modelOne( $scope );
       $scope.displayTemp = $scope.preModel.display.template;
       $scope.sortingKey = removeArray( $scope.preModel.table.order.slice(0), "index", "thumbnail" );
+      _end = {};
       _end = $scope.objModel;
       if ( $scope.preModel.language.setup !== 'en-US' ) {
         $scope.addExternalLanguage = "BlogToc.addJS(\"lang/" + $scope.preModel.language.setup + ".js\");\n\n";
@@ -1268,6 +1269,8 @@ callback( match ) {
 
               result[key] = temp;
 
+            } else if ( angular.isArray(obj[key]) ) {
+              result[key] = obj[key].slice(0);
             } else {
               result[key] = obj[key]; 
             }
