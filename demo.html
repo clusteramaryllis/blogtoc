@@ -1071,7 +1071,7 @@ callback( match ) {
       if ( $scope.objModel.search &&  $scope.objModel.search.markerRender ) {
         $scope.objModel.search.markerRender = eval('(' + $scope.objModel.search.markerRender + ')');
       }
-      
+      console.log($scope.objModel);
 
       if ( isEmptyObj( $scope.resultModel ) ) {
         return '';
