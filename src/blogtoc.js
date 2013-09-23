@@ -2273,7 +2273,7 @@
        * @param  : <string>setId
        ********************************************************************/    
       var _prepareHtml = function( el, setId ) {
-        var blogTocId = setId ? setId : 'blogtoc_' + _uniqueNumber();
+        var blogTocId = !setId || _isEmptyObj( setId ) ? 'blogtoc_' + _uniqueNumber() : setId;
 
         // IE7 workaround
         // style = zoom : 1;
@@ -2368,7 +2368,7 @@
        ********************************************************************/    
       var blogtocBuilder = function( options, element ) {
 
-        var opt = options ? options.blogtocId : null;
+        var opt = options ? options.blogtocId : {};
       
         if ( _isNodeList( element ) ) { // NodeList
           // id is only for one
@@ -2450,12 +2450,8 @@
         _resetState( element );
         element.BTLoaded = false;
 
-        var settedLanguage = options.language && options.language.setup ? 
-          options.language.setup : 
-          element.BTOptions.language.setup,
-          settedTheme = options.theme && options.theme.setup ?
-            options.theme.setup : 
-            element.BTOptions.theme.setup;
+        var settedLanguage = options.language && options.language.setup ? options.language.setup : element.BTOptions.language.setup,
+          settedTheme = options.theme && options.theme.setup ? options.theme.setup : element.BTOptions.theme.setup;
 
         _runAfterPluginLoaded( element, settedLanguage, settedTheme, options );
 
