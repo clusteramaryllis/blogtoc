@@ -1034,8 +1034,8 @@ callback( match ) {
       str = modelOne( $scope );
       $scope.displayTemp = $scope.preModel.display.template;
       $scope.sortingKey = removeArray( $scope.preModel.table.order.slice(0), "index", "thumbnail" );
-      _end = {};
       _end = $scope.objModel;
+      console.log(_end);
       if ( $scope.preModel.language.setup !== 'en-US' ) {
         $scope.addExternalLanguage = "BlogToc.addJS(\"lang/" + $scope.preModel.language.setup + ".js\");\n\n";
       } else {
