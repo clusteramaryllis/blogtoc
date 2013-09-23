@@ -311,7 +311,7 @@
             config.records = opts.display.setup || opts.display.template[0];
 
             // json callback
-            window[ 'BTLDJSONCallback_' + root.id ] = function (json) {
+            window[ 'BTLDJSONCallback_' + root.id ] = function ( json ) {
               _self.loadFeed( json );
             };
 
@@ -396,7 +396,6 @@
                   
                   // add word limiter
                   if ( summary.length > description ) {
-
                     summary = summary.substring( 0, description );
                     summary = summary.substring( 0, summary.lastIndexOf(' ') ) + '....';
                   }
@@ -436,7 +435,6 @@
                   
                   // title & replies URL section
                   for ( var k = 0; k < entry.link.length; k++ ) {
-
                     if ( entry.link[ k ].rel === 'replies' ) {
                       obj.commentURL = entry.link[ k ].href;
                     } else if (entry.link[ k ].rel === 'alternate' ) {
@@ -477,7 +475,7 @@
                   i++;
                   
                   // increase progress
-                  var percentage = Math.round(config.iterate * 100 / count);
+                  var percentage = Math.round( config.iterate * 100 / count );
 
                   progress( loader, percentage );
                   
@@ -494,7 +492,6 @@
                       _self.buildUI();
                     }, 1000 );
                   }
-                
                 }, 1 );
               }; 
               
@@ -2368,7 +2365,12 @@
        ********************************************************************/    
       var blogtocBuilder = function( options, element ) {
 
-        var opt = options ? options.blogtocId : {};
+        // option is null, create new one
+        if ( !options ) {
+          options = {
+            blogtocId: null
+          }
+        }
       
         if ( _isNodeList( element ) ) { // NodeList
           // id is only for one
@@ -2382,11 +2384,11 @@
           }
 
         } else if ( _isHTMLElement( element ) ) { // Node
-          element.BTID = _prepareHtml( element, opt );
+          element.BTID = _prepareHtml( element, options.blogtocId );
           appModule( element, options );
 
         } else {
-          var p = _prepareHtml( null, opt );
+          var p = _prepareHtml( null, options.blogtocId );
           
           element = p.parentNode;
           element.BTID = p;
