@@ -27,6 +27,9 @@ nbproject
 *.sublime-project
 *.sublime-workspace
 
+_config.yml
+example.html
+
 # Komodo
 *.komodoproject
 .komodotools
