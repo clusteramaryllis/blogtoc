@@ -1702,6 +1702,13 @@
         return !!~arr.indexOf( needle );
       };
 
+      /* Check if obj is array
+       * @param  : <object>obj
+       ********************************************************************/       
+      var _isArray = function( obj ) {
+        return Object.prototype.toString.call( obj ) === '[object Array]';
+      };
+
       /* Remove item from array by value
        * @param  : <array>arr
        ********************************************************************/ 
@@ -1843,7 +1850,9 @@
       var _extends = function( def, config ) {
         for (var key in config) {
           if ( config.hasOwnProperty( key ) ) {
-            if ( typeof config[ key ] === 'object' ) { 
+            if ( _isArray( config[ key ] ) ) {
+              def[ key ] = config[ key ].slice(0);
+            } else if ( typeof config[ key ] === 'object' ) { 
               def[ key ] = _extends( def[ key ], config[ key ] );
             } else {
               def[ key ] = config[ key ];
@@ -2137,7 +2146,7 @@
        * @param  : <JSObject>option
        ********************************************************************/ 
       var _BTBuildLang = function( def, lang, option ) {
-        _pretends( option,lang[ def ].options );
+        _pretends( option, lang[ def ].options );
       };
 
       /* Build Theme Starter
