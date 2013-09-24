@@ -26,6 +26,7 @@ desktop.ini
 nbproject
 *.sublime-project
 *.sublime-workspace
+example.html
 
 # Komodo
 *.komodoproject
