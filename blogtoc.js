@@ -352,15 +352,6 @@
             };
 
             sequenceFn( i );
-
-            /*for ( ; i < request; i++ ) {
-
-              startIdx = ( i * 500 ) + 1;
-              scriptID = url + '_' + _uniqueNumber();
-              config.cache.req[ i + 1 ] = scriptID;
-
-              _addJS( url + '&start-index=' + startIdx, scriptID );
-            }*/
           },
           
           /* Load the main feed from JSON callback
