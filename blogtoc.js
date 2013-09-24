@@ -248,7 +248,7 @@
             var _waiting = function() { 
               setTimeout( function() {
                 config.iotf.server ?
-                  _addJS( url, scriptID, function() {
+                  _addJS( url, scriptID, null, function() {
                     // trouble loading feed, show error message
                     alert( opts.language.custom.errorMessage );
                     // remove blogtoc
@@ -336,14 +336,31 @@
               'alt=json-in-script&' + 
               'callback=BTLDJSONCallback_' + root.id;
 
-            for ( ; i < request; i++ ) {
+            var sequenceFn = function( i ) {
+
+              startIdx = ( i * 500 ) + 1;
+              scriptID = url + '_' + _uniqueNumber();
+              config.cache.req[ i + 1 ] = scriptID;
+
+              if ( i < request - 1 ) {
+                _addJS( url + '&start-index=' + startIdx, scriptID, function(){ 
+                  sequenceFn( i + 1 );
+                });                
+              } else {
+                _addJS( url + '&start-index=' + startIdx, scriptID );                
+              }
+            };
+
+            sequenceFn( i );
+
+            /*for ( ; i < request; i++ ) {
 
               startIdx = ( i * 500 ) + 1;
               scriptID = url + '_' + _uniqueNumber();
               config.cache.req[ i + 1 ] = scriptID;
 
               _addJS( url + '&start-index=' + startIdx, scriptID );
-            }
+            }*/
           },
           
           /* Load the main feed from JSON callback
@@ -1784,10 +1801,11 @@
       /* Insert Javascript to Head Section
        * @param  : <string>src
        * @param  : <string>id
+       * @param  : <function>successCallback
        * @param  : <function>errorCallback
        * @param  : <boolean>sync
        ********************************************************************/
-      var _addJS = function( src, id, errorCallback, sync ) {
+      var _addJS = function( src, id, successCallback, errorCallback, sync ) {
         var script = document.createElement('script'); 
         script.type = 'text/javascript'; 
         script.src = _sanitizeURL( src );
@@ -1796,6 +1814,24 @@
         }
         if ( !sync ) {
           script.async = true;
+        }
+        if ( successCallback ) {
+          script.onload = function() {
+            if ( !script.onloadDone ) {
+              script.onloadDone = true;
+              successCallback();
+
+              script.onload = null;
+            }
+          }
+          script.onreadystatechange = function() {
+            if ( ( this.readyState === 'loaded' || this.readyState === 'complete' ) && !script.onloadDone ) {
+              script.onloadDone = true;
+              successCallback();
+
+              script.onreadystatechange = null;
+            }
+          }
         }
         if ( errorCallback ) {
           // some browsers didn't support this
@@ -1808,10 +1844,11 @@
       /* Insert Javascript to Head Section only one time
        * @param  : <string>src
        * @param  : <string>id
+       * @param  : <function>successCallback
        * @param  : <function>errorCallback
        * @param  : <boolean>sync
        ********************************************************************/
-      var _addJSOnce = function( src, id, errorCallback, sync ) {
+      var _addJSOnce = function( src, id, successCallback, errorCallback, sync ) {
         var script = document.getElementsByTagName('script'),
           len = script.length,
           base = src.substr( src.lastIndexOf('/') );
@@ -1822,7 +1859,7 @@
           }
         }
 
-        _addJS( src, id, errorCallback, sync );
+        _addJS( src, id, successCallback, errorCallback, sync );
       };
 
       /* very simple append string
