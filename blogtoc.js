@@ -320,7 +320,7 @@
             config.records = opts.display.setup || opts.display.template[0];
 
             // json callback
-            window[ 'BTLDJSONCallback_' + root.id ] = function (json) {
+            window[ 'BTLDJSONCallback_' + root.id ] = function ( json ) {
               _self.loadFeed( json );
             };
 
@@ -405,7 +405,6 @@
                   
                   // add word limiter
                   if ( summary.length > description ) {
-
                     summary = summary.substring( 0, description );
                     summary = summary.substring( 0, summary.lastIndexOf(' ') ) + '....';
                   }
@@ -445,7 +444,6 @@
                   
                   // title & replies URL section
                   for ( var k = 0; k < entry.link.length; k++ ) {
-
                     if ( entry.link[ k ].rel === 'replies' ) {
                       obj.commentURL = entry.link[ k ].href;
                     } else if (entry.link[ k ].rel === 'alternate' ) {
@@ -486,7 +484,7 @@
                   i++;
                   
                   // increase progress
-                  var percentage = Math.round(config.iterate * 100 / count);
+                  var percentage = Math.round( config.iterate * 100 / count );
 
                   progress( loader, percentage );
                   
@@ -503,7 +501,6 @@
                       _self.buildUI();
                     }, 1000 );
                   }
-                
                 }, 1 );
               }; 
               
@@ -1714,6 +1711,13 @@
         return !!~arr.indexOf( needle );
       };
 
+      /* Check if obj is array
+       * @param  : <object>obj
+       ********************************************************************/       
+      var _isArray = function( obj ) {
+        return Object.prototype.toString.call( obj ) === '[object Array]';
+      };
+
       /* Remove item from array by value
        * @param  : <array>arr
        ********************************************************************/ 
@@ -1855,7 +1859,9 @@
       var _extends = function( def, config ) {
         for (var key in config) {
           if ( config.hasOwnProperty( key ) ) {
-            if ( typeof config[ key ] === 'object' ) { 
+            if ( _isArray( config[ key ] ) ) {
+              def[ key ] = config[ key ].slice(0);
+            } else if ( typeof config[ key ] === 'object' ) { 
               def[ key ] = _extends( def[ key ], config[ key ] );
             } else {
               def[ key ] = config[ key ];
@@ -2149,7 +2155,7 @@
        * @param  : <JSObject>option
        ********************************************************************/ 
       var _BTBuildLang = function( def, lang, option ) {
-        _pretends( option,lang[ def ].options );
+        _pretends( option, lang[ def ].options );
       };
 
       /* Build Theme Starter
@@ -2282,7 +2288,7 @@
        * @param  : <string>setId
        ********************************************************************/    
       var _prepareHtml = function( el, setId ) {
-        var blogTocId = setId ? setId : 'blogtoc_' + _uniqueNumber();
+        var blogTocId = !setId || _isEmptyObj( setId ) ? 'blogtoc_' + _uniqueNumber() : setId;
 
         // IE7 workaround
         // style = zoom : 1;
@@ -2377,7 +2383,12 @@
        ********************************************************************/    
       var blogtocBuilder = function( options, element ) {
 
-        var opt = options ? options.blogtocId : null;
+        // option is null, create new one
+        if ( !options ) {
+          options = {
+            blogtocId: null
+          }
+        }
       
         if ( _isNodeList( element ) ) { // NodeList
           // id is only for one
@@ -2391,11 +2402,11 @@
           }
 
         } else if ( _isHTMLElement( element ) ) { // Node
-          element.BTID = _prepareHtml( element, opt );
+          element.BTID = _prepareHtml( element, options.blogtocId );
           appModule( element, options );
 
         } else {
-          var p = _prepareHtml( null, opt );
+          var p = _prepareHtml( null, options.blogtocId );
           
           element = p.parentNode;
           element.BTID = p;
@@ -2459,12 +2470,8 @@
         _resetState( element );
         element.BTLoaded = false;
 
-        var settedLanguage = options.language && options.language.setup ? 
-          options.language.setup : 
-          element.BTOptions.language.setup,
-          settedTheme = options.theme && options.theme.setup ?
-            options.theme.setup : 
-            element.BTOptions.theme.setup;
+        var settedLanguage = options.language && options.language.setup ? options.language.setup : element.BTOptions.language.setup,
+          settedTheme = options.theme && options.theme.setup ? options.theme.setup : element.BTOptions.theme.setup;
 
         _runAfterPluginLoaded( element, settedLanguage, settedTheme, options );
 
