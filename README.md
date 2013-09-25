@@ -44,6 +44,7 @@ BlogToc using some external service to generate image on the fly
 Some awesome projects for theming purpose
 
 * [Twitter Bootstrap](http://getbootstrap.com/)
+* [Bootmetro](http://aozora.github.io/bootmetro/)
 * [TODC Bootstrap](http://todc.github.io/todc-bootstrap/index.html)
 
 And iconic font from [Bootmetro](http://aozora.github.io/bootmetro)
