@@ -24,7 +24,13 @@ module.exports = function( grunt ) {
 			baseDir: 'css/bootstrap/',
 			dest: 'css/todc-bootstrap/bt_todc-bootstrap.css',
 			src: 'third_party/todc-bootstrap/less/bt_todc-bootstrap/bt_todc-bootstrap.less'
-		}
+		},
+		bootmetro: {
+			id: 'bt_bootmetro',
+			baseDir: 'css/bootmetro/',
+			dest: 'css/bootmetro/bt_bootmetro.css',
+			src: 'third_party/bootmetro/less/bt_bootmetro/bt_bootmetro.less'
+		},
 	};
 
 	var colorSchemeSettings = {
