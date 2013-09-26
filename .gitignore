@@ -30,6 +30,11 @@ nbproject
 _config.yml
 example.html
 
+css/custom.css
+third_party/custom.less
+third_party/lesshat.less
+
+
 # Komodo
 *.komodoproject
 .komodotools
