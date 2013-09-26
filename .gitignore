@@ -31,9 +31,10 @@ _config.yml
 example.html
 
 css/custom.css
+css/blogger.css
 third_party/custom.less
+third_party/blogger.less
 third_party/lesshat.less
-
 
 # Komodo
 *.komodoproject
@@ -50,3 +51,4 @@ validation-report.json
 .idea
 node_modules
 _site
+img
