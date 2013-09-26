@@ -50,7 +50,7 @@
       
         var _parent = element,
           opts, config, feed,
-          root, loader, header, filter, tabler, footer, resulter, paging;
+          root, loader, contenter, header, filter, tabler, footer, resulter, paging;
 
         var _alpha;
         
@@ -187,7 +187,8 @@
             // save necessary element
             root = _parent.BTID;
             loader = root.firstChild;
-            header = _nextElement( loader );
+            contenter = _nextElement( loader );
+            header = contenter.firstChild;
             filter = _nextElement( header );
             tabler = _nextElement( filter );
             footer = _nextElement( tabler );
@@ -195,6 +196,7 @@
             // apply classes
             _extendClass( root, opts.extendClass.blogtoc_id );
             _extendClass( loader, opts.extendClass.blogtoc_loader );
+            _extendClass( contenter, opts.extendClass.blogtoc_content );
             _extendClass( header, opts.extendClass.blogtoc_header );
             _extendClass( filter, opts.extendClass.blogtoc_filter );
             _extendClass( tabler, opts.extendClass.blogtoc_table );
@@ -469,7 +471,7 @@
                   
                   // author information section
                   obj.author = entry.author[0].name.$t;
-                  obj.authorThumbnail = entry.author[0].gd$image.src.replace( thumbRegex, 's' + size + '-c' );
+                  obj.authorThumbnail = entry.author[0].gd$image.src.replace( thumbRegex, 's' + asize + '-c' );
 
                   // posts categories section
                   if ( 'category' in entry ) {
@@ -535,6 +537,9 @@
               searchFn = "BlogToc.search(this.value, document.getElementById('"+ root.id +"')); return false;",
               sortFn;
 
+            // show data
+            contenter.style.display = 'block';
+
             // label section
             _self.makeLabel( feed.label, 'showLabel', 'cloudLabel', 'setup', 'blogtoc_label', klass.blogtoc_label, labelFn );
             _self.makeLabel( _alpha, 'showAlphabetLabel', 'cloudAlphabetLabel', 'setupAlphabet', 'blogtoc_alphabet', klass.blogtoc_alphabet, alphaFn );
@@ -551,7 +556,6 @@
             spn = _createElement( 'span', null, opts.language.custom.display );
             
             for ( ; j < dLen; j++ ) {
-              
               option  = _createElement( 'option', { value: display.num[ j ] }, display.name[ j ] );
               
               // arrange to the default setup selected
@@ -597,7 +601,6 @@
             tr = _createElement('tr');
                 
             for ( j = 0; j < mLen; j++ ) {
-
               mData = config.mapper[ j ];
               sortFn = "BlogToc.sort('"+ mData +"', document.getElementById('"+ root.id +"')); return false;";
               
@@ -628,11 +631,6 @@
 
             // IE strangely add tbody on its own, so position the thead correctly
             tableChild = tabler.firstChild;
-            try {
-              tabler.style.display = 'table'; 
-            } catch ( e ) {
-              tabler.style.display = 'block';
-            }
             tabler.insertBefore( thead, tableChild );
 
             // don't show header if option showHeader is false
@@ -1139,9 +1137,11 @@
               cache.original = ( order === 'ascending' ) ? 
                 _BTSort( cache.original, key, day ).slice(0) :
                 _BTSort( cache.original, key, day ).slice(0).reverse(); 
+              cache.tempData =  cache.original;
 
             } else {
               cache.original = feed.data.slice(0);
+              cache.tempData = [];
             }
           },
           
@@ -1391,11 +1391,30 @@
           }
         };
 
-        // Run
-        var settedLanguage = option.language && option.language.setup ? option.language.setup : defaultLanguage,
-          settedTheme = option.theme && option.theme.setup ? option.theme.setup : defaultTheme; 
+        // Initialization before running
+        var setLanguage, setTheme;
 
-        _runAfterPluginLoaded( _parent, settedLanguage, settedTheme, option );
+        // check the current language setting
+        if ( option.language && option.language.setup ) {
+          setLanguage = option.language.setup;
+        } else {
+          setLanguage = defaultLanguage;
+        }
+
+        // check the current theme setting
+        if ( option.theme && option.theme.setup ) {
+          // check if theme already has default settings
+          if ( _isEmptyObj( themes[ option.theme.setup ] ) ) {
+            themes[ option.theme.setup ] = {};
+            themes[ option.theme.setup ].option = {};
+          }
+          setTheme = option.theme.setup;
+        } else {
+          setTheme = defaultTheme;
+        }
+
+        // Run
+        _runAfterPluginLoaded( _parent, setLanguage, setTheme, option );
 
         return this;
       };
@@ -1814,7 +1833,7 @@
 
               script.onload = null;
             }
-          }
+          };
           script.onreadystatechange = function() {
             if ( ( this.readyState === 'loaded' || this.readyState === 'complete' ) && !script.onloadDone ) {
               script.onloadDone = true;
@@ -1822,7 +1841,7 @@
 
               script.onreadystatechange = null;
             }
-          }
+          };
         }
         if ( errorCallback ) {
           // some browsers didn't support this
@@ -2210,7 +2229,10 @@
         };
 
         _appends( option, templateFn( theme[ def ].options ) );
-        _addCSSOnce( theme[ def ].url, true );
+
+        if ( theme[ def ].url ) {
+          _addCSSOnce( theme[ def ].url, true );
+        }
       };
       
       /* Queue & Lazy Load image for BlogToc
@@ -2324,10 +2346,12 @@
         var text = [
             '<div id="' + blogTocId + '" style="zoom: 1; display: none;">',
             '<div class="blogtoc_loader"></div>',
+            '<div class="blogtoc_content" style="display: none;">',
             '<div class="blogtoc_header"></div>',
             '<div class="blogtoc_filter"></div>',
-            '<table class="blogtoc_table" style="display: none;"></table>',
+            '<table class="blogtoc_table"></table>',
             '<div class="blogtoc_footer"></div>',
+            '</div>',
             '</div>'
           ].join('');
         
@@ -2347,7 +2371,8 @@
       var _resetState = function( el ) {
         var _root = el.BTID,
           _loader = _root.firstChild,
-          _header = _nextElement( _loader ),
+          _contenter = _nextElement( _loader ),
+          _header = _contenter.firstChild,
           _filter = _nextElement( _header ),
           _tabler = _nextElement( _filter ),
           _footer = _nextElement( _tabler );
@@ -2358,7 +2383,9 @@
         _tabler.innerHTML = '';
         _footer.innerHTML = '';
 
+        // reset class
         _root.className = '';
+        _contenter.className = 'blogtoc_content';
         _loader.className = 'blogtoc_loader';
         _header.className = 'blogtoc_header';
         _filter.className = 'blogtoc_filter';
@@ -2367,7 +2394,7 @@
 
         _root.style.display = 'block';
         _loader.style.display = 'block';
-        _tabler.style.display = 'none';
+        _contenter.style.display = 'none';
       };
       
       /* Test the connection image on the fly service
@@ -2415,7 +2442,7 @@
         if ( !options ) {
           options = {
             blogtocId: null
-          }
+          };
         }
       
         if ( _isNodeList( element ) ) { // NodeList
@@ -2498,10 +2525,30 @@
         _resetState( element );
         element.BTLoaded = false;
 
-        var settedLanguage = options.language && options.language.setup ? options.language.setup : element.BTOptions.language.setup,
-          settedTheme = options.theme && options.theme.setup ? options.theme.setup : element.BTOptions.theme.setup;
+        // Initialization before running
+        var setLanguage, setTheme;
 
-        _runAfterPluginLoaded( element, settedLanguage, settedTheme, options );
+        // check the current language setting
+        if ( options.language && options.language.setup ) {
+          setLanguage = options.language.setup;
+        } else {
+          setLanguage = element.BTOptions.language.setup;
+        }
+
+        // check the current theme setting
+        if ( options.theme && options.theme.setup ) {
+          // check if theme already has default settings
+          if ( _isEmptyObj( themes[ options.theme.setup ] ) ) {
+            themes[ options.theme.setup ] = {};
+            themes[ options.theme.setup ].option = {};
+          }
+          setTheme = options.theme.setup;
+        } else {
+          setTheme = element.BTOptions.theme.setup;
+        }
+
+        // Run
+        _runAfterPluginLoaded( element, setLanguage, setTheme, options );
 
         return this;
       };
