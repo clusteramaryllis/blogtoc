@@ -12,6 +12,7 @@
 *~
 *.sass-cache
 *.ruby-version
+*.less
 
 # OS or Editor folders
 .DS_Store
@@ -43,3 +44,4 @@ validation-report.json
 .idea
 node_modules
 _site
+third_party

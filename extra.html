@@ -4,5 +4,46 @@ title: BlogToc
 slug: extra
 ---
 <div class="tab-pane active">
-	<h1>Coming Soon...</h1>
+<h2>Showcase</h2>
+<hr>
+<div class="container-fluid">
+	<div class="row-fluid" ng-controller="ShowCtrl">
+		<ul class="thumbnails">
+			<li class="span4" ng-repeat="gallery in galleries">
+  			<div class="thumbnail">
+    			<img src="[[gallery.thumbnail]]" alt="ALT NAME">
+    			<div class="caption">
+      			<h4>[[gallery.title]]</h4>
+      			<p>[[gallery.description]]</p>
+      			<p align="center"><a href="[[gallery.link]]" class="btn btn-primary btn-block">Preview</a></p>
+    			</div>
+  			</div>
+			</li>
+		</ul>
+	</div>
+	<h1>And many more will be coming soon...</h1>
+	<p>Contribute yourself <a href="https://github.com/clusteramaryllis/blogtoc">@github</a></p>
 </div>
+</div>
+<script>
+	// Angular App
+  var docApp = angular.module('docApp', [ 'ui.bootstrap' ], function($interpolateProvider) {
+      $interpolateProvider.startSymbol('[[');
+      $interpolateProvider.endSymbol(']]');
+  });
+
+  docApp.factory('Gallery', function(){
+  	return [
+  	  {
+  	  	thumbnail: "img/gallery-1.jpg",
+  	  	title: "Custom Theme",
+  	  	description: "Extends BlogToc with your own custom theme.",
+  	  	link: "gallery-1.html"
+  	  }
+  	];
+  });
+
+  docApp.controller('ShowCtrl', function ($scope, Gallery) {
+  	$scope.galleries = Gallery;
+  });
+</script>

@@ -1036,7 +1036,6 @@ callback( match ) {
       $scope.displayTemp = $scope.preModel.display.template;
       $scope.sortingKey = removeArray( $scope.preModel.table.order.slice(0), "index", "thumbnail" );
       _end = $scope.objModel;
-      console.log(_end);
       if ( $scope.preModel.language.setup !== 'en-US' ) {
         $scope.addExternalLanguage = "BlogToc.addJS(\"lang/" + $scope.preModel.language.setup + ".js\");\n\n";
       } else {
@@ -1073,7 +1072,6 @@ callback( match ) {
       if ( $scope.objModel.search &&  $scope.objModel.search.markerRender ) {
         $scope.objModel.search.markerRender = eval('(' + $scope.objModel.search.markerRender + ')');
       }
-      console.log($scope.objModel);
 
       if ( isEmptyObj( $scope.resultModel ) ) {
         return '';
