@@ -95,6 +95,9 @@
                   return '<span class="label">' + language + '</span>';
                 }
               },
+              onLoaded: null,
+              onBeforeDataChange: null,
+              onAfterDataChange: null,
               pagination: {
                 adjacents: 2
               },
@@ -666,6 +669,11 @@
 
             // Tells that apps already loaded
             _parent.BTLoaded = true;
+
+            // calling back the onLoaded function
+            if ( typeof opts.onLoaded === 'function' ) {
+              opts.onLoaded();
+            }
 
             // Clear any references
             window[ 'BTJSONCallback_' + root.id ] = null;
@@ -1266,6 +1274,11 @@
             var _self = this;
             
             var tbody, tbodyRecent, node;
+
+            // calling back onBeforeDataChange
+            if ( typeof opts.onBeforeDataChange === 'function' ) {
+              opts.onBeforeDataChange();
+            }
             
             // Initialize
             config.cache.img = new Array();
@@ -1378,6 +1391,11 @@
               tabler.replaceChild( tbody, tbodyRecent );
             } else { // otherwise create new one
               tabler.appendChild( tbody );
+            }
+
+            // calling back onAfterDataChange
+            if ( typeof opts.onAfterDataChange === 'function' ) {
+              opts.onAfterDataChange();
             }
           }
         };
