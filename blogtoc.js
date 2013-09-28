@@ -1,5 +1,5 @@
 /**!
-* BlogToc v1.2.0
+* BlogToc v1.5.0
 * Copyright 2013 Cluster Amaryllis
 * Licensed under the Apache License v2.0
 * http://www.apache.org/licenses/LICENSE-2.0
@@ -15,7 +15,7 @@
     
     (function() {
 
-      var VERSION = '1.2.0';
+      var VERSION = '1.5.0';
 
       var BASE_URL = '//googledrive.com/host/0B-ME4OmVndQzMFNaMWpqVzVYUFE/' + VERSION + '/';
 
@@ -32,8 +32,8 @@
         thumbRegex = /s\d+\-?\w?/gi, // thumbnail regex
         whitespaceRegex = /(^\s+|\s{2,}|\s+$)/g, // remove whitespace
         stripHtmlRegex = /(<([^>]+)>)/ig, // strip html tags
-        noSortRegex = /^(index|thumbnail)$/i, // don't sorting
-        noGenerateRegex = /^(actualImage|authorThumbnail|badge|category|commentURL|fullSummary|publishDateFormat|titleURL|thumbConfig|updateDateFormat)$/i; // don't generate
+        noSortRegex = /^(index|thumbnail|label)$/i, // don't sorting
+        noGenerateRegex = /^(actualImage|authorThumbnail|authorUrl|badge|category|commentURL|fullSummary|publishDateFormat|titleURL|thumbConfig|updateDateFormat)$/i; // don't generate
 
       var themes = {},
         languages = {};
@@ -66,6 +66,13 @@
             // Default Options
             var defaults = {
               blogtocId: '',
+              binding: {
+                onAfterDataChange: null,
+                onBeforeDataChange: null,
+                onInit: null,
+                onLiveDataChange: null,
+                onLoaded: null
+              },
               date: {
                 day: days,
                 month: months,
@@ -104,11 +111,18 @@
                   return '<span class="label">' + language + '</span>';
                 }
               },
-              onLoaded: null,
-              onBeforeDataChange: null,
-              onAfterDataChange: null,
               pagination: {
-                adjacents: 2
+                adjacents: 2,
+                showNextPage: true,
+                showPrevPage: true,
+                showFirstPage: true,
+                showLastPage: true
+              },
+              postLabel: {
+                separator: '',
+                render: function( label ) {
+                  return '<span>' + label + '</span>';
+                }
               },
               progress: {
                 render : function( elem, progress ) {
@@ -137,12 +151,13 @@
                 wordLimit: 200
               },
               table: {
-                order: ["index","thumbnail","title","publishDate","updateDate","author","comment"],
+                order: [ 'index', 'thumbnail', 'title', 'publishDate', 'updateDate', 'author', 'comment' ],
                 initDataLoad: 10,
                 showHeader: true,
                 indexWidthPoint : 2.5,
                 authorWidthPoint : 10.5,
                 commentWidthPoint : 11,
+                labelWidthPoint: 24,
                 publishDateWidthPoint : 12.5,
                 summaryWidthPoint : 25,
                 thumbnailWidthPoint : 7,
@@ -150,7 +165,8 @@
                 updateDateWidthPoint : 12.5
               },
               theme: {
-                setup: defaultTheme
+                setup: defaultTheme,
+                standalone: false
               },
               thumbnail: {
                 blank: blankThumb,
@@ -264,6 +280,11 @@
             }; 
 
             _waiting();
+
+            // add callback on init
+            if ( typeof opts.binding.onInit === 'function' ) {
+              opts.binding.onInit();
+            }
           },
           
           /* Initialization json callback
@@ -367,7 +388,7 @@
             var _self = this;
             
             var jfeed = json.feed,
-              temp = [],
+              temp = [], temp2 = [],
               obj = {};
               
             var data = feed.data,
@@ -378,7 +399,9 @@
               description = opts.summary.wordLimit,
               render = opts.date.render,
               server = config.iotf.server,
-              progress = opts.progress.render;
+              progress = opts.progress.render,
+              postlabel = opts.postLabel.render,
+              separator = opts.postLabel.separator;
 
             // check entry feed
             if ( 'entry' in jfeed ) {
@@ -433,18 +456,13 @@
                   // check for default blog thumbnail entry
                   // if it's not found find <img> tag in summary
                   if ( 'media$thumbnail' in entry ) { 
-                    
                     obj.thumbnail = entry.media$thumbnail.url;
                     obj.actualImage = obj.thumbnail.replace( thumbRegex, 's0' );
                     obj.thumbnail = obj.thumbnail.replace( '/s72-c/', '/s' + size + '-c/');
-
                   } else if ( ( imgSrc = /<img [^>]*src=["|\']([^"|\']+)/gi.exec( fullSummary ) ) ) {
-                    
                     obj.actualImage = imgSrc[1];
                     obj.thumbnail = _BTMakeThumbnail( obj.actualImage, size, server );
-
                   } else { 
-                    
                     obj.actualImage = notfound;
 
                     // google service?
@@ -474,16 +492,19 @@
                   
                   // author information section
                   obj.author = entry.author[0].name.$t;
+                  obj.authorUrl = entry.author[0].uri ? entry.author[0].uri.$t : '#';
                   obj.authorThumbnail = entry.author[0].gd$image.src.replace( thumbRegex, 's' + asize + '-c' );
 
                   // posts categories section
                   if ( 'category' in entry ) {
                     for ( k = 0; k < entry.category.length; k++ ) {
                       temp.push( entry.category[ k ].term );
+                      temp2.push( postlabel( entry.category[ k ].term ) );
                     }
                   }
 
                   obj.category = temp.slice(0);
+                  obj.label = temp2.slice(0).join( separator );
 
                   // populate data
                   data.push( obj ); 
@@ -491,6 +512,7 @@
                   // reset
                   obj = {};
                   temp.length = 0;
+                  temp2.length = 0;
 
                   // increment
                   config.iterate++;
@@ -680,8 +702,8 @@
             _parent.BTLoaded = true;
 
             // calling back the onLoaded function
-            if ( typeof opts.onLoaded === 'function' ) {
-              opts.onLoaded();
+            if ( typeof opts.binding.onLoaded === 'function' ) {
+              opts.binding.onLoaded();
             }
 
             // Clear any references
@@ -708,6 +730,8 @@
               snpl = page + 6, lnpl = page + 46, sppl = page - 6, lppl = page - 46,
               adj = opts.pagination.adjacents, adjJump = adj * 2,
               rID = root.id, hClass = 'blogtoc_responsive_hide',
+              fClass = 'blogtoc_first_page', lClass = 'blogtoc_last_page', 
+              pClass = 'blogtoc_prev_page', nClass = 'blogtoc_next_page', 
               ul, ulRecent, li; 
 
             // limit more than one
@@ -716,14 +740,21 @@
               // current page not at first one
               if ( page > 1 ) {
                 // first page
-                li = _BTMakePageList( 1, opts.language.custom.firstPage, 'a', rID );
-                ul.appendChild( li );
+                if ( opts.pagination.showFirstPage ) {
+                  li = _BTMakePageList( 1, opts.language.custom.firstPage, 'a', rID, fClass );
+                  ul.appendChild( li );
+                }
                 // prev page
-                li = _BTMakePageList( prev_page, opts.language.custom.prevPage, 'a', rID );
+                if ( opts.pagination.showPrevPage ) {
+                  li = _BTMakePageList( prev_page, opts.language.custom.prevPage, 'a', rID, pClass );
+                  ul.appendChild( li );
+                }
               } else {
-                li = _BTMakePageList( null, opts.language.custom.prevPage, 'span', rID, dClass );
+                if ( opts.pagination.showPrevPage ) {
+                  li = _BTMakePageList( null, opts.language.custom.prevPage, 'span', rID, _appendStr( pClass, dClass ) );
+                  ul.appendChild( li );
+                }
               }
-              ul.appendChild( li );
               
               // the pages are not that big
               if ( limit < 7 + adjJump ) {
@@ -809,14 +840,21 @@
               // current page not at last one
               if ( page < limit ) {
                 // next page
-                li = _BTMakePageList( next_page, opts.language.custom.nextPage, 'a', rID );
-                ul.appendChild( li );
+                if ( opts.pagination.showNextPage ) {
+                  li = _BTMakePageList( next_page, opts.language.custom.nextPage, 'a', rID, nClass );
+                  ul.appendChild( li );
+                }
                 // last page
-                li = _BTMakePageList( limit, opts.language.custom.lastPage, 'a', rID );
+                if ( opts.pagination.showLastPage ) {
+                  li = _BTMakePageList( limit, opts.language.custom.lastPage, 'a', rID, lClass );
+                  ul.appendChild( li );
+                }
               } else {
-                li = _BTMakePageList( null, opts.language.custom.nextPage, 'span', rID, dClass );
+                if ( opts.pagination.showNextPage ) {
+                  li = _BTMakePageList( null, opts.language.custom.nextPage, 'span', rID, _appendStr( nClass, dClass ) );
+                  ul.appendChild( li );
+                }
               }
-              ul.appendChild( li );
             }
             
             if ( ( ulRecent = paging.getElementsByTagName('ul')[0] ) ) {
@@ -1130,23 +1168,21 @@
           doSorting: function( key, order ) {
         
             var data = feed.data,
-              day = opts.date.day,
               cache = config.cache;
             
             cache[ key ] = cache[ key ] || {};
                 
             // generate new data feed
             feed.data = ( order === 'ascending' ) ? 
-              _BTSort( data, key, day ).slice(0) :
-              _BTSort( data, key, day ).slice(0).reverse();
+              _BTSort( data, key ).slice(0) :
+              _BTSort( data, key ).slice(0).reverse();
             
             // cache original data
             if ( cache.original ) {
               cache.original = ( order === 'ascending' ) ? 
-                _BTSort( cache.original, key, day ).slice(0) :
-                _BTSort( cache.original, key, day ).slice(0).reverse(); 
+                _BTSort( cache.original, key ).slice(0) :
+                _BTSort( cache.original, key ).slice(0).reverse(); 
               cache.tempData =  cache.original;
-
             } else {
               cache.original = feed.data.slice(0);
               cache.tempData = [];
@@ -1273,7 +1309,7 @@
             for ( i = 0; i < len; i++ ) {
               range = Math.round( opt[ data[ i ] + 'WidthPoint' ] / count * 100 );
               config.mapperWidth.push( range + '%' );
-            }       
+            }
           },
           
           /* Mostly the main function that get called alot, change how the data is displayed
@@ -1285,8 +1321,8 @@
             var tbody, tbodyRecent, node;
 
             // calling back onBeforeDataChange
-            if ( typeof opts.onBeforeDataChange === 'function' ) {
-              opts.onBeforeDataChange();
+            if ( typeof opts.binding.onBeforeDataChange === 'function' ) {
+              opts.binding.onBeforeDataChange();
             }
             
             // Initialize
@@ -1319,7 +1355,7 @@
                 count = bFeed.data.length,
                 size = bOpts.thumbnail.authorSize,
                 j = start, idx = start, len = bConfig.mapper.length,
-                dataType, data,
+                dataType, data, blob,
                 tr, td;
               
               // if no data found, show empty result message
@@ -1333,12 +1369,15 @@
                   el.appendChild( tr );
                 }
               }
+
+              // use the most data limit as possible
+              blob = ( end <= records && end <= count ) ? 
+                end :
+                ( records <= count) ? 
+                  records : 
+                  count;
               
-              for ( ; j < end; j++ ) {
-                
-                if ( j >= records || j >= count ) { 
-                  return; 
-                }
+              for ( ; j < blob; j++ ) {
                 
                 data = bFeed.data[ j ];
 
@@ -1353,13 +1392,17 @@
                 
                   dataType = bConfig.mapper[ k ];
                   
-                  td = _createElement('td');
+                  td = _createElement('td', { width: bConfig.mapperWidth[ k ] });
                   td.setAttribute( 'data-title', dataType );
                   
                   td.appendChild( _BTRenderContent( dataType, idx, data, bOpts, bConfig, td ) );
                   tr.appendChild( td );
                 }
                 el.appendChild( tr );
+
+                if ( j === ( blob - 1 ) && typeof bOpts.binding.onLiveDataChange === 'function' ) {
+                    bOpts.binding.onLiveDataChange();
+                }
               }
             }; 
 
@@ -1389,7 +1432,26 @@
               _flexScroll( _parent.BTID );
             }; 
 
-            evtHandler();
+            // fill the data until its viewable
+            var filledInViewPort = function( bID ) {
+              setTimeout(function() {
+                // viewport bugs
+                var table = bID.getElementsByTagName('table')[0],
+                  tbody = table.getElementsByTagName('tbody')[0];
+
+                if ( _elementInViewport( table ) ) {
+                  appendData( bID, tbody );
+                  filledInViewPort( bID );
+                }
+              }, 10 );
+            };
+
+            // calling back onAfterDataChange
+            if ( typeof opts.binding.onAfterDataChange === 'function' ) {
+              setTimeout(function(){
+                opts.binding.onAfterDataChange();
+              }, 1 );
+            }
             
             // register event
             _registerEvent( config.registeredEvent, window, 'scroll', evtHandler );
@@ -1402,10 +1464,8 @@
               tabler.appendChild( tbody );
             }
 
-            // calling back onAfterDataChange
-            if ( typeof opts.onAfterDataChange === 'function' ) {
-              opts.onAfterDataChange();
-            }
+            filledInViewPort( root );
+            evtHandler();
           }
         };
 
@@ -1422,7 +1482,7 @@
         // check the current theme setting
         if ( option.theme && option.theme.setup ) {
           // check if theme already has default settings
-          if ( _isEmptyObj( themes[ option.theme.setup ] ) ) {
+          if ( option.theme.standalone ) {
             themes[ option.theme.setup ] = {};
             themes[ option.theme.setup ].option = {};
           }
@@ -1634,7 +1694,8 @@
         return (
           rect.top >= 0 &&
           rect.left >= 0 &&
-          rect.top <= ( window.innerHeight || document.documentElement.clientHeight )
+          rect.bottom <= ( window.innerHeight || document.documentElement.clientHeight ) &&
+          rect.right <= ( window.innerWidth || document.documentElement.clientWidth )
         );
       };
 
@@ -1799,31 +1860,11 @@
           if ( !top ) {
             setTimeout(function(){
               head.appendChild( stylesheet );
-            }, 1000 );
+            }, 100 );
           } else {
             head.insertBefore( stylesheet, head.childNodes[ head.childNodes.length - 1 ] );
           }
         }
-      };
-
-      /* Insert Stylesheet to Head Section only one time
-       * @param  : <string>src
-       * @param  : <boolean>top
-       ********************************************************************/ 
-      var _addCSSOnce = function( src, top ) {
-        var head = document.getElementsByTagName('head')[0],
-          link = head.getElementsByTagName('link'),
-          len = link.length,
-          base = src.substr( src.lastIndexOf('/') );
-
-        // don't add css if already exists
-        while ( len-- ) {
-          if ( link[ len ].href && !!~link[ len ].href.lastIndexOf( base ) ) {
-            return;
-          }
-        }
-
-        _addCSS( src, top );
       };
 
       /* Insert Javascript to Head Section
@@ -1867,27 +1908,6 @@
         }
         
         document.getElementsByTagName('head')[0].appendChild( script );
-      };
-
-      /* Insert Javascript to Head Section only one time
-       * @param  : <string>src
-       * @param  : <string>id
-       * @param  : <function>successCallback
-       * @param  : <function>errorCallback
-       * @param  : <boolean>sync
-       ********************************************************************/
-      var _addJSOnce = function( src, id, successCallback, errorCallback, sync ) {
-        var script = document.getElementsByTagName('script'),
-          len = script.length,
-          base = src.substr( src.lastIndexOf('/') );
-
-        while ( len-- ) {
-          if ( script[ len ].src && !!~script[ len ].src.lastIndexOf( base ) ) {
-            return;
-          }
-        }
-
-        _addJS( src, id, successCallback, errorCallback, sync );
       };
 
       /* very simple append string
@@ -2139,7 +2159,8 @@
 
         obj = {
           author: function() {
-            var span = _createElement( 'span', null, data.author ),
+            var span = _createElement( 'span', null ),
+              anchor = _createElement( 'a', { href: data.authorUrl }, data.author ),
               node = _createElement( 'div', null, null, 'blogtoc_authorthumbnail' );
 
             if ( option.thumbnail.authorThumbnail ) {
@@ -2156,6 +2177,7 @@
               node.appendChild( img );
               config.cache.aimg.push( img );
             }
+            span.appendChild( anchor );
             node.appendChild( span );
 
             return node;
@@ -2163,10 +2185,17 @@
           comment: function() {
             return _createElement( 'a', {
               href: data.commentURL
-            }, '<span class="icon icon-comment-2"></span> ' + data.comment.toString() );
+            }, '<span class="icon icon-comment-2">&nbsp;</span>' + data.comment.toString() );
           },
           index: function() {
             return document.createTextNode( idx );
+          },
+          label: function() {
+            var div = _createElement( 'div', null, null, 'blogtoc_post_label' );
+
+            div.innerHTML = data.label;
+
+            return div;
           },
           thumbnail: function() {
             var img = _createElement( 'img', {
@@ -2200,7 +2229,7 @@
             anchor = _createElement( 'a', {
               href: data.titleURL,
               title: data.summary
-            }, title );
+            }, title, 'blogtoc_post' );
 
             container.appendChild( anchor );
 
@@ -2248,8 +2277,8 @@
 
         _appends( option, templateFn( theme[ def ].options ) );
 
-        if ( theme[ def ].url ) {
-          _addCSSOnce( theme[ def ].url, true );
+        if ( theme[ def ].uri ) {
+          _addCSS( theme[ def ].uri, true );
         }
       };
       
@@ -2327,15 +2356,15 @@
        * @param  : <array>option
        * @param  : <function>fn
        ********************************************************************/    
-      var _BTSort = function( data, key, option, fn ) {
+      var _BTSort = function( data, key, fn ) {
         
         if ( !data.length ) { 
           return data;
         }
 
         // use sample index 0 of an array
-        if ( !!~_arrayContain( option, data[0][ key ] ) ) { // sorting by date
-          fn = function( a , b ) {
+        if ( key === 'updateDate' || key  === 'publishDate' ) { // sorting by date
+          fn = function( a, b ) {
             return a[ key + 'Format' ] - b[ key + 'Format' ];
           };
         } else if ( typeof data[0][ key ] === 'string' ) { // sorting by string
@@ -2556,7 +2585,7 @@
         // check the current theme setting
         if ( options.theme && options.theme.setup ) {
           // check if theme already has default settings
-          if ( _isEmptyObj( themes[ options.theme.setup ] ) ) {
+          if ( options.theme.standalone ) {
             themes[ options.theme.setup ] = {};
             themes[ options.theme.setup ].option = {};
           }
@@ -2574,7 +2603,9 @@
       /* Display
        ********************************************************************/    
       BlogToc.display = function( val, element ) {
-        element.parentNode.BTAPP.changeDisplay( val );
+        if ( element.parentNode.BTAPP ) {
+          element.parentNode.BTAPP.changeDisplay( val );
+        }
 
         return this;
       };
@@ -2582,7 +2613,9 @@
       /* Label
        ********************************************************************/    
       BlogToc.label = function( el, val, element ) {
-        element.parentNode.BTAPP.displayLabel( val, el, null, true );
+        if ( element.parentNode.BTAPP ) {
+          element.parentNode.BTAPP.displayLabel( val, el, null, true );
+        }
 
         return this;
       };
@@ -2590,7 +2623,9 @@
       /* Alphabet
        ********************************************************************/    
       BlogToc.alphabet = function( el, val, element ) {
-        element.parentNode.BTAPP.displayAlphabet( val, el, null, true );
+        if ( element.parentNode.BTAPP ) {
+          element.parentNode.BTAPP.displayAlphabet( val, el, null, true );
+        }
 
         return this;
       };
@@ -2598,7 +2633,9 @@
       /* Page
        ********************************************************************/    
       BlogToc.page = function( val, element ) {
-        element.parentNode.BTAPP.changePage( val );
+        if ( element.parentNode.BTAPP ) {
+          element.parentNode.BTAPP.changePage( val );
+        }
 
         return this;
       };
@@ -2606,7 +2643,9 @@
       /* Search
        ********************************************************************/    
       BlogToc.search = function( val, element ) {
-        element.parentNode.BTAPP.query( val );
+        if ( element.parentNode.BTAPP ) {
+          element.parentNode.BTAPP.query( val );
+        }
 
         return this;
       };
@@ -2614,7 +2653,9 @@
       /* Sorting
        ********************************************************************/    
       BlogToc.sort = function( key, element ) {
-        element.parentNode.BTAPP.sorting( key );
+        if ( element.parentNode.BTAPP ) {
+          element.parentNode.BTAPP.sorting( key );
+        }
 
         return this;
       };
@@ -2630,9 +2671,9 @@
 
       /* Theme
        ********************************************************************/  
-      BlogToc.theme = function( name, url, options ) {
+      BlogToc.theme = function( name, uri, options ) {
         themes[ name ] = {};
-        themes[ name ].url = url;
+        themes[ name ].uri = uri;
         themes[ name ].options = options;
 
         return this;
@@ -2641,13 +2682,13 @@
       /* Utilities
        ********************************************************************/  
       BlogToc.addCSS = function( src, top ) {
-        _addCSSOnce( src, top );
+        _addCSS( src, top );
 
         return this;
       };
 
       BlogToc.addJS = function( src, id, errorCallback, sync ) { 
-        _addJSOnce( src, id, errorCallback, sync );
+        _addJS( src, id, errorCallback, sync );
 
         return this;
       };
