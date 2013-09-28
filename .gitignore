@@ -49,6 +49,7 @@ validation-report.json
 .svn
 .CVS
 .idea
+trunk
 node_modules
 _site
 img
