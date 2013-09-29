@@ -8,7 +8,7 @@
 
       var VERSION = '1.5.0';
 
-      var BASE_URL = '//googledrive.com/host/0B-ME4OmVndQzMFNaMWpqVzVYUFE/' + VERSION + '/';
+      var BASE_URL = '//blogtoc2.googlecode.com/svn/trunk/' + VERSION + '/';
 
       var alphabet = '#|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z'.split('|'),
         days = 'Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday'.split('|'),
