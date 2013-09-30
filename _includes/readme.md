@@ -49,4 +49,4 @@ English is not my native language so, Send me an email if you find any mistakes 
 
 #### Your coding/design was bad ####
 I didn't really care. I'm not a designer guy and mostly everything I know come from different resource and online tutorial. 
-The important thing to me is that this application works!. You can help me by contributing on github.
+I'm happy that this application works for you :). You can help me by contributing on github.
