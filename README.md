@@ -7,7 +7,7 @@ A javascript plugin to make table of contents for blogspot using Blogger Feed AP
 Place this code somewhere in the `<head></head>` section.
 
 ```html
-<script type="text/javascript" src="//googledrive.com/host/0B-ME4OmVndQzMFNaMWpqVzVYUFE/1.2.0/blogtoc.min.js"></script>
+<script type="text/javascript" src="//blogtoc2.googlecode.com/svn/trunk/blogtoc.min.js"></script>
 ```
 
 Then add these codes below in your blog page or post
@@ -44,6 +44,7 @@ BlogToc using some external service to generate image on the fly
 Some awesome projects for theming purpose
 
 * [Twitter Bootstrap](http://getbootstrap.com/)
+* [Bootmetro](http://aozora.github.io/bootmetro/)
 * [TODC Bootstrap](http://todc.github.io/todc-bootstrap/index.html)
 
 And iconic font from [Bootmetro](http://aozora.github.io/bootmetro)

@@ -3,7 +3,7 @@
 Place this code somewhere in the `<head></head>` section.
 
 ```html
-<script type="text/javascript" src="//googledrive.com/host/0B-ME4OmVndQzMFNaMWpqVzVYUFE/1.2.0/blogtoc.min.js"></script>
+<script type="text/javascript" src="//blogtoc2.googlecode.com/svn/trunk/blogtoc.min.js"></script>
 ```
 
 Then add these codes below in your blog page or post
@@ -19,9 +19,6 @@ BlogToc( myDiv ).build({
 });
 </script>
 ```
-
-## Demo ##
-http://clusteramaryllis.github.io/blogtoc/
 
 ## Compatibility ##
 The Javascript Files are being tested in the latest versions of Chrome, Firefox, and IE6+
@@ -44,3 +41,12 @@ Some awesome projects for theming purpose
 * [TODC Bootstrap](http://todc.github.io/todc-bootstrap/index.html)
 
 And iconic font from [Bootmetro](http://aozora.github.io/bootmetro)
+
+## FAQ ##
+
+#### Your grammar sucks ####
+English is not my native language so, Send me an email if you find any mistakes or contribute yourself on github to fix the mistakes.
+
+#### Your coding/design was bad ####
+I didn't really care. I'm not a designer guy and mostly everything I know come from different resource and online tutorial. 
+The important thing to me is that this application works!. You can help me by contributing on github.
