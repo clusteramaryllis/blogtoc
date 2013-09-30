@@ -27,6 +27,7 @@ customlanguage: [
 extendclass: [
 { name: blogtoc_id, model: extendClass.blogtoc_id, desc: "div#[[renderIdText()]]"},
 { name: blogtoc_loader, model: extendClass.blogtoc_loader, desc: div.blogtoc_loader},
+{ name: blogtoc_content, model: extendClass.blogtoc_content, desc: div.blogtoc_content},
 { name: blogtoc_header, model: extendClass.blogtoc_header, desc: div.blogtoc_header},
 { name: blogtoc_label, model: extendClass.blogtoc_label, desc: select|button.blogtoc_label},
 { name: blogtoc_alphabet, model: extendClass.blogtoc_alphabet, desc: select|button.blogtoc_alphabet},
@@ -54,7 +55,7 @@ extendclass: [
             <div class="accordion-heading">
               <div class="accordion-toggle">
                 <label for="bt-cdn" class="checkbox">
-                  <input type="checkbox" name="bt-cdn" id="bt-cdn" ng-model="useCDN"> [[renderCDN()]] google drive URL
+                  <input type="checkbox" name="bt-cdn" id="bt-cdn" ng-model="useCDN"> [[renderCDN()]] google code URL
                 </label>
               </div>
             </div>
@@ -97,6 +98,30 @@ extendclass: [
                 <span class="help-block">
                   Add custom <code>ID</code> to your widget, Otherwise will generate random <code>ID</code>
                 </span>
+              </div>
+            </div>
+          </div>
+          <!-- group zero-one -->
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a href="#collapseZeroOne" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+                Binding
+              </a>
+            </div>
+            <div id="collapseZeroOne" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <!-- binding -->
+                <div ng-repeat="cc in junk.binding">
+                  <!-- table [[ cc ]]-->
+                  <label for="bt-binding-[[ cc[0] ]]">
+                    <span class="label label-inverse">[[ cc[0] ]]</span>
+                  </label>
+                  <textarea class="btn-block" name="bt-binding-[[ cc[0] ]]" id="bt-binding-[[ cc[0] ]]" ng-model="preModel.binding[ cc[0] ]"></textarea>
+                  <span class="help-block">
+                    A callback function and will trigger <code>[[ cc[1] ]]</code>.
+                  </span>
+                </div>
+                <span class="help-block">Try it! with alerting something</span>
               </div>
             </div>
           </div>
@@ -434,13 +459,58 @@ callback( language ) {
             </div>
             <div id="collapseEight" class="accordion-body collapse">
               <div class="accordion-inner">
-                <!-- new badge setup -->
+                <!-- pagination adjacents -->
                 <label for="bt-pagination-adjacents">
                   <span class="label label-inverse">Adjacents</span>
                 </label>
                 <input type="number" id="bt-pagination-adjacents" name="bt-pagination-adjacents" class="input-mini" ng-model="preModel.pagination.adjacents">
                 <span class="help-block">
                   The pagination adjacents (Must be a number).
+                </span>
+                <!-- pagination page -->
+                <div ng-repeat="cc in junk.pagination">
+                  <label for="bt-pagination-[[ cc[0] ]]">
+                    <span class="label label-inverse">[[ cc[0] ]]</span>
+                  </label>
+                  <label class="checkbox inline">
+                    <input type="checkbox" name="bt-pagination-[[ cc[0] ]]" ng-model="preModel.pagination[ cc[0] ]"> [[ preModel.pagination[ cc[0] ] ]]
+                  </label>
+                  <span class="help-block">
+                    Show the <code>[[ cc[1] ]]</code> pagination.
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- group eight-nine -->
+          <div class="accordion-group">
+            <div class="accordion-heading">
+              <a href="#collapseEightNine" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+                Post Label
+              </a>
+            </div>
+            <div id="collapseEightNine" class="accordion-body collapse">
+              <div class="accordion-inner">
+                <!-- post label setup -->
+                <label for="bt-post-label-separator">
+                  <span class="label label-inverse">Separator</span>
+                </label>
+                <input type="text" id="bt-post-label-separator" name="bt-post-label-separator" class="input-mini" ng-model="preModel.postLabel.separator">
+                <span class="help-block">
+                  The post label separator
+                </span>
+                <!-- post label render -->
+                <label for="bt-post-label-render">
+                  <span class="label label-inverse">Render</span>
+                </label>
+                <textarea class="btn-block" name="bt-post-label-render" id="bt-post-label-render" ng-model="preModel.postLabel.renderPostLabelText"></textarea>
+                <span class="help-block">
+                  Wrapping each post label with custom html. This is actually a callback function that requires 1 parameters ( <code>label</code> ) =>
+<pre class="prettyprint">
+callback( label ) {
+// wrap each label
+}</pre>
+                  <code>label</code> is post label name.
                 </span>
               </div>
             </div>
@@ -485,7 +555,7 @@ callback( elem, progress ) {
             </div>  
             <div id="collapseTen" class="accordion-body collapse">
               <div class="accordion-inner">
-                <!-- progress -->
+                <!-- marker render -->
                 <label for="bt-search-marker-render">
                   <span class="label label-inverse">Marker Render</span>
                 </label>
@@ -597,7 +667,7 @@ callback( match ) {
                   <span class="label label-inverse">Use Built in Theme</span>
                 </label>
                 <label class="checkbox inline">
-                  <input type="checkbox" name="bt-theme-built" ng-model="builtInMode"> [[builtInMode]]
+                  <input type="checkbox" name="bt-theme-built" ng-model="builtInMode" ng-change="resetStandalone()"> [[builtInMode]]
                 </label>
                 <span class="help-block">
                   Using built in theme or your own custom theme
@@ -614,20 +684,31 @@ callback( match ) {
                 </select>
                 <!-- theme setup -->
                 <input type="text" id="bt-theme-custom" name="bt-theme-custom" ng-model="preModel.theme.setup" ng-disabled="builtInMode" class="input-large">
-                <span class="help-block">Change background color</span>
+                <!-- theme standalone -->
+                <label for="bt-theme-standalone">
+                  <span class="label label-inverse">Standalone</span>
+                </label>
+                <label class="checkbox inline">
+                  <input type="checkbox" name="bt-theme-standalone" ng-model="preModel.theme.standalone" ng-disabled="builtInMode"> [[preModel.theme.standalone]]
+                </label>
+                <span class="help-block">
+                  Set the standalone to <code>true</code> if you don't follow the standard rule of theme template (<a href="#">See Detail</a>).
+                </span>
                 <!-- change background color -->
+                <span class="help-block">Change background color</span>
                 <div class="input-append colorpicker-component cbsp" data-color="rgb(255, 255, 255)" data-color-format="rgb" id="cp3">
                   <input type="text" value="rgb(255, 255, 255)">
                   <span class="add-on"><i style="background-color: rgb(255, 255, 255)"></i></span>
                 </div>
                 <span class="help-block">
-                  Select your theme. Our built in theme :
+                  Select your theme. We use these awesome project for base theme of our built in theme:
                   <ul>
                     <li><a href="http://getbootstrap.com/2.3.2/">Twitter bootstrap</a></li>
+                    <li><a href="http://aozora.github.io/bootmetro/">Bootmetro</a></li>
                     <li><a href="http://todc.github.io/todc-bootstrap/">TODC bootstrap</a></li>
                   </ul>
                   If you use your custom theme. You might be have to write your own CSS for customing. <br>
-                  You can contribute at <a href="https://github.com/clusteramaryllis/blogtoc">github</a> page.
+                  You might consider to add your own custom theme to become one of our built theme by contributing on <a href="https://github.com/clusteramaryllis/blogtoc">github</a> page.
                 </span>
               </div>
             </div>
@@ -743,6 +824,7 @@ callback( match ) {
     other: {}
   };
   var _def = {
+    binding: {},
     date: {},
     display: {},
     extendClass: {},
@@ -753,6 +835,7 @@ callback( match ) {
     newBadge: {},
     pagination: {},
     progress: {},
+    postLabel: {},
     search: {},
     sorting: {},
     summary: {},
@@ -790,12 +873,15 @@ callback( match ) {
   _def.newBadge.renderBadgeText = '\'<span class="label">\' + language + \'</span>\'';
   _def.pagination.adjacents = 2;
   _def.progress.renderProgressText = "var span; if ( ( span = elem.getElementsByTagName('span')[0] ) ) { span.innerHTML = progress; } else { elem.innerHTML = 'Loading <span>' + progress + '</span> %'; }";
+  _def.postLabel.separator = '';
+  _def.postLabel.renderPostLabelText = "'<span>' + label + '</span>'";
   _def.search.renderSearchText = "'<b>' + match + '</b>'";
   _def.sorting.key = 'title';
   _def.sorting.order = 'ascending';
   _def.summary.wordLimit = 200;
   _def.table.order = ["index","thumbnail","title","publishDate","updateDate","author","comment"];
   _def.theme.setup = 'bootstrap';
+  _def.theme.standalone = false;
   _def.thumbnail.blank = 'http://3.bp.blogspot.com/-trkoRRazZ7A/UdtEVufkxiI/AAAAAAAABxI/DOJ7jAUv1G4/s1600/blank.gif';
   _def.thumbnail.notFound = 'http://3.bp.blogspot.com/-p7gZDNwTJbw/UdkqBnBb1bI/AAAAAAAAALI/hoCIpF74N80/s1600/image_not_available.jpg';
   _def.thumbnail.sample = 'http://s20.postimg.org/7oz0eeuyx/blank.gif';
@@ -804,88 +890,39 @@ callback( match ) {
   _def.thumbnail.authorThumbnail = true;
   _def.url = '';
 
+  // junk data
+  _junk.binding = [
+    ['onAfterDataChange', 'after the data in the table changes' ],
+    ['onBeforeDataChange', 'before the data in the table changes'],
+    ['onInit', 'when the BlogToc App began initialization (first showing a loading progress)'],
+    ['onLiveDataChange', 'everytime the data in the table making a change'],
+    ['onLoaded', 'when the BlogToc App finish loaded']
+  ];
+  _junk.pagination = [
+    ['showNextPage', 'next page'],
+    ['showPrevPage', 'prev page'],
+    ['showFirstPage', 'first page'],
+    ['showLastPage', 'last page']
+  ];
+  _junk.bindingTest = [];
   _junk.label.define = [];
   _junk.other.boot = "if( elem.className.lastIndexOf('progress') === -1 ) { elem.className += ' progress'; } if( ( div = elem.firstChild ) ) { div.style.width = progress + '%'; } else { div = document.createElement('div'); div.className = 'bar'; div.style.width = progress + '%'; elem.appendChild(div); }";
   _junk.other.img = "var img; if ( !( img = elem.getElementsByTagName('img')[0] ) ) { elem.innerHTML = '<div style=\"text-align: center\"><img src=\"//metroui.org.ua/images/preloader-w8-cycle-black.gif\" /><div>'; }"
   _junk.table.order = _def.table.order.slice(0);
   _junk.table.order.push('summary');
-  _junk.table.idx = [2.5,7,26,12.5,12.5,10.5,11,25]
+  _junk.table.order.push('label');
+  _junk.table.idx = [2.5,7,26,12.5,12.5,10.5,11,25];
 
+  for(var i=0; i<_junk.binding.length; i++) { 
+    _def.binding[_junk.binding[i][0]] = '';
+    _junk.bindingTest.push(_junk.binding[i][0]);
+  }
+  for(var i=0; i<_junk.pagination.length; i++) { 
+    _def.pagination[_junk.pagination[i][0]] = true;
+  }
   for(var i=0; i<_junk.table.order.length; i++) {
     _def.table[_junk.table.order[i]+"WidthPoint"] = _junk.table.idx[i];
   }
-
-  $(function(){
-
-    // get categories
-    $("#bt-url").on('blur',function(){
-
-      if ($(this).val() == '') return;
-
-      var url = $(this).val().replace(/.*?:\/\/|\/$/g, '');
-
-      $.ajax({
-        url : '//' + url + '/feeds/posts/summary/?max-results=0&alt=json-in-script',
-        dataType: 'jsonp',
-        success: function(data) {
-          var feed = data.feed;
-
-          if ('category' in feed) {
-            _junk.label.define = [];
-            for (var i=0,len=feed.category.length; i<len;i++) {
-              _junk.label.define.push( feed.category[i].term );
-            }
-          }
-        }
-      });
-    });
-
-    // colorpicker
-    $("#cp3").colorpicker().on('changeColor', function(ev){
-      //console.log(ev.color.toRGB());
-      $('#blogtoc').css('background',ev.color.toHex());
-    });
-
-    // autogrow
-    $("#bt-date-render, #bt-new-badge-render, #bt-progress-render").autogrow();
-
-    // filter input
-    $("#bt-new-badge-setup, #bt-pagination-adjacents, #bt-thumbnail-size, #bt-thumbnail-author-size").filter_input({regex: '[0-9]'});
-    $(".bt-point").filter_input({regex: '[0-9\.]'});
-
-    // misc
-    $("#reveal-new-label").on('click',function(e){
-      e.preventDefault();
-      $("#collapseSix").collapse('show');
-      $($(this).attr("href")).focus();
-    });
-
-    $("#generate").on('click',function(e){
-      e.preventDefault();
-      if ($("#bt-language-setup").val() !== 'en-US') {
-        BlogToc.addJS("lang/" + $("#bt-language-setup").val() + ".js");
-      }
-      if ($("#bt-theme-default").val() !== 'bootstrap') {
-        BlogToc.addJS("theme/bt_" + $("#bt-theme-default").val() + ".js");
-      }
-      BlogToc.reset( myDiv, true, _end );
-
-      $("#generate").attr("disabled",true);
-
-      var timing = function() {
-        setTimeout(function(){
-          if ( !myDiv.BTLoaded ) {
-            timing()
-          } else {
-            $("#generate").attr("disabled",false);
-          }
-        },100);
-      };
-
-      timing();
-    });
-
-  });
 
   // Angular App
   var docApp = angular.module('docApp', ['ui.select2', 'ui.bootstrap'/*, 'toggle-switch'*/], function($interpolateProvider) {
@@ -898,6 +935,7 @@ callback( match ) {
     // properties
     $scope.preModel = {
       blogtocId: _def.blogtocId,
+      binding: {},
       date: {
         day: _def.date.day,
         month: _def.date.month,
@@ -945,11 +983,16 @@ callback( match ) {
       progress: {
         renderProgressText: _def.progress.renderProgressText
       },
+      postLabel: {
+        separator: _def.postLabel.separator,
+        renderPostLabelText: _def.postLabel.renderPostLabelText
+      },
       table: {
         order: _def.table.order
       },
       theme: {
-        setup: _def.theme.setup
+        setup: _def.theme.setup,
+        standalone: _def.theme.standalone
       },
       thumbnail: {
         blank: _def.thumbnail.blank,
@@ -960,6 +1003,12 @@ callback( match ) {
         authorThumbnail: _def.thumbnail.authorThumbnail
       },
       url: _def.url
+    };
+
+
+    $scope.junk = { 
+      binding: _junk.binding,
+      pagination: _junk.pagination
     };
 
     $scope.appVersion = "{{ site.appVersion }}";
@@ -982,6 +1031,12 @@ callback( match ) {
     {% endfor %}
     $scope.preModel.language.custom.result = _def.language.custom.result;
     $scope.preModel.language.custom.errorMessage = _def.language.custom.errorMessage;
+    for(var i=0; i<_junk.binding.length; i++) {
+      $scope.preModel.binding[_junk.binding[i][0]] = _def.binding[_junk.binding[i][0]];
+    }
+    for(var i=0; i<_junk.pagination.length; i++) {
+      $scope.preModel.pagination[_junk.pagination[i][0]] = _def.pagination[_junk.pagination[i][0]];
+    }
     for(var i=0; i<_junk.table.order.length; i++) {
       $scope.preModel.table[_junk.table.order[i]+"WidthPoint"] = _def.table[_junk.table.order[i]+"WidthPoint"];
     }
@@ -1015,7 +1070,7 @@ callback( match ) {
         'simple_tags': true,
         'locked': true,
         'tags': _junk.table.order,
-        'maximumSelectionSize': 8
+        'maximumSelectionSize': 9
       }
     };
 
@@ -1060,6 +1115,15 @@ callback( match ) {
 
       $scope.resultModel = changeDiffObj($scope.preModel, _def, _junk);
       $scope.objModel = clone($scope.resultModel);
+      if ( $scope.objModel.binding ) {
+        for ( var prop in $scope.objModel.binding ) {
+          if ( $scope.objModel.binding.hasOwnProperty(prop) ) {
+            if ( $scope.objModel.binding[prop] ) {
+              $scope.objModel.binding[prop] = eval('(' + $scope.objModel.binding[prop] + ')');
+            }
+          }
+        }
+      }
       if ( $scope.objModel.date &&  $scope.objModel.date.render ) {
         $scope.objModel.date.render = eval('(' + $scope.objModel.date.render + ')');  
       }
@@ -1072,6 +1136,9 @@ callback( match ) {
       if ( $scope.objModel.search &&  $scope.objModel.search.markerRender ) {
         $scope.objModel.search.markerRender = eval('(' + $scope.objModel.search.markerRender + ')');
       }
+      if ( $scope.objModel.postLabel &&  $scope.objModel.postLabel.render ) {
+        $scope.objModel.postLabel.render = eval('(' + $scope.objModel.postLabel.render + ')');
+      }
 
       if ( isEmptyObj( $scope.resultModel ) ) {
         return '';
@@ -1081,7 +1148,7 @@ callback( match ) {
         return ( typeof value === 'function' ) ? value.toString() : value;
       }, 2 );
 
-      return result.replace(/\}\"/i,"}")
+      return result.replace(/\}\"/gi,"}")
         .replace(/\:\s*\"function/gi,": function")
         .replace(/\u2028/g, "\\u2028")
         .replace(/\u2029/g, "\\u2029")
@@ -1111,13 +1178,19 @@ callback( match ) {
     };
 
     $scope.renderCDN = function() {
-      $scope.CDN = $scope.useCDN ? "//googledrive.com/host/0B-ME4OmVndQzMFNaMWpqVzVYUFE/" + $scope.appVersion + "/" : "";
+      $scope.CDN = $scope.useCDN ? "//blogtoc2.googlecode.com/svn/trunk/" + $scope.appVersion + "/" : "";
       return $scope.useCDN ? "Use" : "Don't use";
     };
 
     $scope.renderIdText = function() {
       return $scope.preModel.blogtocId || '{blogtoc_id}';
     };
+
+    $scope.resetStandalone = function() {
+      if ( $scope.builtInMode ) {
+        $scope.preModel.theme.standalone = false;
+      }
+    }
 
     $scope.disableException = function() {
       if ( !$scope.preModel.label.define.length ) {
@@ -1148,6 +1221,7 @@ callback( match ) {
     };
   });
 
+  // Functions
   function modelOne( scope ) {
 
     var str = "<div id=\"blogtoc\"></div>\n\n" + 
@@ -1235,6 +1309,8 @@ callback( match ) {
 
     var result = {};
 
+    var bindingTest = new RegExp(_junk.bindingTest.join('|'),'i');
+
     for (var key in obj ) {
 
       if ( obj.hasOwnProperty(key) ) {
@@ -1242,13 +1318,17 @@ callback( match ) {
           
           if ( angular.isArray(obj[key]) || !angular.isObject(obj[key]) ) {
             if ( key === 'renderDateText' ) { 
-              result['render'] = 'function(date, option) { return ' + obj[key] + '; }'
+              result['render'] = 'function(date, option) { return ' + obj[key] + '; }';
             } else if ( key === 'renderBadgeText' ) { 
-              result['render'] = 'function(language) { return ' + obj[key] + '; }'
+              result['render'] = 'function(language) { return ' + obj[key] + '; }';
             } else if ( key === 'renderProgressText' ) { 
-              result['render'] = 'function(elem, progress) { ' + obj[key] + ' }'
+              result['render'] = 'function(elem, progress) { ' + obj[key] + ' }';
             } else if ( key === 'renderSearchText' ) { 
-              result['markerRender'] = 'function(match) { return ' + obj[key] + '; }'
+              result['markerRender'] = 'function(match) { return ' + obj[key] + '; }';
+            } else if ( key === 'renderPostLabelText' ) { 
+              result['render'] = 'function(label) { return ' + obj[key] + '; }';
+            } else if ( bindingTest.test(key) ) { 
+              result[key] = 'function() { ' + obj[key] + ' }';
             } else if ( key === 'setup' ) {
               if ( isNaN(obj[key]) ) {
                 result[key] = obj[key];
@@ -1282,4 +1362,77 @@ callback( match ) {
 
     return result;
   }
+
+  // jQuery
+  $(function(){
+
+    // get categories
+    $("#bt-url").on('blur',function(){
+
+      if ($(this).val() == '') return;
+
+      var url = $(this).val().replace(/.*?:\/\/|\/$/g, '');
+
+      $.ajax({
+        url : '//' + url + '/feeds/posts/summary/?max-results=0&alt=json-in-script',
+        dataType: 'jsonp',
+        success: function(data) {
+          var feed = data.feed;
+
+          if ('category' in feed) {
+            _junk.label.define = [];
+            for (var i=0,len=feed.category.length; i<len;i++) {
+              _junk.label.define.push( feed.category[i].term );
+            }
+          }
+        }
+      });
+    });
+
+    // colorpicker
+    $("#cp3").colorpicker().on('changeColor', function(ev){
+      //console.log(ev.color.toRGB());
+      $('#blogtoc').css('background',ev.color.toHex());
+    });
+
+    // autogrow on text area
+    $("textarea").autogrow();
+
+    // filter input
+    $("#bt-new-badge-setup, #bt-pagination-adjacents, #bt-thumbnail-size, #bt-thumbnail-author-size").filter_input({regex: '[0-9]'});
+    $(".bt-point").filter_input({regex: '[0-9\.]'});
+
+    // misc
+    $("#reveal-new-label").on('click',function(e){
+      e.preventDefault();
+      $("#collapseSix").collapse('show');
+      $($(this).attr("href")).focus();
+    });
+
+    $("#generate").on('click',function(e){
+      e.preventDefault();
+      if ($("#bt-language-setup").val() !== 'en-US') {
+        BlogToc.addJS("lang/" + $("#bt-language-setup").val() + ".js");
+      }
+      if ($("#bt-theme-default").val() !== 'bootstrap') {
+        BlogToc.addJS("theme/bt_" + $("#bt-theme-default").val() + ".js");
+      }
+      BlogToc.reset( myDiv, true, _end );
+
+      $("#generate").attr("disabled",true);
+
+      var timing = function() {
+        setTimeout(function(){
+          if ( !myDiv.BTLoaded ) {
+            timing()
+          } else {
+            $("#generate").attr("disabled",false);
+          }
+        },100);
+      };
+
+      timing();
+    });
+
+  });
 </script>

@@ -35,7 +35,8 @@ description: Extends BlogToc with your own custom theme.
       authorWidthPoint: 11
     },
     theme : {
-      setup: "custom"
+      setup: "custom",
+      standalone: true
     },
     thumbnail: {
       size: 48,
@@ -80,7 +81,8 @@ BlogToc( document.getElementById('content') ).build({
     authorWidthPoint: 11
   },
   theme : {
-    setup: "custom"
+    setup: "custom",
+    standalone: true // must set this to true
   },
   thumbnail: {
     size: 48,

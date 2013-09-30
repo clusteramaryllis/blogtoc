@@ -1,0 +1,493 @@
+---
+layout: showcase
+title: Use with Other Library.
+description: Make BlogToc like blogger admin panel in the post section.
+---
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+<script src="//cdn.jsdelivr.net/bootstrap.select/0.1/bootstrap-select.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/moment.js/2.2.1/moment.min.js"></script>
+<div class="row-fluid">
+<div class="span12">
+  <h1>{{ page.title }}</h1>
+  <span class="help-inline muted"><em>{{ page.description }}</em></span>
+  <hr>
+  <div id="content"></div>
+  <script>
+  BlogToc.addCSS("//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css");
+  BlogToc.addCSS("//cdn.jsdelivr.net/bootstrap.select/0.1/bootstrap-select.min.css");
+  // Init function
+  function onBlogtocLoaded() {
+    // move necessary element to filter
+    var $content = $("#content");
+    $content.find('.blogtoc_filter').append( $content.find('.blogtoc_label').addClass('pull-right') );
+    $content.find('.blogtoc_filter').append( $content.find('.blogtoc_pagination').css('margin','0 5px') );
+    $content.find('.blogtoc_filter').append( $content.find('.blogtoc_result').removeClass('pull-left').addClass('pull-right') );
+    // add blogtoc wrapper div
+    $content.find('.blogtoc_filter').after( $('<div class="blogtoc_wrapper" style="position: relative"/>') );
+    // change display position
+    $content.find('.blogtoc_display').removeClass('pull-left').addClass('pull-right');
+    // add margin-right to query
+    $content.find('.blogtoc_query').css('margin-right','5px');
+    // move table tp blogtoc wrapper div
+    $content.find('.blogtoc_wrapper').append( $content.find('.blogtoc_table') );
+    // append camouflage and hide it ( for loading trick )
+    $content.find('.blogtoc_wrapper').append( $('<div class="camouflage" style="display: none"/>') );
+
+    // change select appearance as button
+    $('select').selectpicker({
+      width: 'auto'
+    });
+  }
+
+  function onAfterBlogtocDataChanged() {
+    // add little loading trick like in the blogger (:P)
+    // every time the data changed by using camouflage class
+    var $content = $("#content");
+
+    // show it first
+    $content.find('.camouflage').show();
+    // and hide it after 1 seconds
+    setTimeout(function(){
+      $content.find('.camouflage').hide();
+    }, 1000);
+  }
+
+  function movePostLabelNextToPostTitle() {
+    // move post label next to post title
+    var $content = $("#content");
+
+    $content.find('.blogtoc_post').tooltip();
+    $content.find('.blogtoc_post').parent().each(function(){
+      var $blogtocPostLabel = $(this).next().find('.blogtoc_post_label');
+
+      if ( $blogtocPostLabel.length ) {
+        $(this).append( $blogtocPostLabel );
+      }
+    });
+  }
+
+  function progressRender(elem, proggress) {
+    var $elem = $(elem);
+
+    if ( !$elem.hasClass('alert') ) {
+      $elem.addClass('alert');
+    }
+
+    if ( $elem.html() === '' ) {
+      $elem.append('Loading...');
+    }
+  }
+
+  BlogToc.baseURL("./");
+  BlogToc.addJS('theme/bt_todc-bootstrap.js');
+  // BlogToc.addCSS('css/todc-bootstrap/bt_todc-bootstrap.css');
+  BlogToc.addCSS('css/blogger.css');
+
+  BlogToc($('#content')[0]).build({
+    blogtocId: "my_table",
+    binding: {
+      onLoaded: function() {
+        onBlogtocLoaded();
+      },
+      onAfterDataChange: function() {
+        onAfterBlogtocDataChanged();
+        movePostLabelNextToPostTitle();
+      },
+      onLiveDataChange: function() {
+        movePostLabelNextToPostTitle();
+      }
+    },
+    date: {
+      render: function(date, option) {
+        return moment(date.getDate() + '-' + ( date.getMonth() + 1 ) + '-' + date.getFullYear(), "D-MM-YYYY")
+          .format("DD/MM/YYYY");
+      }
+    },
+    display: {
+      setup: 25
+    },
+    extendClass: {
+      blogtoc_id: "blogger"
+    },
+    label: {
+      setup: 'All labels'
+    },
+    language: {
+      custom: {
+        display: " ",
+        search: " ",
+        prevPage: "<i class=\"icon-chevron-left\"></i>",
+        nextPage: "<i class=\"icon-chevron-right\"></i>",
+        result: "{begin}-{end} of {total}"
+      }
+    },
+    newBadge: {
+      setup: 0
+    },
+    pagination: {
+      showFirstPage: false,
+      showLastPage: false
+    },
+    postLabel: {
+      separator: ', '
+    },
+    progress: {
+      render: progressRender
+    },
+    search: {
+      markerRender: function(match) {
+        return match;
+      }
+    },
+    sorting: {
+      key: 'updateDate',
+      order: 'descending'
+    },
+    summary: {
+      wordLimit: 80
+    },
+    table: {
+      order: ['index','title','label','author','comment','updateDate'],
+      showHeader: false,
+      titleWidthPoint: 34,
+      labelWidthPoint: 0,
+      commentWidthPoint: 4,
+      updateDateWidthPoint: 4
+    },
+    theme : {
+      setup: "todc-bootstrap"
+    },
+    thumbnail: {
+      size: 48,
+      authorSize: 24,
+      authorThumbnail: false
+    },
+    url: "android-developers.blogspot.com"
+  });
+  </script>
+  <h3>Code</h3>
+  <hr>
+  <div class="tabbable">
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#html" data-toggle="tab">HTML</a></li>
+      <li><a href="#js" data-toggle="tab">JS</a></li>
+      <li><a href="#css" data-toggle="tab">CSS</a></li>
+    </ul>
+    <div class="tab-content">
+      <div class="tab-pane active" id="html">
+<pre class="prettyprint linenums">
+&lt;!-- add neccessary resource  --&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css&quot;&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.css&quot;&gt;
+&lt;link rel=&quot;stylesheet&quot; href=&quot;//cdn.jsdelivr.net/bootstrap.select/0.1/bootstrap-select.min.css&quot;&gt;
+&lt;script src=&quot;//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;//cdn.jsdelivr.net/bootstrap.select/0.1/bootstrap-select.min.js&quot;&gt;&lt;/script&gt;
+&lt;script src=&quot;//cdnjs.cloudflare.com/ajax/libs/moment.js/2.2.1/moment.min.js&quot;&gt;&lt;/script&gt;
+
+&lt;div id="content"&gt;&lt;/div&gt;
+</pre>
+      </div>
+      <div class="tab-pane" id="js">
+<pre class="prettyprint linenums">
+$(document).ready(function(){
+  
+  // Use BlogToc with other libraries (jQuery, momentjs, font-awesome, bootstrap-select)
+  BlogToc.addJS('theme/bt_todc-bootstrap.js');
+
+  var myDiv = $("#content")[0];
+
+  BlogToc(myDiv).build({
+    binding: {
+      onLoaded: function() {
+        onBlogtocLoaded();
+      },
+      onAfterDataChange: function() {
+        onAfterBlogtocDataChanged();
+        movePostLabelNextToPostTitle();
+      },
+      onLiveDataChange: function() {
+        movePostLabelNextToPostTitle();
+      }
+    },
+    date: {
+      render: function(date, option) {
+        return moment(date.getDate() + '-' + ( date.getMonth() + 1 ) + '-' + date.getFullYear(), &quot;D-MM-YYYY&quot;)
+          .format(&quot;DD/MM/YYYY&quot;);
+      }
+    },
+    display: {
+      setup: 25
+    },
+    extendClass: {
+      blogtoc_id: &quot;blogger&quot;
+    },
+    label: {
+      setup: 'All labels'
+    },
+    language: {
+      custom: {
+        display: &quot; &quot;,
+        search: &quot; &quot;,
+        prevPage: &quot;&lt;i class=\&quot;icon-chevron-left\&quot;&gt;&lt;/i&gt;&quot;,
+        nextPage: &quot;&lt;i class=\&quot;icon-chevron-right\&quot;&gt;&lt;/i&gt;&quot;,
+        result: &quot;{begin}-{end} of {total}&quot;
+      }
+    },
+    newBadge: {
+      setup: 0
+    },
+    pagination: {
+      showFirstPage: false,
+      showLastPage: false
+    },
+    postLabel: {
+      separator: ', '
+    },
+    progress: {
+      render: progressRender
+    },
+    search: {
+      markerRender: function(match) {
+        return match;
+      }
+    },
+    sorting: {
+      key: 'updateDate',
+      order: 'descending'
+    },
+    summary: {
+      wordLimit: 80
+    },
+    table: {
+      order: ['index','title','label','author','comment','updateDate'],
+      showHeader: false,
+      titleWidthPoint: 34,
+      labelWidthPoint: 0,
+      commentWidthPoint: 4,
+      updateDateWidthPoint: 4
+    },
+    theme : {
+      setup: &quot;todc-bootstrap&quot;
+    },
+    thumbnail: {
+      size: 48,
+      authorSize: 24,
+      authorThumbnail: false
+    },
+    url: &quot;android-developers.blogspot.com&quot;
+  });
+
+  function onBlogtocLoaded() {
+    // move necessary element to filter
+    var $content = $(&quot;#content&quot;);
+
+    $content.find('.blogtoc_filter').append( 
+      $content.find('.blogtoc_label').addClass('pull-right'), 
+      $content.find('.blogtoc_pagination').css('margin','0 5px'), 
+      $content.find('.blogtoc_result').removeClass('pull-left').addClass('pull-right') 
+    );
+    // add blogtoc wrapper div
+    $content.find('.blogtoc_filter').after( $('&lt;div class=&quot;blogtoc_wrapper&quot;/&gt;') );
+    // change display position
+    $content.find('.blogtoc_display').removeClass('pull-left').addClass('pull-right');
+    // add margin-right to query
+    $content.find('.blogtoc_query').css('margin-right','5px');
+    // move table tp blogtoc wrapper div
+    $content.find('.blogtoc_wrapper').append( $content.find('.blogtoc_table') );
+    // append camouflage and hide it ( for loading trick )
+    $content.find('.blogtoc_wrapper').append( $('&lt;div class=&quot;camouflage&quot; style=&quot;display: none&quot;/&gt;') );
+
+    // change select appearance as button
+    $('select').selectpicker({
+      width: 'auto'
+    });
+  }
+
+  function onAfterBlogtocDataChanged() {
+    // add little loading trick like in the blogger (:P)
+    // every time the data changed by using camouflage class
+    var $content = $(&quot;#content&quot;);
+
+    // show it first
+    $content.find('.camouflage').show();
+    // and hide it after 1 seconds
+    setTimeout(function(){
+      $content.find('.camouflage').hide();
+    }, 1000);
+  }
+
+  function movePostLabelNextToPostTitle() {
+    // move post label next to post title
+    var $content = $(&quot;#content&quot;);
+
+    $content.find('.blogtoc_post').tooltip();
+    $content.find('.blogtoc_post').parent().each(function(){
+      var $blogtocPostLabel = $(this).next().find('.blogtoc_post_label');
+
+      if ( $blogtocPostLabel.length ) {
+        $(this).append( $blogtocPostLabel );
+      }
+    });
+  }
+
+  function progressRender(elem, proggress) {
+    var $elem = $(elem);
+
+    if ( !$elem.hasClass('alert') ) {
+      $elem.addClass('alert');
+    }
+
+    if ( $elem.html() === '' ) {
+      $elem.append('Loading...');
+    }
+  }
+});
+</pre>
+      </div>
+      <div class="tab-pane" id="css">
+<pre class="prettyprint linenums">
+.blogger {
+  font-size: 13px;
+}
+.blogger a:hover {
+  text-decoration: underline;
+}
+.blogger .btn {
+  cursor: pointer;
+}
+.blogger .btn-group .btn {
+  font-size: 11px;
+}
+.blogger .btn-group.open .btn {
+  outline: 0 !important;
+}
+.blogger .btn-group.open .btn:focus {
+  border-color: #C6C6C6;
+}
+.blogger .btn-group .dropdown-menu {
+  overflow: hidden !important;
+  min-height: none !important;
+  max-height: none !important;
+}
+.blogger .btn-group .dropdown-menu a {
+  font-size: 13px;
+  padding: 10px 20px;
+}
+.blogger .btn-group .dropdown-menu a:hover {
+  background-color: #FFF9E7;
+  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMSAxIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIj48bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQtdWNnZy1nZW5lcmF0ZWQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIiIHN0b3AtY29sb3I9IiNGRkY5RTciIHN0b3Atb3BhY2l0eT0iMSIvPjxzdG9wIG9mZnNldD0iIiBzdG9wLWNvbG9yPSIjRkZGOUU3IiBzdG9wLW9wYWNpdHk9IjEiLz48L2xpbmVhckdyYWRpZW50PjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9InVybCgjZ3JhZC11Y2dnLWdlbmVyYXRlZCkiIC8+PC9zdmc+);
+  background-image: -moz-linear-gradient(top, #FFF9E7, #FFF9E7);
+  background-image: -webkit-linear-gradient(top, #FFF9E7, #FFF9E7);
+  background-image: -o-linear-gradient(top, #FFF9E7, #FFF9E7);
+  background-image: linear-gradient(to bottom, #FFF9E7, #FFF9E7);
+}
+.blogger .btn-group .dropdown-menu a:focus {
+  background-color: #EDF4FF;
+  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMSAxIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIj48bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQtdWNnZy1nZW5lcmF0ZWQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIiIHN0b3AtY29sb3I9IiNFREY0RkYiIHN0b3Atb3BhY2l0eT0iMSIvPjxzdG9wIG9mZnNldD0iIiBzdG9wLWNvbG9yPSIjRURGNEZGIiBzdG9wLW9wYWNpdHk9IjEiLz48L2xpbmVhckdyYWRpZW50PjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9InVybCgjZ3JhZC11Y2dnLWdlbmVyYXRlZCkiIC8+PC9zdmc+);
+  background-image: -moz-linear-gradient(top, #EDF4FF, #EDF4FF);
+  background-image: -webkit-linear-gradient(top, #EDF4FF, #EDF4FF);
+  background-image: -o-linear-gradient(top, #EDF4FF, #EDF4FF);
+  background-image: linear-gradient(to bottom, #EDF4FF, #EDF4FF);
+}
+.blogger .blogtoc_loader {
+  width: 50px;
+  margin: 0 auto;
+  text-align: center;
+  font-size: 11px;
+  padding: 7px 20px;
+}
+.blogger .blogtoc_query {
+  -webkit-border-radius: 2px !important;
+  -webkit-background-clip: padding-box;
+  -moz-border-radius: 2px !important;
+  -moz-background-clip: padding;
+  border-radius: 2px !important;
+  background-clip: padding-box;
+  border: 1px solid rgba(0, 0, 0, 0.1) !important;
+  -webkit-box-shadow: none !important;
+  -moz-box-shadow: none !important;
+  box-shadow: none !important;
+  background: url(&quot;../img/search.png&quot;) top 9px right 5px no-repeat;
+  width: 150px;
+}
+.blogger .blogtoc_query:focus {
+  outline: -webkit-focus-ring-color auto 5px !important;
+}
+.blogger .blogtoc_table {
+  border-color: #EBEBEB !important;
+}
+.blogger .blogtoc_table tbody,
+.blogger .blogtoc_table thead,
+.blogger .blogtoc_table tr,
+.blogger .blogtoc_table td {
+  border-color: #EBEBEB !important;
+}
+.blogger .blogtoc_table tr .icon {
+  color: #d1d1d1;
+  text-decoration: none;
+}
+.blogger .blogtoc_table tr:hover .icon {
+  color: #ff915b;
+}
+.blogger .blogtoc_table tr:last-child {
+  border-bottom: 1px solid #ebebeb;
+}
+.blogger .blogtoc_table td {
+  padding-bottom: 25px;
+}
+.blogger .blogtoc_post_label {
+  display: inline;
+  margin-left: 5px;
+}
+.blogger .blogtoc_post_label span {
+  color: #ffa951;
+  font-style: italic;
+  text-decoration: underline;
+}
+.blogger .blogtoc_result {
+  padding: 5px;
+}
+.blogger .blogtoc_result b {
+  font-weight: normal;
+}
+.blogger .blogtoc_pagination a,
+.blogger .blogtoc_pagination span {
+  font-size: 11px;
+  font-weight: bold;
+}
+.blogger .blogtoc_pagination .active span {
+  color: #B3B3B3 !important;
+  background-color: #F3F3F3 !important;
+  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMSAxIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIj48bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQtdWNnZy1nZW5lcmF0ZWQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIiIHN0b3AtY29sb3I9IiNGNUY1RjUiIHN0b3Atb3BhY2l0eT0iMSIvPjxzdG9wIG9mZnNldD0iIiBzdG9wLWNvbG9yPSIjRjFGMUYxIiBzdG9wLW9wYWNpdHk9IjEiLz4pICFpbXBvcnRhbjwvbGluZWFyR3JhZGllbnQ+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz48L3N2Zz4=);
+  background-image: -moz-linear-gradient(top, #F5F5F5, #F1F1F1) !important;
+  background-image: -webkit-linear-gradient(top, #F5F5F5, #F1F1F1) !important;
+  background-image: -o-linear-gradient(top, #F5F5F5, #F1F1F1) !important;
+  background-image: linear-gradient(to bottom, #F5F5F5, #F1F1F1) !important;
+  border-color: #D9D9D9 !important;
+}
+.blogger .blogtoc_pagination .blogtoc_responsive_hide {
+  display: none;
+}
+.blogger .blogtoc_wrapper {
+  position: relative;
+}
+.blogger .camouflage {
+  border-top: 1px solid #ebebeb;
+  border-bottom: 1px solid #ebebeb;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  background: #ffffff url(&quot;../img/loader.gif&quot;) top 20px center no-repeat;
+  z-index: 999;
+}
+</pre>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script>prettyPrint();</script>
