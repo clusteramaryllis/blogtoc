@@ -4,14 +4,17 @@ title: BlogToc
 slug: extra
 ---
 <div class="tab-pane active">
-<h2>Showcase</h2>
+<h3>Details</h3>
+<hr>
+<p>See detail section <a href="detail.html">here</a>.</p>
+<h3>Showcase</h3>
 <hr>
 <div class="container-fluid">
 	<div class="row-fluid" ng-controller="ShowCtrl">
 		<ul class="thumbnails">
 			<li class="span4" ng-repeat="gallery in galleries">
   			<div class="thumbnail">
-    			<img src="[[gallery.thumbnail]]" alt="ALT NAME">
+    			<img src="[[gallery.thumbnail]]" alt="[[gallery.title]]">
     			<div class="caption">
       			<h4>[[gallery.title]]</h4>
       			<p>[[gallery.description]]</p>
@@ -21,7 +24,6 @@ slug: extra
 			</li>
 		</ul>
 	</div>
-	<h1>And many more will be coming soon...</h1>
 	<p>Contribute yourself <a href="https://github.com/clusteramaryllis/blogtoc">@github</a></p>
 </div>
 </div>
@@ -45,6 +47,12 @@ slug: extra
         title: "Use with Other Library",
         description: "Make BlogToc appearence like blogger admin panel in the post section.",
         link: "gallery-2.html"
+      },
+      {
+        thumbnail: "img/gallery-3.jpg",
+        title: "Thumbnail Gallery",
+        description: "Using BlogToc as thumbnail gallery with the power of CSS and jQuery.",
+        link: "gallery-3.html"
       }
   	];
   });

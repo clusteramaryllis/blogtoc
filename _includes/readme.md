@@ -44,9 +44,8 @@ And iconic font from [Bootmetro](http://aozora.github.io/bootmetro)
 
 ## FAQ ##
 
-#### Your grammar sucks ####
-English is not my native language so, Send me an email if you find any mistakes or contribute yourself on github to fix the mistakes.
+##### Your grammar sucks #####
+English is not my native language so, send me an email if you find any mistakes or contribute yourself on github to fix the mistakes.
 
-#### Your coding/design was bad ####
-I didn't really care. I'm not a designer guy and mostly everything I know come from different resource and online tutorial. 
-I'm happy that this application works for you :). You can help me by contributing on github.
+##### Your coding/design was bad #####
+My programming level are not expert and I'm not a designer guy. Mostly everything I know come from different resource and online tutorial. I'm just happy if this application works for you :). And this is open source project, so you may help me improve the code or design by contributing on github.

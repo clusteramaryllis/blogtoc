@@ -2451,7 +2451,7 @@ a.thumbnail:hover {
 .badge-inverse[href] {
   background-color: #1a1a1a;
 }
-.progress {
+/*.progress {
   border: 1px solid #999;
   padding: 1px;
   height: 10px;
@@ -2539,7 +2539,7 @@ a.thumbnail:hover {
   background-image: -moz-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
   background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
   background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
-}
+}*/
 @media (max-width: 979px) {
   .navbar-masthead.navbar-fixed-top .navbar-inner,
   .navbar-masthead.navbar-fixed-bottom .navbar-inner {

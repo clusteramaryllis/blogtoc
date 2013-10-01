@@ -44,18 +44,29 @@ description: Extends BlogToc with your own custom theme.
     }
   });
   </script>
-  <h3>Code</h3>
+  <h3>Code Example</h3>
   <hr>
   <div class="tabbable">
     <ul class="nav nav-tabs">
       <li class="active"><a href="#html" data-toggle="tab">HTML</a></li>
-      <li><a href="#js" data-toggle="tab">JS</a></li>
-      <li><a href="#css" data-toggle="tab">CSS</a></li>
+      <li><a href="#js" data-toggle="tab">app.js</a></li>
+      <li><a href="#css" data-toggle="tab">custom.css</a></li>
     </ul>
     <div class="tab-content">
       <div class="tab-pane active" id="html">
 <pre class="prettyprint linenums">
-&lt;div id="content"&gt;&lt;/div&gt;
+&lt;!doctype html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;{{ page.title }}&lt;/title&gt;
+    &lt;link href=&quot;custom.css&quot; rel=&quot;stylesheet&quot; /&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div id="content"&gt;&lt;/div&gt;
+    &lt;script src=&quot;blogtoc.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;app.js&quot;&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
 </pre>
       </div>
       <div class="tab-pane" id="js">

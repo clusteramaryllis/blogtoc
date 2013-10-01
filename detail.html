@@ -1,0 +1,191 @@
+---
+layout: showcase
+title: Details.
+description: A helpdesk.
+---
+<div class="row-fluid">
+<div class="span12">
+  <h1>{{ page.title }}</h1>
+  <span class="help-inline muted"><em>{{ page.description }}</em></span>
+  <hr>
+  <h3 id="html-markup">BlogToc HTML Markup</h3>
+  <hr>
+  <p>Illustration markup:</p>
+  <p><code>[ ... ]</code> => contain the value of the BlogToc options. <em>e.g.</em> if you specified <code>{ blogtocId: 'my_blogtoc' }</code>, the 'my_blogtoc' will be applied to [blogtocId]</p>
+  <p><code>if( ... ) ... endif</code> => conditional statement.</p>
+  <p><code>for( ... ) ... endfor</code> => looping statement.</p>
+  <p><code>->loops</code> => The above html markup maybe rendered more than one</p>
+  <p><code>&lt;!-- ... --&gt;</code> => The markup maybe appear or not</p>
+  <p><b>Use <em>Firebug</em> or <em>Chrome dev tools</em> to inspect the html (Recommended)</b></p>
+  <br>
+  <h5>When BlogToc is built (with or without user's option), it will generate some HTML markup as shown below</h5>
+  <hr>
+<pre class="prettyprint linenums">
+&lt;div id=&quot;[blogtocId]&quot; class=&quot;[extendClass.blogtoc_id]&quot;&gt;
+  &lt;div class=&quot;blogtoc_loader [extendClass.blogtoc_loader]&quot;&gt;
+   [progress.render()]
+  &lt;/div&gt;
+  &lt;div class=&quot;blogtoc_content [extendClass.blogtoc_content]&quot;&gt;
+    &lt;div class=&quot;blogtoc_header [extendClass.blogtoc_header]&quot;&gt;
+      if ( [label.showLabel] == true )
+        if ( [label.cloudLabel] == false )
+        &lt;select class=&quot;blogtoc_label [extendClass.blogtoc_label]&quot;&gt;
+          &lt;option value=&quot;[label.setup]&quot;&gt;[label.setup]&lt;/option&gt;
+          &lt;option value=&quot;...&quot;&gt;...&lt;/option&gt;
+          -&gt; loops
+        &lt;/select&gt; 
+        endif
+        if ( [label.cloudLabel] == true )
+        &lt;button class=&quot;blogtoc_label [extendClass.blogtoc_label] [extendClass.blogtoc_btn]&quot;&gt;[label.setup]&lt;/button&gt; 
+        &lt;button class=&quot;blogtoc_label [extendClass.blogtoc_label] [extendClass.blogtoc_btn]&quot;&gt;...&lt;/button&gt; 
+        -&gt; loops
+        endif
+      endif
+      if ( [label.showAlphabetLabel] == true )
+        if ( [label.cloudAlphabetLabel] == false )
+        &lt;select class=&quot;blogtoc_alphabet [extendClass.blogtoc_alphabet]&quot;&gt;
+          &lt;option value=&quot;[label.setupAlphabet]&quot;&gt;[label.setupAlphabet]&lt;/option&gt;
+          &lt;option value=&quot;...&quot;&gt;...&lt;/option&gt;
+          -&gt; loops
+        &lt;/select&gt;
+        endif
+        if ( [label.cloudAlphabetLabel] == true )
+        &lt;button class=&quot;blogtoc_alphabet [extendClass.blogtoc_alphabet] [extendClass.blogtoc_btn]&quot;&gt;[label.setupAlphabet]&lt;/button&gt;
+        &lt;button class=&quot;blogtoc_alphabet [extendClass.blogtoc_alphabet] [extendClass.blogtoc_btn]&quot;&gt;...&lt;/button&gt;
+        -&gt; loops
+        endif
+      endif
+    &lt;/div&gt;
+    &lt;div class=&quot;blogtoc_filter [extendClass.blogtoc_filter]&quot;&gt;
+      &lt;div class=&quot;blogtoc_display [extendClass.blogtoc_display]&quot;&gt;
+        &lt;label&gt;
+          &lt;select&gt;&lt;/select&gt;
+          -&gt;loops
+          &lt;span&gt;[language.display]&lt;/span&gt;
+        &lt;/label&gt;
+      &lt;/div&gt;
+      &lt;div class=&quot;blogtoc_search [extendClass.blogtoc_search]&quot;&gt;
+        &lt;label&gt;
+          &lt;span&gt;[language.search]&lt;/span&gt;
+          &lt;input type=&quot;text&quot; class=&quot;blogtoc_query [extendClass.blogtoc_query]&quot;&gt;
+        &lt;/label&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;table class=&quot;blogtoc_table [extendClass.blogtoc_table]&quot;&gt;
+      if ( [table.showHeader] == true )
+      &lt;thead&gt;
+        &lt;tr&gt;
+          for ( data in [table.order] )
+          &lt;th&gt;[language[data]]&lt;/th&gt;
+          endfor
+        &lt;/tr&gt;
+      &lt;/thead&gt;
+      endif
+      &lt;tbody&gt;
+        &lt;tr&gt;
+          for ( data in [table.order] )
+          &lt;td&gt;...&lt;/td&gt;
+          endfor
+        &lt;/tr&gt;
+        -&gt;loops
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+    &lt;div class=&quot;blogtoc_footer [extendClass.blogtoc_footer]&quot;&gt;
+      &lt;div class=&quot;blogtoc_result [extendClass.blogtoc_result]&quot;&gt;[language.result]&lt;/div&gt;
+      &lt;div class=&quot;blogtoc_pagination [extendClass.blogtoc_pagination]&quot;&gt;
+        &lt;ul class=&quot;[extendClass['blogtoc_pagination ul']]&quot;&gt;
+          if ( [pagination.showFirstPage] == true )
+          &lt;li class=&quot;blogtoc_first_page&quot;&gt;[language.FirstPage]&lt;/li&gt;
+          endif
+          if ( [pagination.showPrevPage] == true )
+          &lt;li class=&quot;blogtoc_prev_page&quot;&gt;[language.PrevPage]&lt;/li&gt;
+          endif
+          &lt;!-- &lt;li class=&quot;[extendClass['blogtoc_pagination disabled']]&quot;&gt;...&lt;/li&gt; --&gt;
+          &lt;!-- &lt;li class=&quot;[extendClass['blogtoc_pagination active']]&quot;&gt;...&lt;/li&gt; --&gt;
+          &lt;li class=&quot;blogtoc_responsive_hide&quot;&gt;...&lt;/li&gt;
+          -&gt; loops
+          if ( [pagination.showNextPage] == true )
+          &lt;li class=&quot;blogtoc_next_page&quot;&gt;[language.NextPage]&lt;/li&gt;
+          endif
+          if ( [pagination.showLastPage] == true )
+          &lt;li class=&quot;blogtoc_last_page&quot;&gt;[language.LastPage]&lt;/li&gt;
+          endif
+        &lt;/ul&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+</pre>
+  <hr>
+  <h3 id="theme-bundle">Creating Theme Bundle</h3>
+  <hr>
+  <p>Theme bundle is javascript file contains pre-configurations setting for theming BlogToc</p>
+  <h5>Basic markup</h5>
+  <hr>
+<pre class="prettyprint linenums">
+(function(){
+  
+  var loadTheme = function( BlogToc ) {
+    (function(){
+
+      BlogToc.theme( 'theme_name', 'path/or/url/to/file.css', {
+        // the extendClass option shorthand
+      });
+
+    })();
+  };
+
+  if ( typeof window !== 'undefined' && window.BlogToc ) {
+    loadTheme( window.BlogToc );
+  }
+
+})();
+</pre>
+  <h5><em>Example :</em></h5>
+<pre class="prettyprint linenums">
+// BlogToc theme configuration
+// theme : gotham, @link http://www.gothamcity.com/
+// author : Bruce Wayne
+// filename : gotham.js
+
+(function(){
+  
+  var loadTheme = function( BlogToc ) {
+    (function(){
+
+      BlogToc.theme( 'gotham', 'css/gotham.css', {
+        "id": "gotham", // the blogtoc_id will have class name "gotham"
+        "header": "bruce" // the blogtoc_header will have class name "bruce", etc...
+        "table": "alfred",
+        "footer": "batman",
+        "pagination": "joker"
+        // The all options in extendClass options can goes here, 
+        // make sure you declare it without using "blogtoc_" keyword, because it's already shorthanded.
+      });
+
+    })();
+  };
+
+  if ( typeof window !== 'undefined' && window.BlogToc ) {
+    loadTheme( window.BlogToc );
+  }
+
+})();
+</pre>
+  <p>And then you save the file as <code>gotham.js</code>, and don't forget to also write your CSS rules in <code>css/gotham.css</code></p>
+  <h5><em>Example to use it :</em></h5>
+<pre class="prettyprint linenums">
+// load your theme bundle first
+BlogToc.addJS('gotham.js');
+
+BlogToc(element).build({
+  theme: {
+    setup: "gotham" // must be a theme name in your theme bundle
+  }
+});
+</pre>
+  <p>The next step is you might consider to add your theme bundle to our <a href="https://github.com/clusteramaryllis/blogtoc">github</a> repository ;)</p>
+  <h4></h4>
+</div>
+</div>
+<script>prettyPrint();</script>

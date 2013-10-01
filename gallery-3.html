@@ -1,0 +1,260 @@
+---
+layout: showcase
+title: Thumbnail Gallery
+description: Using BlogToc as thumbnail gallery with the power of CSS and jQuery
+---
+<div class="row-fluid">
+<div class="span12">
+  <h1>{{ page.title }}</h1>
+  <span class="help-block muted"><em>{{ page.description }}</em></span>
+  <span class="help-block muted"><em>blogspot-site: <a href="http://portraitsofpainters.blogspot.com">PORTRAITS OF PAINTERS</a></em></span>
+  <hr>
+  <div id="content"></div>
+  <script>
+  BlogToc.baseURL("./");
+  BlogToc.addCSS('css/gallery.css');
+
+  BlogToc(document.getElementById('content')).build({
+    binding: {
+      onAfterDataChange: function() {
+        $('#content').find('.blogtoc_authorthumbnail a').each(function(){
+          if ( !$(this).find('span').length ) {
+            $(this).prepend('<span class="icon-user"> </span>');
+          }
+        });
+      },
+      onLiveDataChange: function() {
+        $('#content').find('.blogtoc_authorthumbnail a').each(function(){
+          if ( !$(this).find('span').length ) {
+            $(this).prepend('<span class="icon-user"> </span>');
+          }
+        });
+      }
+    },
+    display: {
+      setup: 20
+    },
+    extendClass: {
+      blogtoc_id: "gallery",
+      blogtoc_table: "clearfix"
+    },
+    progress: {
+      render: function(elem, progress) {
+        if( elem.className.lastIndexOf('progress') === -1 ) { 
+          elem.className += ' progress progress-striped active'; 
+        } 
+
+        if( ( div = elem.firstChild ) ) { 
+          div.style.width = progress + '%'; 
+        } else { 
+          div = document.createElement('div'); 
+          div.className = 'bar'; 
+          div.style.width = progress + '%'; 
+          elem.appendChild(div); 
+        }
+      }
+    },
+    table: {
+      order: ['thumbnail','title','author','comment'],
+      showHeader: false
+    },
+    thumbnail: {
+      size: 300,
+      authorThumbnail: false
+    },
+    url: 'portraitsofpainters.blogspot.com'
+  });
+  </script>
+  <h3>Code Example</h3>
+  <hr>
+  <div class="tabbable">
+    <ul class="nav nav-tabs">
+      <li class="active"><a href="#html" data-toggle="tab">HTML</a></li>
+      <li><a href="#js" data-toggle="tab">app.js</a></li>
+      <li><a href="#css" data-toggle="tab">gallery.css</a></li>
+    </ul>
+    <div class="tab-content">
+      <div class="tab-pane active" id="html">
+<pre class="prettyprint linenums">
+&lt;!doctype html&gt;
+&lt;html&gt;
+  &lt;head&gt;
+    &lt;title&gt;{{ page.title }}&lt;/title&gt;
+    &lt;link href=&quot;gallery.css&quot; rel=&quot;stylesheet&quot; /&gt;
+    &lt;script src=&quot;//ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js&quot;&gt;&lt;/script&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+    &lt;div id="content"&gt;&lt;/div&gt;
+    &lt;script src=&quot;blogtoc.js&quot;&gt;&lt;/script&gt;
+    &lt;script src=&quot;app.js&quot;&gt;&lt;/script&gt;
+  &lt;/body&gt;
+&lt;/html&gt;
+</pre>
+      </div>
+      <div class="tab-pane" id="js">
+<pre class="prettyprint linenums">
+BlogToc( document.getElementById('content') ).build({
+  binding: {
+    onAfterDataChange: function() {
+      $('#content').find('.blogtoc_authorthumbnail a').each(function(){
+        if ( !$(this).find('span').length ) {
+          $(this).prepend('&lt;span class=&quot;icon-user&quot;&gt; &lt;/span&gt;');
+        }
+      });
+    },
+    onLiveDataChange: function() {
+      $('#content').find('.blogtoc_authorthumbnail a').each(function(){
+        if ( !$(this).find('span').length ) {
+          $(this).prepend('&lt;span class=&quot;icon-user&quot;&gt; &lt;/span&gt;');
+        }
+      });
+    }
+  },
+  display: {
+    setup: 20
+  },
+  extendClass: {
+    blogtoc_id: &quot;gallery&quot;,
+    blogtoc_table: &quot;clearfix&quot;
+  },
+  progress: {
+    render: function(elem, progress) {
+      if( elem.className.lastIndexOf('progress') === -1 ) { 
+        elem.className += ' progress progress-striped active'; 
+      } 
+
+      if( ( div = elem.firstChild ) ) { 
+        div.style.width = progress + '%'; 
+      } else { 
+        div = document.createElement('div'); 
+        div.className = 'bar'; 
+        div.style.width = progress + '%'; 
+        elem.appendChild(div); 
+      }
+    }
+  },
+  table: {
+    order: ['thumbnail','title','author','comment'],
+    showHeader: false
+  },
+  thumbnail: {
+    size: 300,
+    authorThumbnail: false
+  },
+  url: 'portraitsofpainters.blogspot.com'
+});
+</pre>
+      </div>
+      <div class="tab-pane" id="css">
+<pre class="prettyprint linenums">
+.gallery .blogtoc_label {
+  width: auto !important;
+  margin: 0 auto;
+  margin-bottom: 10px;
+}
+.gallery .blogtoc_filter {
+  display: none;
+}
+.gallery .blogtoc_table {
+  display: block;
+  margin: 0 auto;
+}
+.gallery .blogtoc_table tbody {
+  display: block;
+}
+.gallery .blogtoc_table tr {
+  width: 18%;
+  display: inline-block;
+  vertical-align: top;
+  margin: 0 1% 10px;
+  padding: 0;
+  background: #eee;
+  -webkit-border-radius: 4px;
+  -webkit-background-clip: padding-box;
+  -moz-border-radius: 4px;
+  -moz-background-clip: padding;
+  border-radius: 4px;
+  background-clip: padding-box;
+  -webkit-box-shadow: 0 3px 5px rgba(0,0,0,.3);
+  -moz-box-shadow: 0 3px 5px rgba(0,0,0,.3);
+  box-shadow: 0 3px 5px rgba(0,0,0,.3);
+}
+.gallery .blogtoc_table tr td {
+  width: auto;
+  display: block;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+.gallery .blogtoc_table tr td .blogtoc_thumbnail {
+  width: auto !important;
+  padding: 0;
+}
+.gallery .blogtoc_table tr td .blogtoc_thumbnail img {
+  border: 0;
+  -webkit-border-radius: 4px 4px 0 0;
+  -webkit-background-clip: padding-box;
+  -moz-border-radius: 4px 4px 0 0;
+  -moz-background-clip: padding;
+  border-radius: 4px 4px 0 0;
+  background-clip: padding-box;
+  width: auto !important;
+}
+.gallery .blogtoc_table tr td .blogtoc_thumbnail img:hover {
+  -webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  box-shadow: none;
+}
+.gallery .blogtoc_table tr td a {
+  display: block;
+  font-size: 11px;
+  padding: 2px 5px 0;
+  text-align: left;
+}
+.gallery .blogtoc_table tr td a span {
+  display: inline !important;
+  font-size: 14px !important;
+}
+.gallery .blogtoc_table tr td .blogtoc_post {
+  display: block;
+  font-size: 18px;
+  padding: 5px 5px 0;
+}
+.gallery .blogtoc_result,
+.gallery .blogtoc_responsive_hide {
+  display: none !important;
+}
+.gallery .blogtoc_pagination {
+  margin-top: 10px !important;
+  float: none;
+  text-align: center;
+}
+@media only screen and (max-width: 800px) {
+  .gallery .blogtoc_table td {
+    padding: 0;
+  }
+  .gallery .blogtoc_table td:before {
+    position: relative;
+    top: 0;
+    left: 0;
+    padding: 0;
+    content: '';
+  }
+}
+@media only screen and (max-width: 940px) {
+  .blogtoc_table tr {
+    width: 23% !important;
+  }
+}
+@media only screen and (max-width: 720px) {
+  .blogtoc_table tr {
+    width: 31.33333% !important;
+  }
+}
+</pre>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<script>prettyPrint();</script>
