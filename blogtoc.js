@@ -1,5 +1,5 @@
 /**!
-* BlogToc v1.1.0
+* BlogToc v1.5.0
 * Copyright 2013 Cluster Amaryllis
 * Licensed under the Apache License v2.0
 * http://www.apache.org/licenses/LICENSE-2.0
@@ -15,9 +15,9 @@
     
     (function() {
 
-      var VERSION = '1.1.0';
+      var VERSION = '1.5.0';
 
-      var BASE_URL = '//googledrive.com/host/0B-ME4OmVndQzMFNaMWpqVzVYUFE/' + VERSION + '/';
+      var BASE_URL = '//blogtoc2.googlecode.com/svn/trunk/' + VERSION + '/';
 
       var alphabet = '#|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z'.split('|'),
         days = 'Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday'.split('|'),
@@ -32,8 +32,8 @@
         thumbRegex = /s\d+\-?\w?/gi, // thumbnail regex
         whitespaceRegex = /(^\s+|\s{2,}|\s+$)/g, // remove whitespace
         stripHtmlRegex = /(<([^>]+)>)/ig, // strip html tags
-        noSortRegex = /^(index|thumbnail)$/i, // don't sorting
-        noGenerateRegex = /^(actualImage|authorThumbnail|badge|category|commentURL|fullSummary|publishDateFormat|titleURL|thumbConfig|updateDateFormat)$/i; // don't generate
+        noSortRegex = /^(index|thumbnail|label)$/i, // don't sorting
+        noGenerateRegex = /^(actualImage|authorThumbnail|authorUrl|badge|category|commentURL|fullSummary|publishDateFormat|titleURL|thumbConfig|updateDateFormat)$/i; // don't generate
 
       var themes = {},
         languages = {};
@@ -50,7 +50,7 @@
       
         var _parent = element,
           opts, config, feed,
-          root, loader, header, filter, tabler, footer, resulter, paging;
+          root, loader, contenter, header, filter, tabler, footer, resulter, paging;
 
         var _alpha;
         
@@ -66,6 +66,13 @@
             // Default Options
             var defaults = {
               blogtocId: '',
+              binding: {
+                onAfterDataChange: null,
+                onBeforeDataChange: null,
+                onInit: null,
+                onLiveDataChange: null,
+                onLoaded: null
+              },
               date: {
                 day: days,
                 month: months,
@@ -105,7 +112,17 @@
                 }
               },
               pagination: {
-                adjacents: 2
+                adjacents: 2,
+                showNextPage: true,
+                showPrevPage: true,
+                showFirstPage: true,
+                showLastPage: true
+              },
+              postLabel: {
+                separator: '',
+                render: function( label ) {
+                  return '<span>' + label + '</span>';
+                }
               },
               progress: {
                 render : function( elem, progress ) {
@@ -134,12 +151,13 @@
                 wordLimit: 200
               },
               table: {
-                order: ["index","thumbnail","title","publishDate","updateDate","author","comment"],
+                order: [ 'index', 'thumbnail', 'title', 'publishDate', 'updateDate', 'author', 'comment' ],
                 initDataLoad: 10,
                 showHeader: true,
                 indexWidthPoint : 2.5,
                 authorWidthPoint : 10.5,
                 commentWidthPoint : 11,
+                labelWidthPoint: 24,
                 publishDateWidthPoint : 12.5,
                 summaryWidthPoint : 25,
                 thumbnailWidthPoint : 7,
@@ -147,7 +165,8 @@
                 updateDateWidthPoint : 12.5
               },
               theme: {
-                setup: defaultTheme
+                setup: defaultTheme,
+                standalone: false
               },
               thumbnail: {
                 blank: blankThumb,
@@ -187,7 +206,8 @@
             // save necessary element
             root = _parent.BTID;
             loader = root.firstChild;
-            header = _nextElement( loader );
+            contenter = _nextElement( loader );
+            header = contenter.firstChild;
             filter = _nextElement( header );
             tabler = _nextElement( filter );
             footer = _nextElement( tabler );
@@ -195,6 +215,7 @@
             // apply classes
             _extendClass( root, opts.extendClass.blogtoc_id );
             _extendClass( loader, opts.extendClass.blogtoc_loader );
+            _extendClass( contenter, opts.extendClass.blogtoc_content );
             _extendClass( header, opts.extendClass.blogtoc_header );
             _extendClass( filter, opts.extendClass.blogtoc_filter );
             _extendClass( tabler, opts.extendClass.blogtoc_table );
@@ -248,17 +269,22 @@
             var _waiting = function() { 
               setTimeout( function() {
                 config.iotf.server ?
-                  _addJS( url, scriptID, function() {
+                  _addJS( url, scriptID, null, function() {
                     // trouble loading feed, show error message
                     alert( opts.language.custom.errorMessage );
                     // remove blogtoc
                     _removeElement( root );
                   }) :
                   _waiting();
-              }, 1000 );
+              }, 100 );
             }; 
 
             _waiting();
+
+            // add callback on init
+            if ( typeof opts.binding.onInit === 'function' ) {
+              opts.binding.onInit();
+            }
           },
           
           /* Initialization json callback
@@ -320,7 +346,7 @@
             config.records = opts.display.setup || opts.display.template[0];
 
             // json callback
-            window[ 'BTLDJSONCallback_' + root.id ] = function (json) {
+            window[ 'BTLDJSONCallback_' + root.id ] = function ( json ) {
               _self.loadFeed( json );
             };
 
@@ -336,14 +362,22 @@
               'alt=json-in-script&' + 
               'callback=BTLDJSONCallback_' + root.id;
 
-            for ( ; i < request; i++ ) {
+            var sequenceFn = function( i ) {
 
               startIdx = ( i * 500 ) + 1;
               scriptID = url + '_' + _uniqueNumber();
               config.cache.req[ i + 1 ] = scriptID;
 
-              _addJS( url + '&start-index=' + startIdx, scriptID );
-            }
+              if ( i < request - 1 ) {
+                _addJS( url + '&start-index=' + startIdx, scriptID, function(){ 
+                  sequenceFn( i + 1 );
+                });                
+              } else {
+                _addJS( url + '&start-index=' + startIdx, scriptID );                
+              }
+            };
+
+            sequenceFn( i );
           },
           
           /* Load the main feed from JSON callback
@@ -354,7 +388,7 @@
             var _self = this;
             
             var jfeed = json.feed,
-              temp = [],
+              temp = [], temp2 = [],
               obj = {};
               
             var data = feed.data,
@@ -365,7 +399,9 @@
               description = opts.summary.wordLimit,
               render = opts.date.render,
               server = config.iotf.server,
-              progress = opts.progress.render;
+              progress = opts.progress.render,
+              postlabel = opts.postLabel.render,
+              separator = opts.postLabel.separator;
 
             // check entry feed
             if ( 'entry' in jfeed ) {
@@ -405,7 +441,6 @@
                   
                   // add word limiter
                   if ( summary.length > description ) {
-
                     summary = summary.substring( 0, description );
                     summary = summary.substring( 0, summary.lastIndexOf(' ') ) + '....';
                   }
@@ -421,18 +456,13 @@
                   // check for default blog thumbnail entry
                   // if it's not found find <img> tag in summary
                   if ( 'media$thumbnail' in entry ) { 
-                    
                     obj.thumbnail = entry.media$thumbnail.url;
                     obj.actualImage = obj.thumbnail.replace( thumbRegex, 's0' );
                     obj.thumbnail = obj.thumbnail.replace( '/s72-c/', '/s' + size + '-c/');
-
                   } else if ( ( imgSrc = /<img [^>]*src=["|\']([^"|\']+)/gi.exec( fullSummary ) ) ) {
-                    
                     obj.actualImage = imgSrc[1];
                     obj.thumbnail = _BTMakeThumbnail( obj.actualImage, size, server );
-
                   } else { 
-                    
                     obj.actualImage = notfound;
 
                     // google service?
@@ -445,7 +475,6 @@
                   
                   // title & replies URL section
                   for ( var k = 0; k < entry.link.length; k++ ) {
-
                     if ( entry.link[ k ].rel === 'replies' ) {
                       obj.commentURL = entry.link[ k ].href;
                     } else if (entry.link[ k ].rel === 'alternate' ) {
@@ -463,16 +492,19 @@
                   
                   // author information section
                   obj.author = entry.author[0].name.$t;
-                  obj.authorThumbnail = entry.author[0].gd$image.src.replace( thumbRegex, 's' + size + '-c' );
+                  obj.authorUrl = entry.author[0].uri ? entry.author[0].uri.$t : '#';
+                  obj.authorThumbnail = entry.author[0].gd$image.src.replace( thumbRegex, 's' + asize + '-c' );
 
                   // posts categories section
                   if ( 'category' in entry ) {
                     for ( k = 0; k < entry.category.length; k++ ) {
                       temp.push( entry.category[ k ].term );
+                      temp2.push( postlabel( entry.category[ k ].term ) );
                     }
                   }
 
                   obj.category = temp.slice(0);
+                  obj.label = temp2.slice(0).join( separator );
 
                   // populate data
                   data.push( obj ); 
@@ -480,13 +512,14 @@
                   // reset
                   obj = {};
                   temp.length = 0;
+                  temp2.length = 0;
 
                   // increment
                   config.iterate++;
                   i++;
                   
                   // increase progress
-                  var percentage = Math.round(config.iterate * 100 / count);
+                  var percentage = Math.round( config.iterate * 100 / count );
 
                   progress( loader, percentage );
                   
@@ -498,13 +531,11 @@
                   // the end of total blog post, 
                   // build user interface & hide loader
                   if ( config.iterate >=  count ) {
-                    
                     setTimeout( function() {
                       loader.style.display = 'none';
                       _self.buildUI();
                     }, 1000 );
                   }
-                
                 }, 1 );
               }; 
               
@@ -531,6 +562,9 @@
               searchFn = "BlogToc.search(this.value, document.getElementById('"+ root.id +"')); return false;",
               sortFn;
 
+            // show data
+            contenter.style.display = 'block';
+
             // label section
             _self.makeLabel( feed.label, 'showLabel', 'cloudLabel', 'setup', 'blogtoc_label', klass.blogtoc_label, labelFn );
             _self.makeLabel( _alpha, 'showAlphabetLabel', 'cloudAlphabetLabel', 'setupAlphabet', 'blogtoc_alphabet', klass.blogtoc_alphabet, alphaFn );
@@ -547,7 +581,6 @@
             spn = _createElement( 'span', null, opts.language.custom.display );
             
             for ( ; j < dLen; j++ ) {
-              
               option  = _createElement( 'option', { value: display.num[ j ] }, display.name[ j ] );
               
               // arrange to the default setup selected
@@ -593,7 +626,6 @@
             tr = _createElement('tr');
                 
             for ( j = 0; j < mLen; j++ ) {
-
               mData = config.mapper[ j ];
               sortFn = "BlogToc.sort('"+ mData +"', document.getElementById('"+ root.id +"')); return false;";
               
@@ -624,11 +656,6 @@
 
             // IE strangely add tbody on its own, so position the thead correctly
             tableChild = tabler.firstChild;
-            try {
-              tabler.style.display = 'table'; 
-            } catch ( e ) {
-              tabler.style.display = 'block';
-            }
             tabler.insertBefore( thead, tableChild );
 
             // don't show header if option showHeader is false
@@ -674,6 +701,11 @@
             // Tells that apps already loaded
             _parent.BTLoaded = true;
 
+            // calling back the onLoaded function
+            if ( typeof opts.binding.onLoaded === 'function' ) {
+              opts.binding.onLoaded();
+            }
+
             // Clear any references
             window[ 'BTJSONCallback_' + root.id ] = null;
             window[ 'BTLDJSONCallback_' + root.id ] = null;
@@ -698,6 +730,8 @@
               snpl = page + 6, lnpl = page + 46, sppl = page - 6, lppl = page - 46,
               adj = opts.pagination.adjacents, adjJump = adj * 2,
               rID = root.id, hClass = 'blogtoc_responsive_hide',
+              fClass = 'blogtoc_first_page', lClass = 'blogtoc_last_page', 
+              pClass = 'blogtoc_prev_page', nClass = 'blogtoc_next_page', 
               ul, ulRecent, li; 
 
             // limit more than one
@@ -706,14 +740,21 @@
               // current page not at first one
               if ( page > 1 ) {
                 // first page
-                li = _BTMakePageList( 1, opts.language.custom.firstPage, 'a', rID );
-                ul.appendChild( li );
+                if ( opts.pagination.showFirstPage ) {
+                  li = _BTMakePageList( 1, opts.language.custom.firstPage, 'a', rID, fClass );
+                  ul.appendChild( li );
+                }
                 // prev page
-                li = _BTMakePageList( prev_page, opts.language.custom.prevPage, 'a', rID );
+                if ( opts.pagination.showPrevPage ) {
+                  li = _BTMakePageList( prev_page, opts.language.custom.prevPage, 'a', rID, pClass );
+                  ul.appendChild( li );
+                }
               } else {
-                li = _BTMakePageList( null, opts.language.custom.prevPage, 'span', rID, dClass );
+                if ( opts.pagination.showPrevPage ) {
+                  li = _BTMakePageList( null, opts.language.custom.prevPage, 'span', rID, _appendStr( pClass, dClass ) );
+                  ul.appendChild( li );
+                }
               }
-              ul.appendChild( li );
               
               // the pages are not that big
               if ( limit < 7 + adjJump ) {
@@ -799,14 +840,21 @@
               // current page not at last one
               if ( page < limit ) {
                 // next page
-                li = _BTMakePageList( next_page, opts.language.custom.nextPage, 'a', rID );
-                ul.appendChild( li );
+                if ( opts.pagination.showNextPage ) {
+                  li = _BTMakePageList( next_page, opts.language.custom.nextPage, 'a', rID, nClass );
+                  ul.appendChild( li );
+                }
                 // last page
-                li = _BTMakePageList( limit, opts.language.custom.lastPage, 'a', rID );
+                if ( opts.pagination.showLastPage ) {
+                  li = _BTMakePageList( limit, opts.language.custom.lastPage, 'a', rID, lClass );
+                  ul.appendChild( li );
+                }
               } else {
-                li = _BTMakePageList( null, opts.language.custom.nextPage, 'span', rID, dClass );
+                if ( opts.pagination.showNextPage ) {
+                  li = _BTMakePageList( null, opts.language.custom.nextPage, 'span', rID, _appendStr( nClass, dClass ) );
+                  ul.appendChild( li );
+                }
               }
-              ul.appendChild( li );
             }
             
             if ( ( ulRecent = paging.getElementsByTagName('ul')[0] ) ) {
@@ -1120,24 +1168,24 @@
           doSorting: function( key, order ) {
         
             var data = feed.data,
-              day = opts.date.day,
               cache = config.cache;
             
             cache[ key ] = cache[ key ] || {};
                 
             // generate new data feed
             feed.data = ( order === 'ascending' ) ? 
-              _BTSort( data, key, day ).slice(0) :
-              _BTSort( data, key, day ).slice(0).reverse();
+              _BTSort( data, key ).slice(0) :
+              _BTSort( data, key ).slice(0).reverse();
             
             // cache original data
             if ( cache.original ) {
               cache.original = ( order === 'ascending' ) ? 
-                _BTSort( cache.original, key, day ).slice(0) :
-                _BTSort( cache.original, key, day ).slice(0).reverse(); 
-
+                _BTSort( cache.original, key ).slice(0) :
+                _BTSort( cache.original, key ).slice(0).reverse(); 
+              cache.tempData =  cache.original;
             } else {
               cache.original = feed.data.slice(0);
+              cache.tempData = [];
             }
           },
           
@@ -1223,7 +1271,6 @@
           },
           
           /* Adding badge
-           * @param : <int>val
            ****************************************************************/
           addBadge: function() {
             
@@ -1262,7 +1309,7 @@
             for ( i = 0; i < len; i++ ) {
               range = Math.round( opt[ data[ i ] + 'WidthPoint' ] / count * 100 );
               config.mapperWidth.push( range + '%' );
-            }       
+            }
           },
           
           /* Mostly the main function that get called alot, change how the data is displayed
@@ -1272,6 +1319,11 @@
             var _self = this;
             
             var tbody, tbodyRecent, node;
+
+            // calling back onBeforeDataChange
+            if ( typeof opts.binding.onBeforeDataChange === 'function' ) {
+              opts.binding.onBeforeDataChange();
+            }
             
             // Initialize
             config.cache.img = new Array();
@@ -1303,7 +1355,7 @@
                 count = bFeed.data.length,
                 size = bOpts.thumbnail.authorSize,
                 j = start, idx = start, len = bConfig.mapper.length,
-                dataType, data,
+                dataType, data, blob,
                 tr, td;
               
               // if no data found, show empty result message
@@ -1317,12 +1369,15 @@
                   el.appendChild( tr );
                 }
               }
+
+              // use the most data limit as possible
+              blob = ( end <= records && end <= count ) ? 
+                end :
+                ( records <= count) ? 
+                  records : 
+                  count;
               
-              for ( ; j < end; j++ ) {
-                
-                if ( j >= records || j >= count ) { 
-                  return; 
-                }
+              for ( ; j < blob; j++ ) {
                 
                 data = bFeed.data[ j ];
 
@@ -1337,13 +1392,17 @@
                 
                   dataType = bConfig.mapper[ k ];
                   
-                  td = _createElement('td');
+                  td = _createElement('td', { width: bConfig.mapperWidth[ k ] });
                   td.setAttribute( 'data-title', dataType );
                   
                   td.appendChild( _BTRenderContent( dataType, idx, data, bOpts, bConfig, td ) );
                   tr.appendChild( td );
                 }
                 el.appendChild( tr );
+
+                if ( j === ( blob - 1 ) && typeof bOpts.binding.onLiveDataChange === 'function' ) {
+                    bOpts.binding.onLiveDataChange();
+                }
               }
             }; 
 
@@ -1373,7 +1432,26 @@
               _flexScroll( _parent.BTID );
             }; 
 
-            evtHandler();
+            // fill the data until its viewable
+            var filledInViewPort = function( bID ) {
+              setTimeout(function() {
+                // viewport bugs
+                var table = bID.getElementsByTagName('table')[0],
+                  tbody = table.getElementsByTagName('tbody')[0];
+
+                if ( _elementInViewport( table ) ) {
+                  appendData( bID, tbody );
+                  filledInViewPort( bID );
+                }
+              }, 10 );
+            };
+
+            // calling back onAfterDataChange
+            if ( typeof opts.binding.onAfterDataChange === 'function' ) {
+              setTimeout(function(){
+                opts.binding.onAfterDataChange();
+              }, 1 );
+            }
             
             // register event
             _registerEvent( config.registeredEvent, window, 'scroll', evtHandler );
@@ -1385,20 +1463,42 @@
             } else { // otherwise create new one
               tabler.appendChild( tbody );
             }
+
+            filledInViewPort( root );
+            evtHandler();
           }
         };
 
-        // Run
-        var settedLanguage = option.language && option.language.setup ? option.language.setup : defaultLanguage,
-          settedTheme = option.theme && option.theme.setup ? option.theme.setup : defaultTheme; 
+        // Initialization before running
+        var setLanguage, setTheme;
 
-        _runAfterPluginLoaded( _parent, settedLanguage, settedTheme, option );
+        // check the current language setting
+        if ( option.language && option.language.setup ) {
+          setLanguage = option.language.setup;
+        } else {
+          setLanguage = defaultLanguage;
+        }
+
+        // check the current theme setting
+        if ( option.theme && option.theme.setup ) {
+          // check if theme already has default settings
+          if ( option.theme.standalone ) {
+            themes[ option.theme.setup ] = {};
+            themes[ option.theme.setup ].option = {};
+          }
+          setTheme = option.theme.setup;
+        } else {
+          setTheme = defaultTheme;
+        }
+
+        // Run
+        _runAfterPluginLoaded( _parent, setLanguage, setTheme, option );
 
         return this;
       };
       
       /********************************************************************
-       * HACKY FUNCTIONS MOSTLY FOR IE                  *
+       * SOME POLYFILL FOR IE                                             *
        ********************************************************************/
       // taken from MSDN Mozilla
       // @link https://developer.mozilla.org/en/JavaScript/Reference/Global_Objects/Array/indexOf
@@ -1438,13 +1538,13 @@
           }
           return -1;
         };
-        
-        // @link http://stackoverflow.com/a/498995
-        if ( !String.prototype.trim ) {
-          String.prototype.trim = function() { 
-            return this.replace(/^\s+|\s+$/g, '');
-          };
-        }
+      }
+
+      // @link http://stackoverflow.com/a/498995
+      if ( !String.prototype.trim ) {
+        String.prototype.trim = function() { 
+          return this.replace(/^\s+|\s+$/g, '');
+        };
       }
 
       /********************************************************************
@@ -1556,12 +1656,12 @@
         var p = document.createElement( tagName );
         
         if ( typeof attr === 'object' ) {
-          
           for ( var key in attr ) {
             if ( key == 'style' ) { // Attribute Style
               p.style.cssText = attr[ key ];
             } else if ( /^on/i.test( key ) ) { // Event Listener
-              p[ key ] = new Function( attr[ key ] ); // @link http://stackoverflow.com/a/748972
+              // @link http://stackoverflow.com/a/748972
+              p[ key ] = new Function( attr[ key ] ); 
             } else {
               if ( p.setAttribute ) {
                 p.setAttribute( key, attr[ key ] );
@@ -1594,7 +1694,8 @@
         return (
           rect.top >= 0 &&
           rect.left >= 0 &&
-          rect.top <= ( window.innerHeight || document.documentElement.clientHeight )
+          rect.bottom <= ( window.innerHeight || document.documentElement.clientHeight ) &&
+          rect.right <= ( window.innerWidth || document.documentElement.clientWidth )
         );
       };
 
@@ -1716,6 +1817,13 @@
         return !!~arr.indexOf( needle );
       };
 
+      /* Check if obj is array
+       * @param  : <object>obj
+       ********************************************************************/       
+      var _isArray = function( obj ) {
+        return Object.prototype.toString.call( obj ) === '[object Array]';
+      };
+
       /* Remove item from array by value
        * @param  : <array>arr
        ********************************************************************/ 
@@ -1752,40 +1860,21 @@
           if ( !top ) {
             setTimeout(function(){
               head.appendChild( stylesheet );
-            }, 1000 );
+            }, 100 );
           } else {
             head.insertBefore( stylesheet, head.childNodes[ head.childNodes.length - 1 ] );
           }
         }
       };
 
-      /* Insert Stylesheet to Head Section only one time
-       * @param  : <string>src
-       * @param  : <boolean>top
-       ********************************************************************/ 
-      var _addCSSOnce = function( src, top ) {
-        var head = document.getElementsByTagName('head')[0],
-          link = head.getElementsByTagName('link'),
-          len = link.length,
-          base = src.substr( src.lastIndexOf('/') );
-
-        // don't add css if already exists
-        while ( len-- ) {
-          if ( link[ len ].href && !!~link[ len ].href.lastIndexOf( base ) ) {
-            return;
-          }
-        }
-
-        _addCSS( src, top );
-      };
-
       /* Insert Javascript to Head Section
        * @param  : <string>src
        * @param  : <string>id
+       * @param  : <function>successCallback
        * @param  : <function>errorCallback
        * @param  : <boolean>sync
        ********************************************************************/
-      var _addJS = function( src, id, errorCallback, sync ) {
+      var _addJS = function( src, id, successCallback, errorCallback, sync ) {
         var script = document.createElement('script'); 
         script.type = 'text/javascript'; 
         script.src = _sanitizeURL( src );
@@ -1795,32 +1884,30 @@
         if ( !sync ) {
           script.async = true;
         }
+        if ( successCallback ) {
+          script.onload = function() {
+            if ( !script.onloadDone ) {
+              script.onloadDone = true;
+              successCallback();
+
+              script.onload = null;
+            }
+          };
+          script.onreadystatechange = function() {
+            if ( ( this.readyState === 'loaded' || this.readyState === 'complete' ) && !script.onloadDone ) {
+              script.onloadDone = true;
+              successCallback();
+
+              script.onreadystatechange = null;
+            }
+          };
+        }
         if ( errorCallback ) {
           // some browsers didn't support this
           script.onerror = errorCallback;
         }
         
         document.getElementsByTagName('head')[0].appendChild( script );
-      };
-
-      /* Insert Javascript to Head Section only one time
-       * @param  : <string>src
-       * @param  : <string>id
-       * @param  : <function>errorCallback
-       * @param  : <boolean>sync
-       ********************************************************************/
-      var _addJSOnce = function( src, id, errorCallback, sync ) {
-        var script = document.getElementsByTagName('script'),
-          len = script.length,
-          base = src.substr( src.lastIndexOf('/') );
-
-        while ( len-- ) {
-          if ( script[ len ].src && !!~script[ len ].src.lastIndexOf( base ) ) {
-            return;
-          }
-        }
-
-        _addJS( src, id, errorCallback, sync );
       };
 
       /* very simple append string
@@ -1857,7 +1944,9 @@
       var _extends = function( def, config ) {
         for (var key in config) {
           if ( config.hasOwnProperty( key ) ) {
-            if ( typeof config[ key ] === 'object' ) { 
+            if ( _isArray( config[ key ] ) ) {
+              def[ key ] = config[ key ].slice(0);
+            } else if ( typeof config[ key ] === 'object' ) { 
               def[ key ] = _extends( def[ key ], config[ key ] );
             } else {
               def[ key ] = config[ key ];
@@ -1957,7 +2046,7 @@
         return Math.floor( Math.random() * ( y - x + 1 ) + x );
       };
 
-      /* Generate a random number between interval x until y
+      /* Run apps after all needed plugins loaded
        * @param  : <node>elem
        * @param  : <string>lang
        * @param  : <string>theme
@@ -2020,6 +2109,9 @@
           boxresizer: "http://proxy.boxresizer.com/convert?" + 
             "resize=" + prop + "x" + prop + "&" +
             "source=" + img,
+          mobify: "http://ir0.mobify.com/jpg100" + 
+            "/" + prop + "/" + prop +
+            "/" + img,
           sencha: "http://src.sencha.io" + 
             "/" + prop + "/" + prop + 
             "/" + img,
@@ -2067,7 +2159,8 @@
 
         obj = {
           author: function() {
-            var span = _createElement( 'span', null, data.author ),
+            var span = _createElement( 'span', null ),
+              anchor = _createElement( 'a', { href: data.authorUrl }, data.author ),
               node = _createElement( 'div', null, null, 'blogtoc_authorthumbnail' );
 
             if ( option.thumbnail.authorThumbnail ) {
@@ -2084,6 +2177,7 @@
               node.appendChild( img );
               config.cache.aimg.push( img );
             }
+            span.appendChild( anchor );
             node.appendChild( span );
 
             return node;
@@ -2091,10 +2185,17 @@
           comment: function() {
             return _createElement( 'a', {
               href: data.commentURL
-            }, '<span class="icon icon-comment-2"></span> ' + data.comment.toString() );
+            }, '<span class="icon icon-comment-2">&nbsp;</span>' + data.comment.toString() );
           },
           index: function() {
             return document.createTextNode( idx );
+          },
+          label: function() {
+            var div = _createElement( 'div', null, null, 'blogtoc_post_label' );
+
+            div.innerHTML = data.label;
+
+            return div;
           },
           thumbnail: function() {
             var img = _createElement( 'img', {
@@ -2128,7 +2229,7 @@
             anchor = _createElement( 'a', {
               href: data.titleURL,
               title: data.summary
-            }, title );
+            }, title, 'blogtoc_post' );
 
             container.appendChild( anchor );
 
@@ -2148,7 +2249,7 @@
        * @param  : <JSObject>option
        ********************************************************************/ 
       var _BTBuildLang = function( def, lang, option ) {
-        _pretends( option,lang[ def ].options );
+        _pretends( option, lang[ def ].options );
       };
 
       /* Build Theme Starter
@@ -2175,7 +2276,10 @@
         };
 
         _appends( option, templateFn( theme[ def ].options ) );
-        _addCSSOnce( theme[ def ].url, true );
+
+        if ( theme[ def ].uri ) {
+          _addCSS( theme[ def ].uri, true );
+        }
       };
       
       /* Queue & Lazy Load image for BlogToc
@@ -2252,15 +2356,15 @@
        * @param  : <array>option
        * @param  : <function>fn
        ********************************************************************/    
-      var _BTSort = function( data, key, option, fn ) {
+      var _BTSort = function( data, key, fn ) {
         
         if ( !data.length ) { 
           return data;
         }
 
         // use sample index 0 of an array
-        if ( !!~_arrayContain( option, data[0][ key ] ) ) { // sorting by date
-          fn = function( a , b ) {
+        if ( key === 'updateDate' || key  === 'publishDate' ) { // sorting by date
+          fn = function( a, b ) {
             return a[ key + 'Format' ] - b[ key + 'Format' ];
           };
         } else if ( typeof data[0][ key ] === 'string' ) { // sorting by string
@@ -2281,7 +2385,7 @@
        * @param  : <string>setId
        ********************************************************************/    
       var _prepareHtml = function( el, setId ) {
-        var blogTocId = setId ? setId : 'blogtoc_' + _uniqueNumber();
+        var blogTocId = !setId || _isEmptyObj( setId ) ? 'blogtoc_' + _uniqueNumber() : setId;
 
         // IE7 workaround
         // style = zoom : 1;
@@ -2289,10 +2393,12 @@
         var text = [
             '<div id="' + blogTocId + '" style="zoom: 1; display: none;">',
             '<div class="blogtoc_loader"></div>',
+            '<div class="blogtoc_content" style="display: none;">',
             '<div class="blogtoc_header"></div>',
             '<div class="blogtoc_filter"></div>',
-            '<table class="blogtoc_table" style="display: none;"></table>',
+            '<table class="blogtoc_table"></table>',
             '<div class="blogtoc_footer"></div>',
+            '</div>',
             '</div>'
           ].join('');
         
@@ -2301,7 +2407,8 @@
           el.innerHTML = text;
         } else {
           document.write( text );
-        }       
+        }
+
         return _getId( blogTocId );
       };
 
@@ -2311,7 +2418,8 @@
       var _resetState = function( el ) {
         var _root = el.BTID,
           _loader = _root.firstChild,
-          _header = _nextElement( _loader ),
+          _contenter = _nextElement( _loader ),
+          _header = _contenter.firstChild,
           _filter = _nextElement( _header ),
           _tabler = _nextElement( _filter ),
           _footer = _nextElement( _tabler );
@@ -2322,7 +2430,9 @@
         _tabler.innerHTML = '';
         _footer.innerHTML = '';
 
+        // reset class
         _root.className = '';
+        _contenter.className = 'blogtoc_content';
         _loader.className = 'blogtoc_loader';
         _header.className = 'blogtoc_header';
         _filter.className = 'blogtoc_filter';
@@ -2331,7 +2441,7 @@
 
         _root.style.display = 'block';
         _loader.style.display = 'block';
-        _tabler.style.display = 'none';
+        _contenter.style.display = 'none';
       };
       
       /* Test the connection image on the fly service
@@ -2344,6 +2454,7 @@
         
         var cdn = [
           [ "boxresizer", "http://proxy.boxresizer.com/convert?resize=1x1&source=" + imgTest ],
+          [ "mobify", "http://ir0.mobify.com/jpg1/1/1/" + imgTest ],
           [ "google", "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?url=" + imgTest + "&container=focus&resize_w=1&resize_h=1" ],
           [ "sencha", "http://src.sencha.io/1/1/" + imgTest ],
         ];
@@ -2374,6 +2485,7 @@
        ********************************************************************/    
       var blogtocBuilder = function( options, element ) {
 
+        // option is null, create new one
         if ( !options ) {
           options = {
             blogtocId: null
@@ -2436,6 +2548,14 @@
           return this;
         }
 
+        if ( !element.BTLoaded ) {
+          setTimeout(function() {
+            BlogToc.reset( element, newOption, options );
+          }, 1 );
+
+          return this;
+        }
+
         if ( element.BTConfig ) {
           _unRegisterEvent( element.BTConfig.registeredEvent, window, 'scroll' );
           _unRegisterEvent( element.BTConfig.registeredEvent, window, 'resize' );
@@ -2448,21 +2568,34 @@
         } else {
           options = element.BTOptions;
         }
-        
 
         _resetState( element );
-
         element.BTLoaded = false;
 
-        var settedLanguage = options.language && options.language.setup ? 
-          options.language.setup : 
-          element.BTOptions.language.setup,
-          settedTheme = options.theme && options.theme.setup ?
-            options.theme.setup : 
-            element.BTOptions.theme.setup;
+        // Initialization before running
+        var setLanguage, setTheme;
 
+        // check the current language setting
+        if ( options.language && options.language.setup ) {
+          setLanguage = options.language.setup;
+        } else {
+          setLanguage = element.BTOptions.language.setup;
+        }
 
-        _runAfterPluginLoaded( element, settedLanguage, settedTheme, options );
+        // check the current theme setting
+        if ( options.theme && options.theme.setup ) {
+          // check if theme already has default settings
+          if ( options.theme.standalone ) {
+            themes[ options.theme.setup ] = {};
+            themes[ options.theme.setup ].option = {};
+          }
+          setTheme = options.theme.setup;
+        } else {
+          setTheme = element.BTOptions.theme.setup;
+        }
+
+        // Run
+        _runAfterPluginLoaded( element, setLanguage, setTheme, options );
 
         return this;
       };
@@ -2470,7 +2603,9 @@
       /* Display
        ********************************************************************/    
       BlogToc.display = function( val, element ) {
-        element.parentNode.BTAPP.changeDisplay( val );
+        if ( element.parentNode.BTAPP ) {
+          element.parentNode.BTAPP.changeDisplay( val );
+        }
 
         return this;
       };
@@ -2478,7 +2613,9 @@
       /* Label
        ********************************************************************/    
       BlogToc.label = function( el, val, element ) {
-        element.parentNode.BTAPP.displayLabel( val, el, null, true );
+        if ( element.parentNode.BTAPP ) {
+          element.parentNode.BTAPP.displayLabel( val, el, null, true );
+        }
 
         return this;
       };
@@ -2486,7 +2623,9 @@
       /* Alphabet
        ********************************************************************/    
       BlogToc.alphabet = function( el, val, element ) {
-        element.parentNode.BTAPP.displayAlphabet( val, el, null, true );
+        if ( element.parentNode.BTAPP ) {
+          element.parentNode.BTAPP.displayAlphabet( val, el, null, true );
+        }
 
         return this;
       };
@@ -2494,7 +2633,9 @@
       /* Page
        ********************************************************************/    
       BlogToc.page = function( val, element ) {
-        element.parentNode.BTAPP.changePage( val );
+        if ( element.parentNode.BTAPP ) {
+          element.parentNode.BTAPP.changePage( val );
+        }
 
         return this;
       };
@@ -2502,7 +2643,9 @@
       /* Search
        ********************************************************************/    
       BlogToc.search = function( val, element ) {
-        element.parentNode.BTAPP.query( val );
+        if ( element.parentNode.BTAPP ) {
+          element.parentNode.BTAPP.query( val );
+        }
 
         return this;
       };
@@ -2510,7 +2653,9 @@
       /* Sorting
        ********************************************************************/    
       BlogToc.sort = function( key, element ) {
-        element.parentNode.BTAPP.sorting( key );
+        if ( element.parentNode.BTAPP ) {
+          element.parentNode.BTAPP.sorting( key );
+        }
 
         return this;
       };
@@ -2526,9 +2671,9 @@
 
       /* Theme
        ********************************************************************/  
-      BlogToc.theme = function( name, url, options ) {
+      BlogToc.theme = function( name, uri, options ) {
         themes[ name ] = {};
-        themes[ name ].url = url;
+        themes[ name ].uri = uri;
         themes[ name ].options = options;
 
         return this;
@@ -2537,13 +2682,13 @@
       /* Utilities
        ********************************************************************/  
       BlogToc.addCSS = function( src, top ) {
-        _addCSSOnce( src, top );
+        _addCSS( src, top );
 
         return this;
       };
 
       BlogToc.addJS = function( src, id, errorCallback, sync ) { 
-        _addJSOnce( src, id, errorCallback, sync );
+        _addJS( src, id, errorCallback, sync );
 
         return this;
       };

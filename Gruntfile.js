@@ -13,12 +13,24 @@ module.exports = function( grunt ) {
 			dest: 'css/bootstrap/bt_bootstrap.css',
 			src: 'third_party/bootstrap/less/bt_bootstrap/bt_bootstrap.less'
 		},
+		dark_bootstrap: {
+			id: 'bt_dark-bootstrap',
+			baseDir: 'css/bootstrap/',
+			dest: 'css/bootstrap/bt_dark-bootstrap.css',
+			src: 'third_party/bootstrap/less/bt_bootstrap/bt_dark-bootstrap.less'
+		},
 		todc_bootstrap: {
 			id: 'bt_todc-bootstrap',
 			baseDir: 'css/bootstrap/',
 			dest: 'css/todc-bootstrap/bt_todc-bootstrap.css',
 			src: 'third_party/todc-bootstrap/less/bt_todc-bootstrap/bt_todc-bootstrap.less'
-		}
+		},
+		bootmetro: {
+			id: 'bt_bootmetro',
+			baseDir: 'css/bootmetro/',
+			dest: 'css/bootmetro/bt_bootmetro.css',
+			src: 'third_party/bootmetro/less/bt_bootmetro/bt_bootmetro.less'
+		},
 	};
 
 	var colorSchemeSettings = {
@@ -94,8 +106,8 @@ module.exports = function( grunt ) {
 				"expr": true,
 				"nonew": true,
 				"-W009": true,
-				"-W107": true,
-				"-W041": true
+				"-W041": true,
+				"-W107": true
 			},
 			release: [ '<%= pkg.name %>.js', 'lang/**/*.js', 'theme/**/*.js' ]
 		},
@@ -138,4 +150,5 @@ module.exports = function( grunt ) {
 
 	grunt.registerTask( 'default', [ 'clean', 'concat', 'usebanner', 'less', 'uglify', 'jshint' ] );
 	grunt.registerTask( 'js', [ 'clean', 'concat:release', 'usebanner', 'uglify' ] );
+	grunt.registerTask( 'theme', [ 'concat:color', 'less' ] );
 }
