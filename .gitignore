@@ -34,6 +34,7 @@ css/custom.css
 css/blogger.css
 third_party/custom.less
 third_party/blogger.less
+third_party/gallery.less
 third_party/lesshat.less
 
 # Komodo
