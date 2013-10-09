@@ -8746,6 +8746,7 @@ Tile ListView
     left: -9999px;
   }
   .bootmetro .blogtoc_table td {
+    width: 100% !important;
     position: relative;
     padding-left: 50%;
     white-space: normal;

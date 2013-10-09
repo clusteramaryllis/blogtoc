@@ -5155,28 +5155,30 @@ textarea.bootstrap-3 .blogtoc_filter select {
     display: none !important;
   }
   .bootstrap-3 .blogtoc_display {
-    float: none;
+    float: none !important;
   }
   .bootstrap-3 .blogtoc_display label {
     position: relative;
+    display: block;
   }
   .bootstrap-3 .blogtoc_display label select {
-    width: 100%;
+    width: 100% !important;
   }
   .bootstrap-3 .blogtoc_display label span {
     position: absolute;
-    right: 30px;
+    right: 33px;
     top: 5px;
   }
   .bootstrap-3 .blogtoc_search {
-    float: none;
+    float: none !important;
   }
   .bootstrap-3 .blogtoc_search label {
     position: relative;
+    display: block;
   }
   .bootstrap-3 .blogtoc_search label input {
     display: block;
-    width: 100%;
+    width: 100% !important;
     min-height: 30px;
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
@@ -5210,7 +5212,8 @@ textarea.bootstrap-3 .blogtoc_filter select {
   }
   .bootstrap-3 .blogtoc_table td {
     position: relative;
-    padding-left: 50%;
+    padding-left: 50% !important;
+    width: auto !important;
     white-space: normal;
     text-align: left;
   }
@@ -5228,12 +5231,12 @@ textarea.bootstrap-3 .blogtoc_filter select {
     content: attr(data-title);
   }
   .bootstrap-3 .blogtoc_result {
-    float: none;
+    float: none !important;
     text-align: center;
     padding-bottom: 8px;
   }
   .bootstrap-3 .blogtoc_pagination {
-    float: none;
+    float: none !important;
     text-align: center;
   }
 }

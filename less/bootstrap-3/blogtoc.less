@@ -215,32 +215,34 @@ input, select, textarea {
   }
 
   .blogtoc_display {
-    float: none;
+    float: none !important;
 
     label {
       position: relative;
+      display: block;
 
       select {
-        width: 100%
+        width: 100% !important;
       }
 
       span {
         position: absolute;
-        right: 30px;
+        right: 33px;
         top: 5px;
       }
     }
   }
 
   .blogtoc_search {
-    float: none;
+    float: none !important;
 
     label {
       position: relative;
+      display: block;
 
       input {
         display: block;
-        width: 100%;
+        width: 100% !important;
         min-height: 30px;
         .box-sizing(border-box);
       }
@@ -286,7 +288,8 @@ input, select, textarea {
 
     td {
       position: relative;
-      padding-left: 50%;
+      padding-left: 50% !important;
+      width: auto !important;
       white-space: normal;
       text-align: left;
 
@@ -308,13 +311,13 @@ input, select, textarea {
   }
 
   .blogtoc_result {
-    float: none;
+    float: none !important;
     text-align: center;
     padding-bottom: 8px;
   }
 
   .blogtoc_pagination {
-    float: none;
+    float: none !important;
     text-align: center; 
   }
 }
