@@ -569,7 +569,7 @@
             _self.makeLabel( feed.label, 'showLabel', 'cloudLabel', 'setup', 'blogtoc_label', klass.blogtoc_label, labelFn );
             _self.makeLabel( _alpha, 'showAlphabetLabel', 'cloudAlphabetLabel', 'setupAlphabet', 'blogtoc_alphabet', klass.blogtoc_alphabet, alphaFn );
             
-            var j = 0, dLen = display.num.length, dVal,
+            var j = 0, dLen = display.length, dVal,
               div, select, input, option, label, spn;
             
             // display section
@@ -581,10 +581,10 @@
             spn = _createElement( 'span', null, opts.language.custom.display );
             
             for ( ; j < dLen; j++ ) {
-              option  = _createElement( 'option', { value: display.num[ j ] }, display.name[ j ] );
+              option  = _createElement( 'option', { value: display[ j ].num }, display[ j ].name );
               
               // arrange to the default setup selected
-              if ( display.num[ j ] === config.records ) {
+              if ( display[ j ].num === config.records ) {
                 option.selected = true;
               }
               
@@ -1989,26 +1989,21 @@
         }
 
         var i = 0, len = template.length,
-          temp = {
-            name : [],
-            num: []
-          };
+          temp = [];
         
         for ( ; i < len; i++ ) {
-          if ( typeof template[ i ] === 'string' ) {
-            temp.num.push( count );
+          // check if a number @link http://stackoverflow.com/a/1830844
+          if ( _isNumber( template[ i ] ) ) {
+            temp.push( { num: template[ i ], name: template[ i ] } );
           } else {
-            temp.num.push( template[ i ] );
+            temp.push( { num: count, name: template[ i ] } );
           }
         }
 
-        temp.num = temp.num.sort( function ( a, b ){
-          return a - b;
+        // Sort number first then string @link http://stackoverflow.com/a/19276824/2863460
+        temp = temp.sort(function ( x, y ) {
+          return !_isNumber( x.name ) ? 1 : x.name - y.name;
         });
-
-        for ( i = 0; i < len; i++ ) {
-          temp.name.push( template[ i ] );
-        }
 
         return temp;
       };
@@ -2021,6 +2016,14 @@
           return false;
         }
         return true;
+      };
+
+      /* Check whether object is number
+       * @param  : <JSObject>obj
+       * @link http://stackoverflow.com/a/1830844
+       ********************************************************************/    
+      var _isNumber = function( obj ) {
+        return !isNaN( parseFloat( obj ) ) && isFinite( obj );
       };
 
       /* Return new Date Object
