@@ -3,4 +3,4 @@ appVersion: "1.2.0"
 markdown: redcarpet
 pygment: true
 
-exclude: [".editorconfig", ".gitignore", ".gitattributes", ".ruby-version", "bower.json", "composer.json", "CONTRIBUTING.md", "CNAME", "LICENSE", "Gruntfile.js", "package.json", "node_modules", "README.md", "less", "*.less", "*.dat"]
+exclude: [".editorconfig", ".gitignore", ".gitattributes", ".ruby-version", "bower.json", "composer.json", "CONTRIBUTING.md", "CNAME", "LICENSE", "Gruntfile.js", "package.json", "node_modules", "README.md", "less", "*.less", "*.dat", "vendor"]
