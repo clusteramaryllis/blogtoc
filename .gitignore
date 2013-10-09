@@ -32,10 +32,10 @@ example.html
 
 css/custom.css
 css/blogger.css
-third_party/custom.less
-third_party/blogger.less
-third_party/gallery.less
-third_party/lesshat.less
+less/custom.less
+less/blogger.less
+less/gallery.less
+less/lesshat.less
 
 # Komodo
 *.komodoproject

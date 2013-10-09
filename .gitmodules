@@ -1,3 +1,12 @@
 [submodule "vendor/bootstrap"]
 	path = vendor/bootstrap
 	url = git@github.com:twbs/bootstrap.git
+[submodule "vendor/bootstrap_2.3.2"]
+	path = vendor/bootstrap_2.3.2
+	url = git@github.com:twbs/bootstrap.git
+[submodule "vendor/todc-bootstrap"]
+	path = vendor/todc-bootstrap
+	url = git@github.com:todc/todc-bootstrap.git
+[submodule "vendor/bootmetro"]
+	path = vendor/bootmetro
+	url = git@github.com:aozora/bootmetro.git
