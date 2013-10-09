@@ -7438,7 +7438,7 @@
     left: -9999px;
   }
   .todc-bootstrap .blogtoc_table td {
-    width: 100% !important;
+    width: auto !important;
     position: relative;
     padding-left: 50%;
     white-space: normal;
