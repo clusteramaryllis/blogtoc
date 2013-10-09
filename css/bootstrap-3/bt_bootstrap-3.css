@@ -8,13 +8,6 @@
  * Based off Twitter Bootstrap v2.3.2
  * http://twbs.github.io/bootstrap/2.3.2 
  */
-*,
-*:before,
-*:after {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
 .bootstrap-3 {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   font-size: 14px;
@@ -5023,9 +5016,11 @@ textarea.bootstrap-3 .blogtoc_filter select {
   height: auto;
 }
 .bootstrap-3 .blogtoc_filter .blogtoc_display span {
+  font-weight: normal;
   margin-left: 5px;
 }
 .bootstrap-3 .blogtoc_filter .blogtoc_search span {
+  font-weight: normal;
   margin-right: 5px;
 }
 .bootstrap-3 .blogtoc_filter .blogtoc_search .blogtoc_query {
