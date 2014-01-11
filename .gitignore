@@ -27,7 +27,12 @@ desktop.ini
 nbproject
 *.sublime-project
 *.sublime-workspace
+
+#Playground files
+data.json
+data2.json
 example.html
+src/blogtoc.temp.js
 
 # Komodo
 *.komodoproject
