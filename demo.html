@@ -1467,7 +1467,8 @@ callback( match ) {
     $("textarea").autogrow();
 
     // filter input
-    $("#bt-new-badge-setup, #bt-pagination-adjacents, #bt-thumbnail-size, #bt-thumbnail-author-size").filter_input({regex: '[0-9]'});
+    $('input[type="number"]').filter_input({regex: '[0-9]'});
+    $('input[type="number"]').spinner();
     $(".bt-point").filter_input({regex: '[0-9\.]'});
 
     // misc
