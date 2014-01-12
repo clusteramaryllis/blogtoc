@@ -44,853 +44,914 @@ extendclass: [
 { name: blogtoc_pagination-disabled, model: "extendClass['blogtoc_pagination disabled']", desc: "div.blogtoc_pagination>li:disabled"}
 ]
 ---
-<div class="tab-pane active">
-  <div class="row-fluid" id="demo-wrapper" ng-controller="DemoCtrl">
-    <div class="span3 demo-fluid">
-      <fieldset>
-        <legend>Options <span class="badge badge-important">Click Generate Button after done</span></legend>
-        <div class="accordion" id="options">
-          <!-- group choice -->
-          <div class="accordion-group">
-            <div class="accordion-heading">
-              <div class="accordion-toggle">
-                <label for="bt-cdn" class="checkbox">
-                  <input type="checkbox" name="bt-cdn" id="bt-cdn" ng-model="useCDN"> [[renderCDN()]] google code URL
-                </label>
-              </div>
+<div class="row-fluid" id="demo-wrapper" ng-controller="DemoCtrl">
+  <div class="span3 demo-fluid">
+      <p><span class="legend-title">Options</span></p>
+      <hr class="condensed-line">
+      <div class="alert alert-error">
+        Click <b>Generate Button</b> after finish customizing to view the change
+      </div>
+      <div class="accordion" id="options">
+        <!-- group choice -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <div class="accordion-toggle">
+              <label for="bt-cdn" class="checkbox">
+                <input type="checkbox" name="bt-cdn" id="bt-cdn" ng-model="useCDN"> [[renderCDN()]] google code URL
+              </label>
             </div>
           </div>
-          <!-- group main -->
-          <div class="accordion-group">
-            <div class="accordion-heading">
-              <a href="#collapseMain" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
-                Blogspot URL
-              </a>
-            </div>
-            <div id="collapseMain" class="accordion-body collapse in">
-              <div class="accordion-inner">
-                <!-- date day -->
-                <label for="bt-url">
-                  <span class="label label-important">Important!</span>
-                </label>
-                <input type="text" id="bt-url" name="bt-url" class="input-large" ng-model="preModel.url">
-                <span class="help-block">
-                  Your blogspot URL, <b>without</b> <code>http://</code> or <code>trailing slash</code> <i>e.g.</i> <br>
-                  <span class="badge badge-info">googleblog.blogspot.com</span>
-                </span>
-              </div>
+        </div>
+        <!-- group main -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a href="#collapseMain" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+              Blogspot URL
+            </a>
+          </div>
+          <div id="collapseMain" class="accordion-body collapse in">
+            <div class="accordion-inner">
+              <form>
+              <!-- date day -->
+              <label for="bt-url">
+                <span class="label label-important">Important!</span>
+              </label>
+              <input type="text" id="bt-url" name="bt-url" class="span12" ng-model="preModel.url">
+              <p class="help-block">
+                Your blogspot URL, <b>without</b> <code>http://</code> or <code>trailing slash</code> <i>e.g.</i> <br>
+                <span class="badge badge-info">googleblog.blogspot.com</span>
+              </p>
+              </form>
             </div>
           </div>
-          <!-- group zero -->
-          <div class="accordion-group">
-            <div class="accordion-heading">
-              <a href="#collapseZero" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
-                BlogToc
-              </a>
-            </div>  
-            <div id="collapseZero" class="accordion-body collapse">
-              <div class="accordion-inner">
-                <!-- date day -->
-                <label for="bt-blogtoc-id">
-                  <span class="label label-inverse">ID</span>
-                </label>
-                <input type="text" id="bt-blogtoc-id" name="bt-blogtoc-id" class="input-large" ng-model="preModel.blogtocId">
-                <span class="help-block">
-                  Add custom <code>ID</code> to your widget, Otherwise will generate random <code>ID</code>
-                </span>
-              </div>
+        </div>
+        <!-- group zero -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a href="#collapseZero" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+              BlogToc
+            </a>
+          </div>  
+          <div id="collapseZero" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <!-- date day -->
+              <form>
+              <label for="bt-blogtoc-id">
+                <span class="label label-inverse">ID</span>
+              </label>
+              <input type="text" id="bt-blogtoc-id" name="bt-blogtoc-id" class="span12" ng-model="preModel.blogtocId">
+              <p class="help-block">
+                Add custom <code>ID</code> to your widget, Otherwise will generate random <code>ID</code>
+              </p>
+              </form>
             </div>
           </div>
-          <!-- group zero-one -->
-          <div class="accordion-group">
-            <div class="accordion-heading">
-              <a href="#collapseZeroOne" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
-                Binding
-              </a>
-            </div>
-            <div id="collapseZeroOne" class="accordion-body collapse">
-              <div class="accordion-inner">
-                <!-- binding -->
-                <div ng-repeat="cc in junk.binding">
-                  <!-- table [[ cc ]]-->
-                  <label for="bt-binding-[[ cc[0] ]]">
-                    <span class="label label-inverse">[[ cc[0] ]]</span>
-                  </label>
-                  <textarea class="btn-block" name="bt-binding-[[ cc[0] ]]" id="bt-binding-[[ cc[0] ]]" ng-model="preModel.binding[ cc[0] ]"></textarea>
-                  <span class="help-block">
-                    A callback function and will trigger <br><b>[[ cc[1] ]]</b>.
-                  </span>
-                </div>
-                <span class="help-block">Try it! with alerting something</span>
+        </div>
+        <!-- group zero-one -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a href="#collapseZeroOne" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+              Binding
+            </a>
+          </div>
+          <div id="collapseZeroOne" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <!-- binding -->
+              <form>
+              <div ng-repeat="cc in junk.binding">
+                <!-- table [[ cc ]]-->
+                <label for="bt-binding-[[ cc[0] ]]">
+                  <span class="label label-inverse">[[ cc[0] ]]</span>
+                </label>
+                <textarea class="btn-block" name="bt-binding-[[ cc[0] ]]" id="bt-binding-[[ cc[0] ]]" ng-model="preModel.binding[ cc[0] ]"></textarea>
+                <p class="help-block">
+                  A callback function and will trigger <br><b>[[ cc[1] ]]</b>.
+                </p>
               </div>
+              </form>
+              <p class="help-block">Try it! with alerting something</p>
             </div>
           </div>
-          <!-- group one -->
-          <div class="accordion-group">
-            <div class="accordion-heading">
-              <a href="#collapseOne" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
-                Date
-              </a>
-            </div>
-            <div id="collapseOne" class="accordion-body collapse">
-              <div class="accordion-inner">
-                <!-- date day -->
-                <label for="bt-date-day">
-                  <span class="label label-inverse">Day</span>
-                </label>
-                <input type="text" id="bt-date-day" name="bt-date-day" ng-model="preModel.date.day" ui-select2="select2Options.dateDay" style="min-width:40%">
-                <span class="help-block">
-                  List of days. You can change the value. <i>e.g.</i> <code>Sun</code>,<code>Mon</code>,<code>Tue</code>,etc... (Days in 3 letter format) or <code>Sonntag</code>,<code>Montag</code>,<code>Dienstag</code>,etc... (The days name in your current language). But remember(!) the order are absolute, starting from <code>Sunday</code> to <code>Saturday</code>.
-                </span>
-                <!-- date month -->
-                <label for="bt-date-month">
-                  <span class="label label-inverse">Month</span>
-                </label>
-                <input type="text" id="bt-date-month" name="bt-date-month" ng-model="preModel.date.month" ui-select2="select2Options.dateMonth" style="min-width:40%">
-                <span class="help-block">
-                  List of months. Same as above, you can change the value according to your own taste. Starting from <code>January</code> to <code>December</code>.
-                </span>
-                <!-- date render -->
-                <label for="bt-date-render">
-                  <span class="label label-inverse">Render</span>
-                </label>
-                <textarea class="btn-block" name="bt-date-render" id="bt-date-render" ng-model="preModel.date.renderDateText"></textarea>
-                <span class="help-block">
-                  This is how the date will be displayed in your table. This is actually a callback function that requires 2 parameters ( <code>date</code> & <code>option</code> ) =>
+        </div>
+        <!-- group one -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a href="#collapseOne" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+              Date
+            </a>
+          </div>
+          <div id="collapseOne" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <form>
+              <!-- date day -->
+              <label for="bt-date-day">
+                <span class="label label-inverse">Day</span>
+              </label>
+              <input type="text" id="bt-date-day" name="bt-date-day" ng-model="preModel.date.day" ui-select2="select2Options.dateDay" class="span12">
+              <p class="help-block">
+                List of days. You can change the value. <i>e.g.</i> <code>Sun</code>,<code>Mon</code>,<code>Tue</code>,etc... (Days in 3 letter format) or <code>Sonntag</code>,<code>Montag</code>,<code>Dienstag</code>,etc... (The days name in your current language). But remember(!) the order are absolute, starting from <code>Sunday</code> to <code>Saturday</code>.
+              </p>
+              <!-- date month -->
+              <label for="bt-date-month">
+                <span class="label label-inverse">Month</span>
+              </label>
+              <input type="text" id="bt-date-month" name="bt-date-month" ng-model="preModel.date.month" ui-select2="select2Options.dateMonth" class="span12">
+              <p class="help-block">
+                List of months. Same as above, you can change the value according to your own taste. Starting from <code>January</code> to <code>December</code>.
+              </p>
+              <!-- date render -->
+              <label for="bt-date-render">
+                <span class="label label-inverse">Render</span>
+              </label>
+              <textarea class="btn-block" name="bt-date-render" id="bt-date-render" ng-model="preModel.date.renderDateText"></textarea>
+              <p class="help-block">
+                This is how the date will be displayed in your table. This is actually a callback function that requires 2 parameters ( <code>date</code> & <code>option</code> ) =>
 <pre class="prettyprint">
 callback( date, option ) {
 // render the date...
 }</pre>
-                  <code>option</code> is the user's option and <code>date</code> is JavaScript <a href="//developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date">date object</a>. The example above likely will output => <br><i>Friday, August 30 2013</i>
-                </span>
-              </div>
+                <code>option</code> is the user's option and <code>date</code> is JavaScript <a href="//developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date">date object</a>. The example above likely will output => <br><i>Friday, August 30 2013</i>
+              </p>
+              </form>
             </div>
           </div>
-          <!-- group two -->
-          <div class="accordion-group">
-            <div class="accordion-heading">
-              <a href="#collapseTwo" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
-                Display
-              </a>
-            </div>
-            <div id="collapseTwo" class="accordion-body collapse">
-              <div class="accordion-inner">
-                <!-- display setup -->
-                <label for="bt-display-setup">
-                  <span class="label label-inverse">Setup</span>
-                </label>
-                <input type="text" id="bt-display-setup" name="bt-display-setup" ng-model="preModel.display.setup" class="input-small" typeahead="dst for dst in displayTemp | filter:$viewValue">
-                <span class="help-block">
-                  The initial setup how many records will be displayed (Must be a number or string value that indicates displaying all records).
-                </span>
-                <!-- display template -->
-                <label for="bt-display-template">
-                  <span class="label label-inverse">Template</span>
-                </label>
-                <input type="text" id="bt-display-template" name="bt-display-template" ng-model="preModel.display.template" ui-select2="select2Options.displayTemplate" style="min-width:30%">
-                <span class="help-block">
-                  The alternative options for displaying records, You can change the value according to your own taste. The <i>string</i> value => <code>All</code> indicates displaying all records, you can change these value too (All values that have type <i>string</i> will be treated for displaying all records).
-                </span>
-              </div>
+        </div>
+        <!-- group two -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a href="#collapseTwo" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+              Display
+            </a>
+          </div>
+          <div id="collapseTwo" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <form>
+              <!-- display setup -->
+              <label for="bt-display-setup">
+                <span class="label label-inverse">Setup</span>
+              </label>
+              <input type="text" id="bt-display-setup" name="bt-display-setup" ng-model="preModel.display.setup" class="span4" typeahead="dst for dst in displayTemp | filter:$viewValue">
+              <p class="help-block">
+                The initial setup how many records will be displayed (Must be a number or string value that indicates displaying all records).
+              </span>
+              <!-- display template -->
+              <label for="bt-display-template">
+                <span class="label label-inverse">Template</span>
+              </label>
+              <input type="text" id="bt-display-template" name="bt-display-template" ng-model="preModel.display.template" ui-select2="select2Options.displayTemplate" class="span12">
+              <p class="help-block">
+                The alternative options for displaying records, You can change the value according to your own taste. The <i>string</i> value => <code>All</code> indicates displaying all records, you can change these value too (All values that have type <i>string</i> will be treated for displaying all records).
+              </span>
+              </form>
             </div>
           </div>
-          <!-- group three -->
-          <div class="accordion-group">
-            <div class="accordion-heading">
-              <a href="#collapseThree" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
-                Extend Class
-              </a>
+        </div>
+        <!-- group three -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a href="#collapseThree" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+              Extend Class
+            </a>
+          </div>
+          <div id="collapseThree" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <form>
+              <p>
+                The main purpose of this option is mostly for custom styling by adding additional class to the structure of DOM that this application generate.
+              </p>
+              {% for item in page.extendclass %}
+              <!-- extend class {{ item.name | replace: '-',' ' }} -->
+              <label for="{{ item.name }}">
+                <span class="label label-inverse">{{ item.name | replace: '-',' ' }}</span>
+              </label>
+              <input type="text" id="{{ item.name }}" name="{{ item.name }}" class="span12" ng-model="preModel.{{ item.model }}">
+              <p class="help-block">
+                Add additional class to 
+                <code>{{ item.desc }}</code>
+              </p>
+              {% endfor %}
+              </form>
             </div>
-            <div id="collapseThree" class="accordion-body collapse">
-              <div class="accordion-inner">
-                <p>
-                  The main purpose of this option is mostly for custom styling by adding additional class to the structure of DOM that this application generate.
-                </p>
-                {% for item in page.extendclass %}
-                <!-- extend class {{ item.name | replace: '-',' ' }} -->
-                <label for="{{ item.name }}">
-                  <span class="label label-inverse">{{ item.name | replace: '-',' ' }}</span>
-                </label>
-                <input type="text" id="{{ item.name }}" name="{{ item.name }}" class="input-large" ng-model="preModel.{{ item.model }}">
-                <span class="help-block">
-                  Add additional class to 
-                  <code>{{ item.desc }}</code>
-                </span>
+          </div>
+        </div>
+        <!-- group four -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a href="#collapseFour" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+              Feed
+            </a>
+          </div>
+          <div id="collapseFour" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <form>
+              <!-- feed type -->
+              <label for="bt-feed-type">
+                <span class="label label-inverse">Type</span>
+              </label>
+              <select name="bt-feed-type" id="bt-feed-type" ng-model="preModel.feedType">
+                <option value="default">default</option>
+                <option value="summary">summary</option>
+              </select>
+              <p class="help-block">
+                The blogger feed type we're gonna using, either <code>default</code> or <code>summary</code>.
+              </p>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- group five -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a href="#collapseFive" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+              Label
+            </a>
+          </div>
+          <div id="collapseFive" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <form>
+              <!-- label define -->
+              <label for="bt-label-define">
+                <span class="label label-inverse">Define (filter)</span>
+              </label>
+              <input type="hidden" id="bt-label-define" name="bt-label-define" ng-model="preModel.label.define" ui-select2="select2Options.labelDefine" class="span12" ng-change="disableException()">
+              <p class="help-block">
+                If it's not empty, include / exclude only specific label / categories based on the options below.
+              </p>
+              <!-- label exception -->
+              <label for="bt-label-exception">
+                <span class="label label-inverse">Exception</span>
+              </label>
+              <label class="checkbox inline">
+                <input type="checkbox" name="bt-label-exception" ng-model="preModel.label.exception" ng-disabled="!exceptionState"> [[preModel.label.exception]]
+              </label>
+              <p class="help-block">
+                Trigger only when define option above is specified. Set to <code>true</code> <i>(Yes)</i>, will exclude the label. Set to <code>false</code> <i>(No)</i> will include the label.
+              </p>
+              <!-- label show label -->
+              <label for="bt-label-show-label">
+                <span class="label label-inverse">Show Label</span>
+              </label>
+              <label class="checkbox inline">
+                <input type="checkbox" name="bt-label-show-label" ng-model="preModel.label.showLabel" ng-click="disableLabel()"> [[preModel.label.showLabel]]
+              </label>
+              <p class="help-block">
+                Show Label.
+              </p>
+              <!-- label include label all -->
+              <label for="bt-label-include-label-all">
+                <span class="label label-inverse">Include Label All</span>
+              </label>
+              <label class="checkbox inline">
+                <input type="checkbox" name="bt-label-include-label-all" ng-model="preModel.label.includeLabelAll" ng-disabled="!showLabelState"> [[preModel.label.includeLabelAll]]
+              </label>
+              <p class="help-block">
+                Include the label that displaying all categories.
+              </p>
+              <!-- label setup -->
+              <label for="bt-label-setup">
+                <span class="label label-inverse">Label "All Categories" text</span>
+              </label>
+              <input type="text" id="bt-label-setup" name="bt-label-setup" class="span3" ng-model="preModel.label.setup" ng-disabled="!showLabelState || !preModel.label.includeLabelAll">
+              <p class="help-block">
+                The label text for displaying all categories.
+              </p>
+              <!-- label cloud label -->
+              <label for="bt-label-cloud-label">
+                <span class="label label-inverse">Show Label in "Cloud" mode</span>
+              </label>
+              <label class="checkbox inline">
+                <input type="checkbox" name="bt-label-cloud-label" ng-model="preModel.label.cloudLabel" ng-disabled="!showLabelState"> [[preModel.label.cloudLabel]]
+              </label>
+              <p class="help-block">
+                Option for showing label / categories in <code>dropdown</code> or <code>cloud</code> mode.
+              </p>
+              <!-- label show label -->
+              <label for="bt-label-show-alphabet-label">
+                <span class="label label-inverse">Show Alphabet Label</span>
+              </label>
+              <label class="checkbox inline">
+                <input type="checkbox" name="bt-label-show-alphabet-label" ng-model="preModel.label.showAlphabetLabel" ng-click="disableAlphabetLabel()"> [[preModel.label.showAlphabetLabel]]
+              </label>
+              <p class="help-block">
+                Show Alphabet Label.
+              </p>
+              <!-- label include label all -->
+              <label for="bt-label-include-alphabet-label-all">
+                <span class="label label-inverse">Include Alphabet Label All</span>
+              </label>
+              <label class="checkbox inline">
+                <input type="checkbox" name="bt-label-include-alphabet-label-all" ng-model="preModel.label.includeAlphabetLabelAll" ng-disabled="!showAlphabetLabelState"> [[preModel.label.includeAlphabetLabelAll]]
+              </label>
+              <p class="help-block">
+                Include the label that displaying all data without filtered by alphabet.
+              </p>
+              <!-- label setup alphabet -->
+              <label for="bt-label-setup-alphabet">
+                <span class="label label-inverse">Alphabet Label "All Data" text</span>
+              </label>
+              <input type="text" id="bt-label-setup-alphabet" name="bt-label-setup-alphabet" class="span3" ng-model="preModel.label.setupAlphabet" ng-disabled="!showAlphabetLabelState || !preModel.label.includeAlphabetLabelAll">
+              <p class="help-block">
+                The alphabet label text for displaying all data without filtered by alphabet.
+              </p>
+              <!-- label cloud label -->
+              <label for="bt-label-cloud-alphabet-label">
+                <span class="label label-inverse">Show Alphabet Label in "Cloud" mode</span>
+              </label>
+              <label class="checkbox inline">
+                <input type="checkbox" name="bt-label-cloud-alphabet-label" ng-model="preModel.label.cloudAlphabetLabel" ng-disabled="!showAlphabetLabelState"> [[preModel.label.cloudAlphabetLabel]]
+              </label>
+              <p class="help-block">
+                Option for showing alphabet label in <code>dropdown</code> or <code>cloud</code> mode.
+              </p>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- group six -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a href="#collapseSix" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+              Language
+            </a>
+          </div>
+          <div id="collapseSix" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <form>
+              <!-- language setup -->
+              <label for="bt-language-setup">
+                <span class="label label-inverse">Setup</span>
+              </label>
+              <select name="bt-language-setup" id="bt-language-setup" ng-model="preModel.language.setup">
+                {% for item in page.language %}
+                <option value="{{item.abbr}}">{{item.abbr}} - ( {{item.name}} )</option>
                 {% endfor %}
-              </div>
-            </div>
-          </div>
-          <!-- group four -->
-          <div class="accordion-group">
-            <div class="accordion-heading">
-              <a href="#collapseFour" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
-                Feed
-              </a>
-            </div>
-            <div id="collapseFour" class="accordion-body collapse">
-              <div class="accordion-inner">
-                <!-- feed type -->
-                <label for="bt-feed-type">
-                  <span class="label label-inverse">Type</span>
-                </label>
-                <select name="bt-feed-type" id="bt-feed-type" ng-model="preModel.feedType">
-                  <option value="default">default</option>
-                  <option value="summary">summary</option>
-                </select>
-                <span class="help-block">
-                  The blogger feed type we're gonna using, either <code>default</code> or <code>summary</code>.
-                </span>
-              </div>
-            </div>
-          </div>
-          <!-- group five -->
-          <div class="accordion-group">
-            <div class="accordion-heading">
-              <a href="#collapseFive" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
-                Label
-              </a>
-            </div>
-            <div id="collapseFive" class="accordion-body collapse">
-              <div class="accordion-inner">
-                <!-- label define -->
-                <label for="bt-label-define">
-                  <span class="label label-inverse">Define (filter)</span>
-                </label>
-                <input type="hidden" id="bt-label-define" name="bt-label-define" ng-model="preModel.label.define" ui-select2="select2Options.labelDefine" style="min-width:50%" ng-change="disableException()">
-                <span class="help-block">
-                  If it's not empty, include / exclude only specific label / categories based on the options below.
-                </span>
-                <!-- label exception -->
-                <label for="bt-label-exception">
-                  <span class="label label-inverse">Exception</span>
-                </label>
-                <label class="checkbox inline">
-                  <input type="checkbox" name="bt-label-exception" ng-model="preModel.label.exception" ng-disabled="!exceptionState"> [[preModel.label.exception]]
-                </label>
-                <span class="help-block">
-                  Trigger only when define option above is specified. Set to <code>true</code> <i>(Yes)</i>, will exclude the label. Set to <code>false</code> <i>(No)</i> will include the label.
-                </span>
-                <!-- label show label -->
-                <label for="bt-label-show-label">
-                  <span class="label label-inverse">Show Label</span>
-                </label>
-                <label class="checkbox inline">
-                  <input type="checkbox" name="bt-label-show-label" ng-model="preModel.label.showLabel" ng-click="disableLabel()"> [[preModel.label.showLabel]]
-                </label>
-                <span class="help-block">
-                  Show Label.
-                </span>
-                <!-- label include label all -->
-                <label for="bt-label-include-label-all">
-                  <span class="label label-inverse">Include Label All</span>
-                </label>
-                <label class="checkbox inline">
-                  <input type="checkbox" name="bt-label-include-label-all" ng-model="preModel.label.includeLabelAll" ng-disabled="!showLabelState"> [[preModel.label.includeLabelAll]]
-                </label>
-                <span class="help-block">
-                  Include the label that displaying all categories.
-                </span>
-                <!-- label setup -->
-                <label for="bt-label-setup">
-                  <span class="label label-inverse">Label "All Categories" text</span>
-                </label>
-                <input type="text" id="bt-label-setup" name="bt-label-setup" class="input-mini" ng-model="preModel.label.setup" ng-disabled="!showLabelState || !preModel.label.includeLabelAll">
-                <span class="help-block">
-                  The label text for displaying all categories.
-                </span>
-                <!-- label cloud label -->
-                <label for="bt-label-cloud-label">
-                  <span class="label label-inverse">Show Label in "Cloud" mode</span>
-                </label>
-                <label class="checkbox inline">
-                  <input type="checkbox" name="bt-label-cloud-label" ng-model="preModel.label.cloudLabel" ng-disabled="!showLabelState"> [[preModel.label.cloudLabel]]
-                </label>
-                <span class="help-block">
-                  Option for showing label / categories in <code>dropdown</code> or <code>cloud</code> mode.
-                </span>
-                <!-- label show label -->
-                <label for="bt-label-show-alphabet-label">
-                  <span class="label label-inverse">Show Alphabet Label</span>
-                </label>
-                <label class="checkbox inline">
-                  <input type="checkbox" name="bt-label-show-alphabet-label" ng-model="preModel.label.showAlphabetLabel" ng-click="disableAlphabetLabel()"> [[preModel.label.showAlphabetLabel]]
-                </label>
-                <span class="help-block">
-                  Show Alphabet Label.
-                </span>
-                <!-- label include label all -->
-                <label for="bt-label-include-alphabet-label-all">
-                  <span class="label label-inverse">Include Alphabet Label All</span>
-                </label>
-                <label class="checkbox inline">
-                  <input type="checkbox" name="bt-label-include-alphabet-label-all" ng-model="preModel.label.includeAlphabetLabelAll" ng-disabled="!showAlphabetLabelState"> [[preModel.label.includeAlphabetLabelAll]]
-                </label>
-                <span class="help-block">
-                  Include the label that displaying all data without filtered by alphabet.
-                </span>
-                <!-- label setup alphabet -->
-                <label for="bt-label-setup-alphabet">
-                  <span class="label label-inverse">Alphabet Label "All Data" text</span>
-                </label>
-                <input type="text" id="bt-label-setup-alphabet" name="bt-label-setup-alphabet" class="input-mini" ng-model="preModel.label.setupAlphabet" ng-disabled="!showAlphabetLabelState || !preModel.label.includeAlphabetLabelAll">
-                <span class="help-block">
-                  The alphabet label text for displaying all data without filtered by alphabet.
-                </span>
-                <!-- label cloud label -->
-                <label for="bt-label-cloud-alphabet-label">
-                  <span class="label label-inverse">Show Alphabet Label in "Cloud" mode</span>
-                </label>
-                <label class="checkbox inline">
-                  <input type="checkbox" name="bt-label-cloud-alphabet-label" ng-model="preModel.label.cloudAlphabetLabel" ng-disabled="!showAlphabetLabelState"> [[preModel.label.cloudAlphabetLabel]]
-                </label>
-                <span class="help-block">
-                  Option for showing alphabet label in <code>dropdown</code> or <code>cloud</code> mode.
-                </span>
-              </div>
-            </div>
-          </div>
-          <!-- group six -->
-          <div class="accordion-group">
-            <div class="accordion-heading">
-              <a href="#collapseSix" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
-                Language
-              </a>
-            </div>
-            <div id="collapseSix" class="accordion-body collapse">
-              <div class="accordion-inner">
-                <!-- language setup -->
-                <label for="bt-language-setup">
-                  <span class="label label-inverse">Setup</span>
-                </label>
-                <select name="bt-language-setup" id="bt-language-setup" ng-model="preModel.language.setup">
-                  {% for item in page.language %}
-                  <option value="{{item.abbr}}">{{item.abbr}} - ( {{item.name}} )</option>
+              </select>
+              <p class="help-block">
+                The default language you're gonna using.
+              </p>
+              <!-- language custom -->
+              <label for="bt-language-custom">
+                <span class="label label-inverse">Custom</span>
+              </label>
+              <p>
+                Override the current language with your custom choice, because sometimes the default language library we provide doesn't match with your preferences. Checkout the <a href="//github.com/clusteramaryllis/blogtoc/tree/master/lang">language library</a> for more detail. Leave the field empty if you want to use the default settings.
+              </p>
+              <div class="row-fluid">
+                <div class="span1"></div>
+                <div class="span11">
+                  {% for item in page.customlanguage %}
+                  <!-- language custom {{ item.name | replace: '-',' ' }} -->
+                  <label for="bt-language-custom-{{ item.name }}">
+                    <span class="label label-inverse">{{ item.name | replace: '-',' ' |capitalize }}</span>
+                  </label>
+                  <input type="text" id="bt-language-custom-{{ item.name }}" name="bt-language-custom-{{ item.name }}" ng-model="preModel.{{ item.model }}">
+                  <p class="help-block">
+                    Override the language for <code>{{ item.name | replace: '-',' ' }}</code>.
+                  </p>
                   {% endfor %}
-                </select>
-                <span class="help-block">
-                  The default language you're gonna using.
-                </span>
-                <!-- language custom -->
-                <label for="bt-language-custom">
-                  <span class="label label-inverse">Custom</span>
-                </label>
-                <p>
-                  Override the current language with your custom choice, because sometimes the default language library we provide doesn't match with your preferences. Checkout the <a href="//github.com/clusteramaryllis/blogtoc/tree/master/lang">language library</a> for more detail. Leave the field empty if you want to use the default settings.
-                </p>
-                <div class="row-fluid">
-                  <div class="span1"></div>
-                  <div class="span11">
-                    {% for item in page.customlanguage %}
-                    <!-- language custom {{ item.name | replace: '-',' ' }} -->
-                    <label for="bt-language-custom-{{ item.name }}">
-                      <span class="label label-inverse">{{ item.name | replace: '-',' ' |capitalize }}</span>
-                    </label>
-                    <input type="text" id="bt-language-custom-{{ item.name }}" name="bt-language-custom-{{ item.name }}" ng-model="preModel.{{ item.model }}">
-                    <span class="help-block">
-                      Override the language for <code>{{ item.name | replace: '-',' ' }}</code>.
-                    </span>
-                    {% endfor %}
-                    <!-- language custom result -->
-                    <label for="bt-language-custom-result">
-                      <span class="label label-inverse">Result</span>
-                    </label>
-                    <input type="text" id="bt-language-custom-result" name="bt-language-custom-result" ng-model="preModel.language.custom.result">
-                    <span class="help-block">
-                      Override the language for <code>result</code>. There's some language parsing here which are : <br>
-                      <code>{begin}</code> will be parsing to the first index number of the current showing records.<br>
-                      <code>{end}</code> will be parsing to the last index number of the current showing records.<br>
-                      <code>{total}</code> will be parsing to the total records (means total posts).<br>
-                      <i>e.g Showing <b>{begin}</b> to <b>{end}</b> out of <b>{total}</b>.</i> <br>
-                      will be parsing to<br>
-                      <i>Showing <b>1</b> to <b>10</b> out of <b>120</b>.</i>
-                    </span>
-                    <!-- language custom error message -->
-                    <label for="bt-language-custom-error-message">
-                      <span class="label label-inverse">Error Message</span>
-                    </label>
-                    <textarea class="btn-block" id="bt-language-custom-error-message" name="bt-language-custom-error-message" ng-model="preModel.language.custom.errorMessage"></textarea>
-                    <span class="help-block">
-                      Override the language for <code>error message</code>.
-                    </span>
-                  </div><!-- span2 -->
-                </div><!-- row-fluid -->
-              </div>
+                  <!-- language custom result -->
+                  <label for="bt-language-custom-result">
+                    <span class="label label-inverse">Result</span>
+                  </label>
+                  <input type="text" id="bt-language-custom-result" name="bt-language-custom-result" ng-model="preModel.language.custom.result">
+                  <p class="help-block">
+                    Override the language for <code>result</code>. There's some language parsing here which are : <br>
+                    <code>{begin}</code> will be parsing to the first index number of the current showing records.<br>
+                    <code>{end}</code> will be parsing to the last index number of the current showing records.<br>
+                    <code>{total}</code> will be parsing to the total records (means total posts).<br>
+                    <i>e.g Showing <b>{begin}</b> to <b>{end}</b> out of <b>{total}</b>.</i> <br>
+                    will be parsing to<br>
+                    <i>Showing <b>1</b> to <b>10</b> out of <b>120</b>.</i>
+                  </p>
+                  <!-- language custom error message -->
+                  <label for="bt-language-custom-error-message">
+                    <span class="label label-inverse">Error Message</span>
+                  </label>
+                  <textarea class="btn-block" id="bt-language-custom-error-message" name="bt-language-custom-error-message" ng-model="preModel.language.custom.errorMessage"></textarea>
+                  <p class="help-block">
+                    Override the language for <code>error message</code>.
+                  </p>
+                </div><!-- span2 -->
+              </div><!-- row-fluid -->
+              </form>
             </div>
           </div>
-          <!-- group seven -->
-          <div class="accordion-group">
-            <div class="accordion-heading">
-              <a href="#collapseSeven" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
-                New Badge
-              </a>
-            </div>  
-            <div id="collapseSeven" class="accordion-body collapse">
-              <div class="accordion-inner">
-                <!-- new badge setup -->
-                <label for="bt-new-badge-setup">
-                  <span class="label label-inverse">Setup</span>
-                </label>
-                <input type="number" id="bt-new-badge-setup" name="bt-new-badge-setup" class="input-mini" ng-model="preModel.newBadge.setup">
-                <span class="help-block">
-                  The initial setup how many <span class="badge badge-info">New</span> label will be glued to the newest published post (Must be a number).
-                </span>
-                <!-- new badge render -->
-                <label for="bt-new-badge-render">
-                  <span class="label label-inverse">Render</span>
-                </label>
-                <textarea class="btn-block" name="bt-new-badge-render" id="bt-new-badge-render" ng-model="preModel.newBadge.renderBadgeText"></textarea>
-                <span class="help-block">
-                  This is how the <span class="badge badge-info">New</span> label will be displayed. This is actually a callback function that requires 1 parameters ( <code>language</code> ) =>
+        </div>
+        <!-- group seven -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a href="#collapseSeven" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+              New Badge
+            </a>
+          </div>  
+          <div id="collapseSeven" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <form>
+              <!-- new badge setup -->
+              <label for="bt-new-badge-setup">
+                <span class="label label-inverse">Setup</span>
+              </label>
+              <input type="number" id="bt-new-badge-setup" name="bt-new-badge-setup" class="span3" ng-model="preModel.newBadge.setup">
+              <p class="help-block">
+                The initial setup how many <span class="badge badge-info">New</span> label will be glued to the newest published post (Must be a number).
+              </p>
+              <!-- new badge render -->
+              <label for="bt-new-badge-render">
+                <span class="label label-inverse">Render</span>
+              </label>
+              <textarea class="btn-block" name="bt-new-badge-render" id="bt-new-badge-render" ng-model="preModel.newBadge.renderBadgeText"></textarea>
+              <p class="help-block">
+                This is how the <span class="badge badge-info">New</span> label will be displayed. This is actually a callback function that requires 1 parameters ( <code>language</code> ) =>
 <pre class="prettyprint">
 callback( language ) {
 // display the label
 }</pre>
-                  <code>language</code> is the language you set in language section option, refer to <a id="reveal-new-label" href="#bt-language-custom-new-label">this</a>.
-                </span>
-              </div>
+                <code>language</code> is the language you set in language section option, refer to <a id="reveal-new-label" href="#bt-language-custom-new-label">this</a>.
+              </p>
+              </form>
             </div>
           </div>
-          <!-- group eight -->
-          <div class="accordion-group">
-            <div class="accordion-heading">
-              <a href="#collapseEight" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
-                Pagination
-              </a>
-            </div>
-            <div id="collapseEight" class="accordion-body collapse">
-              <div class="accordion-inner">
-                <!-- pagination adjacents -->
-                <label for="bt-pagination-adjacents">
-                  <span class="label label-inverse">Adjacents</span>
+        </div>
+        <!-- group eight -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a href="#collapseEight" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+              Pagination
+            </a>
+          </div>
+          <div id="collapseEight" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <form>
+              <!-- pagination adjacents -->
+              <label for="bt-pagination-adjacents">
+                <span class="label label-inverse">Adjacents</span>
+              </label>
+              <input type="number" id="bt-pagination-adjacents" name="bt-pagination-adjacents" class="span3" ng-model="preModel.pagination.adjacents">
+              <p class="help-block">
+                The pagination adjacents (Must be a number).
+              </p>
+              <!-- pagination page -->
+              <div ng-repeat="cc in junk.pagination">
+                <label for="bt-pagination-[[ cc[0] ]]">
+                  <span class="label label-inverse">[[ cc[0] ]]</span>
                 </label>
-                <input type="number" id="bt-pagination-adjacents" name="bt-pagination-adjacents" class="input-mini" ng-model="preModel.pagination.adjacents">
-                <span class="help-block">
-                  The pagination adjacents (Must be a number).
-                </span>
-                <!-- pagination page -->
-                <div ng-repeat="cc in junk.pagination">
-                  <label for="bt-pagination-[[ cc[0] ]]">
-                    <span class="label label-inverse">[[ cc[0] ]]</span>
-                  </label>
-                  <label class="checkbox inline">
-                    <input type="checkbox" name="bt-pagination-[[ cc[0] ]]" ng-model="preModel.pagination[ cc[0] ]"> [[ preModel.pagination[ cc[0] ] ]]
-                  </label>
-                  <span class="help-block">
-                    Show the <code>[[ cc[1] ]]</code> pagination.
-                  </span>
-                </div>
+                <label class="checkbox inline">
+                  <input type="checkbox" name="bt-pagination-[[ cc[0] ]]" ng-model="preModel.pagination[ cc[0] ]"> [[ preModel.pagination[ cc[0] ] ]]
+                </label>
+                <p class="help-block">
+                  Show the <code>[[ cc[1] ]]</code> pagination.
+                </p>
               </div>
+              </form>
             </div>
           </div>
-          <!-- group eight-nine -->
-          <div class="accordion-group">
-            <div class="accordion-heading">
-              <a href="#collapseEightNine" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
-                Post Label
-              </a>
-            </div>
-            <div id="collapseEightNine" class="accordion-body collapse">
-              <div class="accordion-inner">
-                <!-- post label setup -->
-                <label for="bt-post-label-separator">
-                  <span class="label label-inverse">Separator</span>
-                </label>
-                <input type="text" id="bt-post-label-separator" name="bt-post-label-separator" class="input-mini" ng-model="preModel.postLabel.separator">
-                <span class="help-block">
-                  The post label separator
-                </span>
-                <!-- post label render -->
-                <label for="bt-post-label-render">
-                  <span class="label label-inverse">Render</span>
-                </label>
-                <textarea class="btn-block" name="bt-post-label-render" id="bt-post-label-render" ng-model="preModel.postLabel.renderPostLabelText"></textarea>
-                <span class="help-block">
-                  Wrapping each post label with custom html. This is actually a callback function that requires 1 parameters ( <code>label</code> ) =>
+        </div>
+        <!-- group eight-nine -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a href="#collapseEightNine" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+              Post Label
+            </a>
+          </div>
+          <div id="collapseEightNine" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <form>
+              <!-- post label setup -->
+              <label for="bt-post-label-separator">
+                <span class="label label-inverse">Separator</span>
+              </label>
+              <input type="text" id="bt-post-label-separator" name="bt-post-label-separator" class="span3" ng-model="preModel.postLabel.separator">
+              <p class="help-block">
+                The post label separator
+              </p>
+              <!-- post label render -->
+              <label for="bt-post-label-render">
+                <span class="label label-inverse">Render</span>
+              </label>
+              <textarea class="btn-block" name="bt-post-label-render" id="bt-post-label-render" ng-model="preModel.postLabel.renderPostLabelText"></textarea>
+              <p class="help-block">
+                Wrapping each post label with custom html. This is actually a callback function that requires 1 parameters ( <code>label</code> ) =>
 <pre class="prettyprint">
 callback( label ) {
 // wrap each label
 }</pre>
-                  <code>label</code> is post label name.
-                </span>
-              </div>
+                <code>label</code> is post label name.
+              </p>
+              </form>
             </div>
           </div>
-          <!-- group nine -->
-          <div class="accordion-group">
-            <div class="accordion-heading">
-              <a href="#collapseNine" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
-                Progress
-              </a>
-            </div>  
-            <div id="collapseNine" class="accordion-body collapse">
-              <div class="accordion-inner">
-                <!-- progress -->
-                <label for="bt-progress-render">
-                  <span class="label label-inverse">Render</span>
-                </label>
-                <span class="help-block pull-right">
-                  <span class="label label-important">Need JavaScript knowledge</span>
-                </span>
-                <textarea class="btn-block" name="bt-progress-render" id="bt-progress-render" ng-model="preModel.progress.renderProgressText"></textarea>
-                <button class="btn btn-block" ng-click="bootstrapExample($event)">Example using bootstrap <br>progress bar</button>
-                <button class="btn btn-block" ng-click="imgExample($event)">Example using image loader from <br><a href="http://metroui.org.ua/">Metro UI</a></button>
-                <button class="btn btn-block" ng-click="defaultExample($event)">Reset Default Example</button>
-                <span class="help-block">
-                  Customize your waiting progress animation. This is actually a callback function that requires 2 parameters ( <code>elem</code> & <code>progress</code> ) =>
+        </div>
+        <!-- group nine -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a href="#collapseNine" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+              Progress
+            </a>
+          </div>  
+          <div id="collapseNine" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <form>
+              <!-- progress -->
+              <label for="bt-progress-render">
+                <span class="label label-inverse">Render</span>
+              </label>
+              <span class="help-block pull-right">
+                <span class="label label-important">Need JavaScript knowledge</span>
+              </span>
+              <textarea class="btn-block" name="bt-progress-render" id="bt-progress-render" ng-model="preModel.progress.renderProgressText"></textarea>
+              <button class="btn btn-block" ng-click="bootstrapExample($event)">Example using bootstrap <br>progress bar</button>
+              <button class="btn btn-block" ng-click="imgExample($event)">Example using image loader from <br><a href="http://metroui.org.ua/">Metro UI</a></button>
+              <button class="btn btn-block" ng-click="defaultExample($event)">Reset Default Example</button>
+              <p class="help-block">
+                Customize your waiting progress animation. This is actually a callback function that requires 2 parameters ( <code>elem</code> & <code>progress</code> ) =>
 <pre class="prettyprint">
 callback( elem, progress ) {
 // animate your waiting progress
 }</pre>
-                  <code>elem</code> is the element that the progress will be apended and <code>progress</code> is percentage value of progress ( current loading text state ).
-                </span>
-              </div>
+                <code>elem</code> is the element that the progress will be apended and <code>progress</code> is percentage value of progress ( current loading text state ).
+              </p>
+              </form>
             </div>
           </div>
-          <!-- group ten -->
-          <div class="accordion-group">
-            <div class="accordion-heading">
-              <a href="#collapseTen" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
-                Search
-              </a>
-            </div>  
-            <div id="collapseTen" class="accordion-body collapse">
-              <div class="accordion-inner">
-                <!-- marker render -->
-                <label for="bt-search-marker-render">
-                  <span class="label label-inverse">Marker Render</span>
-                </label>
-                <textarea class="btn-block" name="bt-search-marker-render" id="bt-search-marker-render" ng-model="preModel.search.renderSearchText"></textarea>
-                <span class="help-block">
-                  Mark the the string result that match with searching query. This is actually a callback function that requires 1 parameters ( <code>match</code> ) =>
+        </div>
+        <!-- group ten -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a href="#collapseTen" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+              Search
+            </a>
+          </div>  
+          <div id="collapseTen" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <form>
+              <!-- marker render -->
+              <label for="bt-search-marker-render">
+                <span class="label label-inverse">Marker Render</span>
+              </label>
+              <textarea class="btn-block" name="bt-search-marker-render" id="bt-search-marker-render" ng-model="preModel.search.renderSearchText"></textarea>
+              <p class="help-block">
+                Mark the the string result that match with searching query. This is actually a callback function that requires 1 parameters ( <code>match</code> ) =>
 <pre class="prettyprint">
 callback( match ) {
 // mark the matching query
 }</pre>
-                  <code>match</code> is the matching query string. The example above will <b>bold</b> the matching query text.
-                </span>
-              </div>
+                <code>match</code> is the matching query string. The example above will <b>bold</b> the matching query text.
+              </p>
+              </form>
             </div>
           </div>
-          <!-- group eleven -->
-          <div class="accordion-group">
-            <div class="accordion-heading">
-              <a href="#collapseEleven" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
-                Sorting
-              </a>
-            </div>
-            <div id="collapseEleven" class="accordion-body collapse">
-              <div class="accordion-inner">
-                <!-- sorting key -->
-                <label for="bt-sorting-key">
-                  <span class="label label-inverse">Key</span>
-                </label>
-                <select name="bt-sorting-key" id="bt-sorting-key" ng-model="preModel.sorting.key" ng-options="cc for cc in sortingKey">
-                </select>
-                <span class="help-block">
-                  The initialization of sorting.
-                </span>
-                <!-- sorting order -->
-                <label for="bt-sorting-order">
-                  <span class="label label-inverse">Order</span>
-                </label>
-                <select name="bt-sorting-order" id="bt-sorting-order" ng-model="preModel.sorting.order">
-                  <option value="ascending">ascending</option>
-                  <option value="descending">descending</option>
-                </select>
-                <span class="help-block">
-                  The sorting order based on sorting key above, either <code>ascending</code> or <code>descending</code>.
-                </span>
-              </div>
+        </div>
+        <!-- group eleven -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a href="#collapseEleven" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+              Sorting
+            </a>
+          </div>
+          <div id="collapseEleven" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <form>
+              <!-- sorting key -->
+              <label for="bt-sorting-key">
+                <span class="label label-inverse">Key</span>
+              </label>
+              <select name="bt-sorting-key" id="bt-sorting-key" ng-model="preModel.sorting.key" ng-options="cc for cc in sortingKey">
+              </select>
+              <p class="help-block">
+                The initialization of sorting.
+              </p>
+              <!-- sorting order -->
+              <label for="bt-sorting-order">
+                <span class="label label-inverse">Order</span>
+              </label>
+              <select name="bt-sorting-order" id="bt-sorting-order" ng-model="preModel.sorting.order">
+                <option value="ascending">ascending</option>
+                <option value="descending">descending</option>
+              </select>
+              <p class="help-block">
+                The sorting order based on sorting key above, either <code>ascending</code> or <code>descending</code>.
+              </p>
+              </form>
             </div>
           </div>
-          <!-- group twelve -->
-          <div class="accordion-group">
-            <div class="accordion-heading">
-              <a href="#collapseTwelve" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
-                Summary
-              </a>
-            </div>
-            <div id="collapseTwelve" class="accordion-body collapse">
-              <div class="accordion-inner">
-                <!-- new badge setup -->
-                <label for="bt-summary">
-                  <span class="label label-inverse">Word Limit</span>
-                </label>
-                <input type="number" id="bt-summary" name="bt-summary" class="input-mini" ng-model="preModel.summary.wordLimit">
-                <span class="help-block">
-                  Limit the summary text of your blog post (Must be a number).
-                </span>
-              </div>
+        </div>
+        <!-- group twelve -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a href="#collapseTwelve" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+              Summary
+            </a>
+          </div>
+          <div id="collapseTwelve" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <form>
+              <!-- new badge setup -->
+              <label for="bt-summary">
+                <span class="label label-inverse">Word Limit</span>
+              </label>
+              <input type="number" id="bt-summary" name="bt-summary" class="span3" ng-model="preModel.summary.wordLimit">
+              <p class="help-block">
+                Limit the summary text of your blog post (Must be a number).
+              </p>
+              </form>
             </div>
           </div>
-          <!-- group thirteen -->
-          <div class="accordion-group">
-            <div class="accordion-heading">
-              <a href="#collapseThirteen" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
-                Table
-              </a>
-            </div>
-            <div id="collapseThirteen" class="accordion-body collapse">
-              <div class="accordion-inner">
-                <!-- table order -->
-                <label for="bt-table-order">
-                  <span class="label label-inverse">Order</span>
-                </label>
-                <input type="text" id="bt-table-order" name="bt-table-order" ui-select2="select2Options.tableOrder" style="min-width:30%" ng-model="preModel.table.order">
-                <span class="help-block">
-                  The order of data that will display in table
-                </span>
-                <div ng-repeat="cc in preModel.table.order">
-                  <!-- table [[ cc ]]-->
-                  <label for="bt-table-[[ cc ]]">
-                    <span class="label label-inverse">[[ cc ]] width point</span>
-                  </label>
-                  <input type="number" class="input-mini bt-point" name="bt-table-[[ cc ]]" id="bt-table-[[ cc ]]" ng-model="preModel.table[cc+'WidthPoint']" step="0.1">
-                  <span class="help-block">
-                    Calculate the width of <code>[[ cc ]] &lt;thead&gt;</code> by point.
-                  </span>
-                </div>
-              </div>
-            </div>
+        </div>
+        <!-- group thirteen -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a href="#collapseThirteen" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+              Table
+            </a>
           </div>
-          <!-- group fourteen -->
-          <div class="accordion-group">
-            <div class="accordion-heading">
-              <a href="#collapseFourteen" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
-                Theme
-              </a>
-            </div>
-            <div id="collapseFourteen" class="accordion-body collapse">
-              <div class="accordion-inner">
-                <!-- theme built -->
-                <label for="bt-theme-built">
-                  <span class="label label-inverse">Use Built in Theme</span>
+          <div id="collapseThirteen" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <form>
+              <!-- table order -->
+              <label for="bt-table-order">
+                <span class="label label-inverse">Order</span>
+              </label>
+              <input type="text" id="bt-table-order" name="bt-table-order" ui-select2="select2Options.tableOrder" class="span12" ng-model="preModel.table.order">
+              <p class="help-block">
+                The order of data that will display in table
+              </p>
+              <div ng-repeat="cc in preModel.table.order">
+                <!-- table [[ cc ]]-->
+                <label for="bt-table-[[ cc ]]">
+                  <span class="label label-inverse">[[ cc ]] width point</span>
                 </label>
-                <label class="checkbox inline">
-                  <input type="checkbox" name="bt-theme-built" ng-model="builtInMode" ng-change="resetStandalone()"> [[builtInMode]]
-                </label>
-                <span class="help-block">
-                  Using built in theme or your own custom theme
-                </span>
-                <!-- theme setup -->
-                <label for="bt-theme-default">
-                  <span class="label label-inverse">Setup</span>
-                </label>
-                <select name="bt-theme-default" id="bt-theme-default" ng-model="preModel.theme.setup" ng-disabled="!builtInMode" class="input-large">
-                  <option value="bootstrap">bootstrap</option>
-                  <option value="dark-bootstrap">dark-bootstrap</option>
-                  <option value="bootmetro">bootmetro</option>
-                  <option value="todc-bootstrap">todc-bootstrap</option>
-                </select>
-                <!-- theme setup -->
-                <input type="text" id="bt-theme-custom" name="bt-theme-custom" ng-model="preModel.theme.setup" ng-disabled="builtInMode" class="input-large">
-                <!-- theme standalone -->
-                <label for="bt-theme-standalone">
-                  <span class="label label-inverse">Standalone</span>
-                </label>
-                <label class="checkbox inline">
-                  <input type="checkbox" name="bt-theme-standalone" ng-model="preModel.theme.standalone" ng-disabled="builtInMode"> [[preModel.theme.standalone]]
-                </label>
-                <span class="help-block">
-                  Set the standalone to <code>true</code> if you're not using theme bundle (<a href="detail.html#theme-bundle">See Detail</a>).
-                </span>
-                <!-- change background color -->
-                <span class="help-block">Change background color</span>
-                <div class="input-append colorpicker-component cbsp" data-color="rgb(255, 255, 255)" data-color-format="rgb" id="cp3">
-                  <input type="text" value="rgb(255, 255, 255)">
-                  <span class="add-on"><i style="background-color: rgb(255, 255, 255)"></i></span>
-                </div>
-                <span class="help-block">
-                  Select your theme. We use these awesome project for base theme of our built in theme:
-                  <ul>
-                    <li><a href="http://getbootstrap.com/2.3.2/">Twitter bootstrap</a></li>
-                    <li><a href="http://aozora.github.io/bootmetro/">Bootmetro</a></li>
-                    <li><a href="http://todc.github.io/todc-bootstrap/">TODC bootstrap</a></li>
-                  </ul>
-                  If you use your custom theme. You might be have to write your own CSS for customing. <br>
-                  You might consider to add your own custom theme to become one of our built theme by contributing on <a href="https://github.com/clusteramaryllis/blogtoc">github</a> page.
-                </span>
-              </div>
-            </div>
-          </div>
-          <!-- group fifteen -->
-          <div class="accordion-group">
-            <div class="accordion-heading">
-              <a href="#collapseFifteen" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
-                Thumbnail
-              </a>
-            </div>
-            <div id="collapseFifteen" class="accordion-body collapse">
-              <div class="accordion-inner">
-                <!-- thumbnail blank -->
-                <label for="bt-thumbnail-blank">
-                  <span class="label label-inverse">Blank</span>
-                </label>
-                <input type="url" id="bt-thumbnail-blank" name="bt-thumbnail-blank" ng-model="preModel.thumbnail.blank" class="input-large">
-                <span class="help-block">
-                  <code>URL</code> for transparent blank image, use for lazyload.
-                </span>
-                <!-- thumbnail not found -->
-                <label for="bt-thumbnail-not-found">
-                  <span class="label label-inverse">Not Found</span>
-                </label>
-                <input type="url" id="bt-thumbnail-not-found" name="bt-thumbnail-not-found" ng-model="preModel.thumbnail.notFound" class="input-large">
-                <span class="help-block">
-                  <code>URL</code> for not found image, a fallback if thumbnail is not found.
-                </span>
-                <!-- thumbnail sample -->
-                <label for="bt-thumbnail-sample">
-                  <span class="label label-inverse">Sample</span>
-                </label>
-                <input type="url" id="bt-thumbnail-sample" name="bt-thumbnail-sample" ng-model="preModel.thumbnail.sample" class="input-large">
-                <span class="help-block">
-                  <code>URL</code> for sample image, use for test the image on the fly service.
-                </span>
-                <!-- thumbnail size -->
-                <label for="bt-thumbnail-size">
-                  <span class="label label-inverse">Blogpost Thumbnail Size</span>
-                </label>
-                <input type="number" id="bt-thumbnail-size" name="bt-thumbnail-size" class="input-mini" ng-model="preModel.thumbnail.size">
-                <span class="help-block">
-                  The thumbnail dimension size found in the blog post.
-                </span>
-                <!-- thumbnail author size -->
-                <label for="bt-thumbnail-author-size">
-                  <span class="label label-inverse">Author Thumbnail Size</span>
-                </label>
-                <input type="number" id="bt-thumbnail-author-size" name="bt-thumbnail-author-size" class="input-mini" ng-model="preModel.thumbnail.authorSize">
-                <span class="help-block">
-                  The thumbnail dimension size for the author who publish the post.
-                </span>
-                <!-- thumbnail author thumbnail -->
-                <label for="bt-thumbnail-author-thumb">
-                  <span class="label label-inverse">Show Author Thumbnail</span>
-                </label>
-                <label class="checkbox inline">
-                  <input type="checkbox" name="bt-thumbnail-author-thumb" ng-model="preModel.thumbnail.authorThumbnail"> [[preModel.thumbnail.authorThumbnail]]
-                </label>
-                <span class="help-block">
-                  Show the author thumbnail?
-                </span>
+                <input type="number" class="span3 bt-point" name="bt-table-[[ cc ]]" id="bt-table-[[ cc ]]" ng-model="preModel.table[cc+'WidthPoint']" step="0.1">
+                <p class="help-block">
+                  Calculate the width of <code>[[ cc ]] &lt;thead&gt;</code> by point.
+                </p>
+                </form>
               </div>
             </div>
           </div>
         </div>
-      </fieldset>
-    </div><!-- span3 -->
-    <div class="span9 demo-fluid">
-      <fieldset>
-        <legend>Result</legend>
-        <div class="tabbable">
-          <ul class="nav nav-tabs">
-            <li class="active"><a href="#tab1" data-toggle="tab">Display</a></li>
-            <li><a href="#tab2" data-toggle="tab">How to use in your blog</a></li>
-          </ul>
-          <div class="tab-content">
-            <div class="tab-pane active" id="tab1">
-              <script src="blogtoc.js"></script>
-              <div id="blogtoc"></div>
-              <script>
-                // Set Base URL
-                BlogToc.baseURL( './' ); 
-                var myDiv = document.getElementById('blogtoc');
-                BlogToc( myDiv ).build();
-              </script>
+        <!-- group fourteen -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a href="#collapseFourteen" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+              Theme
+            </a>
+          </div>
+          <div id="collapseFourteen" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <form>
+              <!-- theme built -->
+              <label for="bt-theme-built">
+                <span class="label label-inverse">Use Built in Theme</span>
+              </label>
+              <label class="checkbox inline">
+                <input type="checkbox" name="bt-theme-built" ng-model="builtInMode" ng-change="resetStandalone()"> [[builtInMode]]
+              </label>
+              <p class="help-block">
+                Using built in theme or your own custom theme
+              </p>
+              <!-- theme setup -->
+              <label for="bt-theme-default">
+                <span class="label label-inverse">Setup</span>
+              </label>
+              <select name="bt-theme-default" id="bt-theme-default" ng-model="preModel.theme.setup" ng-disabled="!builtInMode" class="span12">
+                <option value="bootstrap">bootstrap</option>
+                <option value="dark-bootstrap">dark-bootstrap</option>
+                <option value="bootmetro">bootmetro</option>
+                <option value="todc-bootstrap">todc-bootstrap</option>
+              </select>
+              <!-- theme setup -->
+              <input type="text" id="bt-theme-custom" name="bt-theme-custom" ng-model="preModel.theme.setup" ng-disabled="builtInMode" class="span12">
+              <!-- theme standalone -->
+              <label for="bt-theme-standalone">
+                <span class="label label-inverse">Standalone</span>
+              </label>
+              <label class="checkbox inline">
+                <input type="checkbox" name="bt-theme-standalone" ng-model="preModel.theme.standalone" ng-disabled="builtInMode"> [[preModel.theme.standalone]]
+              </label>
+              <p class="help-block">
+                Set the standalone to <code>true</code> if you're not using theme bundle (<a href="detail.html#theme-bundle">See Detail</a>).
+              </p>
+              <!-- change background color -->
+              <p class="help-block">Change background color</p>
+              <div class="input-append colorpicker-component cbsp" data-color="rgb(255, 255, 255)" data-color-format="rgb" id="cp3">
+                <input type="text" value="rgb(255, 255, 255)">
+                <span class="add-on"><i style="background-color: rgb(255, 255, 255)"></i></span>
+              </div>
+              <p class="help-block">
+                Select your theme. We use these awesome project for base theme of our built in theme:
+                <ul>
+                  <li><a href="http://getbootstrap.com/2.3.2/">Twitter bootstrap</a></li>
+                  <li><a href="http://aozora.github.io/bootmetro/">Bootmetro</a></li>
+                  <li><a href="http://todc.github.io/todc-bootstrap/">TODC bootstrap</a></li>
+                </ul>
+                If you use your custom theme. You might be have to write your own CSS for customing. <br>
+                You might consider to add your own custom theme to become one of our built theme by contributing on <a href="https://github.com/clusteramaryllis/blogtoc">github</a> page.
+              </p>
+              </form>
             </div>
-            <div class="tab-pane" id="tab2">
-              <p>Place this code somewhere in the <code>&lt;head&gt;&lt;/head&gt;</code> section</p>
+          </div>
+        </div>
+        <!-- group fifteen -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a href="#collapseFifteen" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+              Thumbnail
+            </a>
+          </div>
+          <div id="collapseFifteen" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <form>
+              <!-- thumbnail blank -->
+              <label for="bt-thumbnail-blank">
+                <span class="label label-inverse">Blank</span>
+              </label>
+              <input type="url" id="bt-thumbnail-blank" name="bt-thumbnail-blank" ng-model="preModel.thumbnail.blank" class="span12">
+              <p class="help-block">
+                <code>URL</code> for transparent blank image, use for lazyload.
+              </p>
+              <!-- thumbnail not found -->
+              <label for="bt-thumbnail-not-found">
+                <span class="label label-inverse">Not Found</span>
+              </label>
+              <input type="url" id="bt-thumbnail-not-found" name="bt-thumbnail-not-found" ng-model="preModel.thumbnail.notFound" class="span12">
+              <p class="help-block">
+                <code>URL</code> for not found image, a fallback if thumbnail is not found.
+              </p>
+              <!-- thumbnail sample -->
+              <label for="bt-thumbnail-sample">
+                <span class="label label-inverse">Sample</span>
+              </label>
+              <input type="url" id="bt-thumbnail-sample" name="bt-thumbnail-sample" ng-model="preModel.thumbnail.sample" class="span12">
+              <p class="help-block">
+                <code>URL</code> for sample image, use for test the image on the fly service.
+              </p>
+              <!-- thumbnail size -->
+              <label for="bt-thumbnail-size">
+                <span class="label label-inverse">Blogpost Thumbnail Size</span>
+              </label>
+              <input type="number" id="bt-thumbnail-size" name="bt-thumbnail-size" class="span3" ng-model="preModel.thumbnail.size">
+              <p class="help-block">
+                The thumbnail dimension size found in the blog post.
+              </p>
+              <!-- thumbnail author size -->
+              <label for="bt-thumbnail-author-size">
+                <span class="label label-inverse">Author Thumbnail Size</span>
+              </label>
+              <input type="number" id="bt-thumbnail-author-size" name="bt-thumbnail-author-size" class="span3" ng-model="preModel.thumbnail.authorSize">
+              <p class="help-block">
+                The thumbnail dimension size for the author who publish the post.
+              </p>
+              <!-- thumbnail author thumbnail -->
+              <label for="bt-thumbnail-author-thumb">
+                <span class="label label-inverse">Show Author Thumbnail</span>
+              </label>
+              <label class="checkbox inline">
+                <input type="checkbox" name="bt-thumbnail-author-thumb" ng-model="preModel.thumbnail.authorThumbnail"> [[preModel.thumbnail.authorThumbnail]]
+              </label>
+              <p class="help-block">
+                Show the author thumbnail?
+              </p>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- last group -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <div class="accordion-toggle">
+              <button id="generate" class="btn btn-danger btn-block" type="button">Generate</button>
+            </div>
+          </div>
+        </div>  
+      </div>
+  </div><!-- span3 -->
+  <div class="span9 demo-fluid">
+      <p><span class="legend-title">Result</span></p>
+      <hr class="condensed-line">
+      <div class="tabbable">
+        <ul class="nav nav-tabs">
+          <li class="active"><a href="#tab1" data-toggle="tab">Display</a></li>
+          <li><a href="#tab2" data-toggle="tab">How to use in your blog</a></li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="tab1">
+            <script src="blogtoc.js"></script>
+            <div id="blogtoc"></div>
+            <script>
+              // Set Base URL
+              BlogToc.baseURL( './' ); 
+              var myDiv = document.getElementById('blogtoc');
+              BlogToc( myDiv ).build();
+            </script>
+          </div>
+          <div class="tab-pane" id="tab2">
+            <p>Place this code somewhere in the <code>&lt;head&gt;&lt;/head&gt;</code> section</p>
 <pre class="prettyprint linenums" id="result-00">
 </pre>              
-              <p>Then add these codes below in your blog page or post <span class="help-inline">(these are just a pre-built example. You can change these codes manually)</span>.</p>
+            <p>Then add these codes below in your blog page or post <span class="help-inline">(these are just a pre-built example. You can change these codes manually)</span>.</p>
 <pre class="prettyprint linenums" id="result-01">
 </pre>
 <div id="result-01-hidden" style="display: none">
 [[modelOneRender()]]
 </div>              
-            </div>
           </div>
         </div>
-      </fieldset>
-    </div><!-- span9 -->
-  </div><!-- row-fluid -->
-</div>
-<div class="fixed-wrapper">
-  <button id="generate" class="btn btn-danger" type="button">Generate</button>
-</div>
+      </div>
+  </div><!-- span9 -->
+</div><!-- row-fluid -->
+
 <script>
+  // store temp data
   var _junk = {
     label: {},
     table: {},
     other: {}
   };
+  // store default data
   var _def = {
+    blogtocId: '',
     binding: {},
-    date: {},
-    display: {},
-    extendClass: {},
-    label: {},
-    language: {
-      custom: {}
+    date: {
+      day: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
+      month: 'January,February,March,April,May,June,July,August,September,October,November,December'.split(','),
+      renderDateText: "option.date.day[ date.getDay() ] + ', ' + option.date.month[ date.getMonth() ] + ' ' + date.getDate() + ' ' + date.FullYear()"    
     },
-    newBadge: {},
-    pagination: {},
-    progress: {},
-    postLabel: {},
-    search: {},
-    sorting: {},
-    summary: {},
-    table: {},
-    theme: {},
-    thumbnail: {}
+    display: {
+      setup: '10',
+      template: ['5','10','25','50','All']
+    },
+    feedType: 'default',
+    extendClass: {},
+    label: {
+      define: [],
+      exception: false,
+      showLabel: true,
+      includeLabelAll: true,
+      setup: "All",
+      cloudLabel: false,
+      showAlphabetLabel: false,
+      includeAlphabetLabelAll: true,
+      setupAlphabet: "All",
+      cloudAlphabetLabel: false
+    },
+    language: {
+      setup: 'en-US',
+      custom: {
+        result: '',
+        errorMessage: ''
+      }
+    },
+    newBadge: {
+      setup: 5,
+      renderBadgeText: "'<span class=\"label\">' + language + '</span>'"
+    },
+    pagination: {
+      adjacents: 2
+    },
+    progress: {
+      renderProgressText: "var span; if ( ( span = elem.getElementsByTagName('span')[0] ) ) { span.innerHTML = progress; } else { elem.innerHTML = 'Loading <span>' + progress + '</span> %'; }"
+    },
+    postLabel: {
+      separator: '',
+      renderPostLabelText: "'<span>' + label + '</span>'"
+    },
+    search: {
+      renderSearchText: "'<b>' + match + '</b>'"
+    },
+    sorting: {
+      key: 'title',
+      order: 'ascending'
+    },
+    summary: {
+      wordLimit: 200
+    },
+    table: {
+      order: ["index","thumbnail","title","publishDate","updateDate","author","comment"]
+    },
+    theme: {
+      setup: 'bootstrap',
+      standalone: false
+    },
+    thumbnail: {
+      blank: 'http://3.bp.blogspot.com/-trkoRRazZ7A/UdtEVufkxiI/AAAAAAAABxI/DOJ7jAUv1G4/s1600/blank.gif',
+      notFound: 'http://3.bp.blogspot.com/-p7gZDNwTJbw/UdkqBnBb1bI/AAAAAAAAALI/hoCIpF74N80/s1600/image_not_available.jpg',
+      sample: 'http://s20.postimg.org/7oz0eeuyx/blank.gif',
+      size: 72,
+      authorSize: 36,
+      authorThumbnail: true
+    },
+    url: ''
   };
-  var _end = {};
+  // store final data
+  var _final = {};
 
-  _def.blogtocId = '';
-  _def.date.day = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
-  _def.date.month = 'January,February,March,April,May,June,July,August,September,October,November,December'.split(',');
-  _def.date.renderDateText = "option.date.day[ date.getDay() ] + ', ' + option.date.month[ date.getMonth() ] + ' ' + date.getDate() + ' ' + date.getFullYear()";
-  _def.display.setup = '10';
-  _def.display.template = ['5','10','25','50','All'];
-  _def.feedType = 'default';
-  _def.label.define = [];
-  _def.label.exception = false;
-  _def.label.showLabel = true;
-  _def.label.includeLabelAll = true;
-  _def.label.setup = "All";
-  _def.label.cloudLabel = false;
-  _def.label.showAlphabetLabel = false;
-  _def.label.includeAlphabetLabelAll = true;
-  _def.label.setupAlphabet = "All";
-  _def.label.cloudAlphabetLabel = false;
+  // some data generate by jekyll
   {% for item in page.extendclass %}_def.{{ item.model }} = '';
   {% endfor %}
-  _def.language.setup = 'en-US';
   {% for item in page.customlanguage %}_def.{{ item.model }} = '';
   {% endfor %}
-  _def.language.custom.result = '';
-  _def.language.custom.errorMessage = '';
-  _def.newBadge.setup = 5;
-  _def.newBadge.renderBadgeText = '\'<span class="label">\' + language + \'</span>\'';
-  _def.pagination.adjacents = 2;
-  _def.progress.renderProgressText = "var span; if ( ( span = elem.getElementsByTagName('span')[0] ) ) { span.innerHTML = progress; } else { elem.innerHTML = 'Loading <span>' + progress + '</span> %'; }";
-  _def.postLabel.separator = '';
-  _def.postLabel.renderPostLabelText = "'<span>' + label + '</span>'";
-  _def.search.renderSearchText = "'<b>' + match + '</b>'";
-  _def.sorting.key = 'title';
-  _def.sorting.order = 'ascending';
-  _def.summary.wordLimit = 200;
-  _def.table.order = ["index","thumbnail","title","publishDate","updateDate","author","comment"];
-  _def.theme.setup = 'bootstrap';
-  _def.theme.standalone = false;
-  _def.thumbnail.blank = 'http://3.bp.blogspot.com/-trkoRRazZ7A/UdtEVufkxiI/AAAAAAAABxI/DOJ7jAUv1G4/s1600/blank.gif';
-  _def.thumbnail.notFound = 'http://3.bp.blogspot.com/-p7gZDNwTJbw/UdkqBnBb1bI/AAAAAAAAALI/hoCIpF74N80/s1600/image_not_available.jpg';
-  _def.thumbnail.sample = 'http://s20.postimg.org/7oz0eeuyx/blank.gif';
-  _def.thumbnail.size = 72;
-  _def.thumbnail.authorSize = 36;
-  _def.thumbnail.authorThumbnail = true;
-  _def.url = '';
 
-  // junk data
+  // populate temp data
   _junk.binding = [
     ['onAfterDataChange', 'after the data in the table changes' ],
     ['onBeforeDataChange', 'before the data in the table changes'],
@@ -913,6 +974,7 @@ callback( match ) {
   _junk.table.order.push('label');
   _junk.table.idx = [2.5,7,26,12.5,12.5,10.5,11,25];
 
+  // populate some def data with temp data
   for(var i=0; i<_junk.binding.length; i++) { 
     _def.binding[_junk.binding[i][0]] = '';
     _junk.bindingTest.push(_junk.binding[i][0]);
@@ -924,7 +986,7 @@ callback( match ) {
     _def.table[_junk.table.order[i]+"WidthPoint"] = _junk.table.idx[i];
   }
 
-  // Angular App
+  // Angular init
   var docApp = angular.module('docApp', ['ui.select2', 'ui.bootstrap'/*, 'toggle-switch'*/], function($interpolateProvider) {
       $interpolateProvider.startSymbol('[[');
       $interpolateProvider.endSymbol(']]');
@@ -1005,15 +1067,14 @@ callback( match ) {
       url: _def.url
     };
 
-
     $scope.junk = { 
       binding: _junk.binding,
       pagination: _junk.pagination
     };
 
     $scope.appVersion = "{{ site.appVersion }}";
-    $scope.resultModel = {};
-    $scope.objModel = {};
+    $scope.resultModel = {}; // final result model
+    $scope.objModel = {}; // first model
 
     $scope.renderStr = '';
     $scope.displayTemp = $scope.preModel.display.template;
@@ -1025,10 +1086,13 @@ callback( match ) {
     $scope.CDN = '';
     $scope.addExternalLanguage = '';
     $scope.addExternalTheme = '';
+
+    // generate by jekyll
     {% for item in page.extendclass %}$scope.preModel.{{ item.model }} = _def.{{ item.model }};
     {% endfor %}
     {% for item in page.customlanguage %}$scope.preModel.{{ item.model }} = _def.{{ item.model }};
     {% endfor %}
+
     $scope.preModel.language.custom.result = _def.language.custom.result;
     $scope.preModel.language.custom.errorMessage = _def.language.custom.errorMessage;
     for(var i=0; i<_junk.binding.length; i++) {
@@ -1076,21 +1140,24 @@ callback( match ) {
 
     // method
     $scope.modelOneRender = function() {
-      var str;
 
-      // jquery call
-      tagsDragging_( $("#bt-date-day") );
-      tagsDragging_( $("#bt-date-month") );
-      tagsDragging_( $("#bt-display-template") );
-      tagsDragging_( $("#bt-label-define") );
-      tagsDragging_( $("#bt-table-order") );
+      // parse tag for dragging support
+      parseTags( $("#bt-date-day") );
+      parseTags( $("#bt-date-month") );
+      parseTags( $("#bt-display-template") );
+      parseTags( $("#bt-label-define") );
+      parseTags( $("#bt-table-order") );
 
-
+      // parse the data
       $scope.renderStr = $scope.pushDiff();
-      str = modelOne( $scope );
+      var str = parseTemplate( $scope );
+
       $scope.displayTemp = $scope.preModel.display.template;
       $scope.sortingKey = removeArray( $scope.preModel.table.order.slice(0), "index", "thumbnail" );
-      _end = $scope.objModel;
+
+      _final = $scope.objModel; // assign to object model
+
+      // provide language and theme
       if ( $scope.preModel.language.setup !== 'en-US' ) {
         $scope.addExternalLanguage = "BlogToc.addJS(\"lang/" + $scope.preModel.language.setup + ".js\");\n\n";
       } else {
@@ -1109,6 +1176,7 @@ callback( match ) {
       return str;
     };
 
+    // Methods
     $scope.pushDiff = function () {
       $scope.resultModel = {};
       $scope.objModel = {};
@@ -1222,7 +1290,7 @@ callback( match ) {
   });
 
   // Functions
-  function modelOne( scope ) {
+  function parseTemplate( scope ) {
 
     var str = "<div id=\"blogtoc\"></div>\n\n" + 
       "<script type=\"text/javascript\">\n" +
@@ -1237,7 +1305,7 @@ callback( match ) {
     return str;
   }
 
-  function tagsDragging_( el ) {
+  function parseTags( el ) {
     el.on('change', function(){
         el.html( el.val() );
       })
@@ -1409,6 +1477,7 @@ callback( match ) {
       $($(this).attr("href")).focus();
     });
 
+    // click event on generate button
     $("#generate").on('click',function(e){
       e.preventDefault();
       if ($("#bt-language-setup").val() !== 'en-US') {
@@ -1417,7 +1486,7 @@ callback( match ) {
       if ($("#bt-theme-default").val() !== 'bootstrap') {
         BlogToc.addJS("theme/bt_" + $("#bt-theme-default").val() + ".js");
       }
-      BlogToc.reset( myDiv, true, _end );
+      BlogToc.reset( myDiv, true, _final );
 
       $("#generate").attr("disabled",true);
 
