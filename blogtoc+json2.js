@@ -572,7 +572,7 @@ if (typeof JSON !== 'object') {
               extendClass: {},
               feed: {
                 type: 'default',
-                requestCount: 500,
+                requestCount: 500
               },
               label: { 
                 define: [], 
@@ -2573,7 +2573,7 @@ if (typeof JSON !== 'object') {
 
         // Sort number first then string @link http://stackoverflow.com/a/19276824/2863460
         temp = temp.sort(function ( x, y ) {
-          return !_isNumber( x.name ) ? 1 : x.name - y.name;
+          return !_isNumber( x.name ) ? 1 : x.num - y.num;
         });
 
         return temp;
