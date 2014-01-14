@@ -427,7 +427,7 @@
                   json = _parseJSON( req.responseText );
                   _self.loadFeed( json );
 
-                  if ( i < request - 1 ) { sequenceFn( i + 1 ); }
+                  if ( i < request - 1 ) { _sequenceFn( i + 1 ); }
                 };
 
                 _ajaxRequest( newUrl + '&start-index=' + startIdx, successCallback );
