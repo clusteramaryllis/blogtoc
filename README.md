@@ -52,11 +52,10 @@ And iconic font from [Bootmetro](http://aozora.github.io/bootmetro)
 * Added dataType option (using JSONP or JSON).
 * Added RTL Support (experimental).
 * Added number option for parsing the number in index column, pagination, page report.
-* Added alphabetMember and symbolicAlphabetRegex for determine the alphabet filter (still buggy).
+* Added alphabetMember and symbolicAlphabetFilter for determine the alphabet filter (still buggy).
 * Remove theme standalone option (prefered using synchronous request).
 * Update bootstrap theme to v3.0.3
 * Other theme deprecated except bootstrap.
-* Added [json2](https://github.com/douglascrockford/JSON-js) submodule for parsing JSON data.
 
 ### 1.5.0
 * First Stable Release
