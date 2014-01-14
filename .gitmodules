@@ -10,3 +10,6 @@
 [submodule "vendor/bootmetro"]
 	path = vendor/bootmetro
 	url = git@github.com:aozora/bootmetro.git
+[submodule "vendor/JSON-js"]
+	path = vendor/JSON-js
+	url = git@github.com:douglascrockford/JSON-js.git

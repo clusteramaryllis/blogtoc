@@ -1,14 +1,15 @@
 // BlogToc Header class
+input, select, textarea {
+  .box-sizing(border-box);
+}
+
 .blogtoc_header {
   text-align: center;
   margin-bottom: 2px;
 
   select {
-    display: block !important;
-      width: 100%;
-      min-height: @inputHeight;
-      text-align: center;
-      .box-sizing(border-box);
+    .form-control();
+    text-align: center;
   }
 
   button {
@@ -21,30 +22,50 @@
   margin-top: 5px;
 
   select {
+    .form-control();
     width: auto;
   }
 
   .blogtoc_display {
+    float: left;
+
     span {
+      font-weight: normal;
       margin-left: 5px;
     }
   }
 
   .blogtoc_search {
+    float: right;
+
     span {
+      font-weight: normal;
       margin-right: 5px;
+    }
+
+    .blogtoc_query {
+      width: auto;
+    }
+  }
+
+  .bt-form-inline {
+    input, select {
+      display: inline-block;
     }
   }
 }
 
 // BlogToc Table class
 .blogtoc_table {
+  border-collapse: collapse;
 
   th {
-    color: @linkColor;
+    color: @link-color;
+    text-align: center;
 
     a {
       display: block;
+      text-decoration: none;
     }
 
     span {
@@ -86,15 +107,13 @@
   }
 
   .bt-thumb {
-    line-height: @baseLineHeight;
-    border: 1px solid @thumbBorderColor;
-    .border-radius(@baseBorderRadius);
-    .box-shadow(0 1px 3px rgba(0,0,0,.055));
+    line-height: @line-height-base;
+    border: 1px solid @thumbnail-border;
+    border-radius: @border-radius-base;
     .transition(all .2s ease-in-out);
     
     &:hover {
-      border-color: @linkColor;
-      .box-shadow(0 1px 4px rgba(0,105,214,.25));
+      border-color: @link-color;
     }
   }
 
@@ -106,11 +125,59 @@
 // BlogToc Footer class
 .blogtoc_footer {
   .blogtoc_result {
+    float: left;
     padding-top: 8px;
   }
 
   .blogtoc_pagination {
+    float: right;
     margin: 0;
+
+    ul {
+      margin: 0;
+    }
+  }
+}
+
+.blogtoc_copyright {
+  text-align: center;
+  margin: 5px 0;
+  font-size: 85%;
+  color: @blockquote-small-color;
+}
+
+// RTL Support
+&.bt-rtl {
+  .blogtoc_display {
+    float: right;
+
+    span {
+      margin-right: 5px;
+    }
+  }
+
+  .blogtoc_search {
+    float: left;
+
+    span {
+      margin-left: 5px;
+    }
+  }
+
+  .blogtoc_table {
+    th {
+      span {
+        float: left;
+      }
+    }
+  }
+
+  .blogtoc_result {
+    float: right;
+  }
+
+  .blogtoc_pagination {
+    float: left;
   }
 }
 
@@ -118,107 +185,110 @@
   li {
     a, 
     span {
-      .buttonBackground(@btnBackground, @btnBackgroundHighlight, @grayDark, 0 1px 1px rgba(255,255,255,.75));
-      border: 1px solid @btnBorder;
+      color: @btn-default-color;
+      background-color: @btn-default-bg;
+      border-color: @btn-default-border;
       *border: 0; // Remove the border to prevent IE7's black border on input:focus
-      border-bottom-color: darken(@btnBorder, 10%);
-      .box-shadow(~"inset 0 1px 0 rgba(255,255,255,.2), 0 1px 2px rgba(0,0,0,.05)");
+      border-bottom-color: darken(@btn-default-border, 10%);
     }
 
     a {
-      // Hover/focus state
-      &:hover,
-      &:focus {
-        color: @grayDark;
-        text-decoration: none;
-        background-position: 0 -15px;
-        .transition(background-position .1s linear);
-      }
-
-      // Focus state for keyboard and accessibility
       &:focus {
         .tab-focus();
       }
 
-      // Active state
+      &:hover,
+      &:focus {
+        color: @btn-default-color;
+        text-decoration: none;
+      }
+
       &.active,
       &:active {
+        .box-shadow(inset 0 3px 5px rgba(0,0,0,.125));
         background-image: none;
         outline: 0;
-        .box-shadow(~"inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05)");
+      }
+
+      &:hover,
+      &:focus,
+      &:active,
+      &.active {
+        color: @btn-default-color;
+        background-color: darken(@btn-default-bg, 8%);
+        border-color: darken(@btn-default-border, 12%);
+        text-decoration: none;
       }
 
       // Disabled state
       &.disabled,
       &[disabled] {
-        cursor: default;
-        background-image: none;
-        .opacity(65);
+        cursor: not-allowed;
+        pointer-events: none;
+        .opacity(.65);
         .box-shadow(none);
-      }
-
-      &:hover, &:focus, &:active, &.active, &.disabled, &[disabled] {
-        background-color: @btnBackgroundHighlight !important;
-        *background-color: darken(@btnBackgroundHighlight, 5%) !important;
       }
     }
 
     &.active {
       span {
-        color: @grayDark;
+        color: @btn-default-color;
+        background-color: darken(@btn-default-bg, 8%);
+        border-color: darken(@btn-default-border, 12%);
         text-decoration: none;
-        background-position: 0 -15px;
-        .transition(background-position .1s linear);
+        .box-shadow(inset 0 3px 5px rgba(0,0,0,.125));
         background-image: none;
         outline: 0;
-        .box-shadow(~"inset 0 2px 4px rgba(0,0,0,.15), 0 1px 2px rgba(0,0,0,.05)"); 
-        background-color: @btnBackgroundHighlight !important;
-        *background-color: darken(@btnBackgroundHighlight, 5%) !important;
       }
     }
 
     &.disabled {
       span {
-        color: @grayDark;
-        .opacity(65);
+        color: @btn-default-color;
+        cursor: not-allowed;
+        pointer-events: none;
+        .opacity(.65);
+        .box-shadow(none);
       }
     }
   }
 }
 
 // responsive table
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 767px) {
   .blogtoc_responsive_hide {
     display: none !important;
   }
 
   .blogtoc_display {
-    float: none;
+    float: none !important;
 
     label {
       position: relative;
+      display: block;
 
       select {
-        width: 100%
+        width: 100% !important;
       }
 
       span {
         position: absolute;
-        right: 30px;
+        right: 33px;
         top: 5px;
       }
     }
   }
 
   .blogtoc_search {
-    float: none;
+    float: none !important;
 
     label {
       position: relative;
+      display: block;
 
       input {
         display: block;
-        width: 100%;
+        width: 100% !important;
         min-height: 30px;
         .box-sizing(border-box);
       }
@@ -260,23 +330,21 @@
       }
     }
 
-    tr {}
-
     td {
-      width: auto !important;
       position: relative;
-      padding-left: 50%;
+      padding-left: 50% !important;
+      width: auto !important;
       white-space: normal;
-      text-align: left;
+      // text-align: left;
 
       &:before {
         position: absolute;
-        top: 6px;
+        // top: 6px;
         left: 6px;
         width: 45%;
         padding-right: 10px;
         white-space: nowrap;
-        text-align: left;
+        // text-align: left;
         font-weight: bold;
       }
 
@@ -287,13 +355,34 @@
   }
 
   .blogtoc_result {
-    float: none;
+    float: none !important;
     text-align: center;
     padding-bottom: 8px;
   }
 
   .blogtoc_pagination {
-    float: none;
+    float: none !important;
     text-align: center; 
+  }
+
+  &.bt-rtl {
+    .blogtoc_display {
+      span {
+        right: auto;
+        left: 33px;
+      }
+    }
+
+    .blogtoc_table {
+      td {
+        padding-left: 0 !important;
+        padding-right: 50% !important;
+
+        &:before {
+          left: auto !important;
+          right: 6px;
+        }
+      }      
+    }
   }
 }

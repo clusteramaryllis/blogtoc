@@ -12,14 +12,15 @@ module.exports = function( grunt ) {
 			baseDir: 'css/bootstrap/',
 			dest: 'css/bootstrap/bt_bootstrap.css',
 			src: 'less/bootstrap/bt_bootstrap.less'
-		},
-		bootstrap_3: {
+		}
+		// Deprecated
+		/*bootstrap_v2: {
 			id: 'bt_bootstrap-3',
 			baseDir: 'css/bootstrap-3/',
 			dest: 'css/bootstrap-3/bt_bootstrap-3.css',
 			src: 'less/bootstrap-3/bt_bootstrap-3.less'
-		},
-		dark_bootstrap: {
+		},*/
+		/*dark_bootstrap: {
 			id: 'bt_dark-bootstrap',
 			baseDir: 'css/bootstrap/',
 			dest: 'css/bootstrap/bt_dark-bootstrap.css',
@@ -36,11 +37,11 @@ module.exports = function( grunt ) {
 			baseDir: 'css/bootmetro/',
 			dest: 'css/bootmetro/bt_bootmetro.css',
 			src: 'less/bootmetro/bt_bootmetro.less'
-		},
+		},*/
 	};
 
 	var colorSchemeSettings = {
-		bootstrap: {
+		/*bootstrap: {
 			dir: 'less/bootstrap/color_scheme/variables/',
 			dest: 'less/bootstrap/color_scheme/',
 			src: function( dir, path ) {
@@ -49,7 +50,7 @@ module.exports = function( grunt ) {
 			filter: function( path ) {
 				return path.substring( 0, path.indexOf('_') ) + '.less';
 			}
-		}
+		}*/
 	};
 
 	// Read directories
@@ -94,12 +95,16 @@ module.exports = function( grunt ) {
 		  '* A javascript plugin to make table of contents for blogspot using Blogger Feed API.\n' + 
 		  '*/\n',
 		clean: {
-			release: ['<%= pkg.name %>.js']
+			release: [ '<%= pkg.name %>.js', '<%= pkg.name %>+json2.js' ]
 		},
 		concat: {
 			release: {
-				src: 'src/<%= pkg.name %>.js',
+				src: [ 'src/<%= pkg.name %>.js', 'lang/en-US.js', 'theme/bt_bootstrap.js' ],
 				dest: '<%= pkg.name %>.js'
+			},
+			plusjson: {
+				src: [ 'vendor/JSON-js/json2.js', '<%= pkg.name %>.js' ],
+				dest: '<%= pkg.name %>+json2.js'
 			},
 			color: colorScheme
 		},
@@ -123,7 +128,7 @@ module.exports = function( grunt ) {
 			},
 			build: {
 				expand: true,
-				src: '<%= pkg.name %>.js',
+				src: [ '<%= pkg.name %>.js', '<%= pkg.name %>+json2.js' ],
 				ext: '.min.js'
 			}
 		},
