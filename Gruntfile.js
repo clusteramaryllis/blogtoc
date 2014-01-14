@@ -95,16 +95,12 @@ module.exports = function( grunt ) {
 		  '* A javascript plugin to make table of contents for blogspot using Blogger Feed API.\n' + 
 		  '*/\n',
 		clean: {
-			release: [ '<%= pkg.name %>.js', '<%= pkg.name %>+json2.js' ]
+			release: [ '<%= pkg.name %>.js' ]
 		},
 		concat: {
 			release: {
 				src: [ 'src/<%= pkg.name %>.js', 'lang/en-US.js', 'theme/bt_bootstrap.js' ],
 				dest: '<%= pkg.name %>.js'
-			},
-			plusjson: {
-				src: [ 'vendor/JSON-js/json2.js', '<%= pkg.name %>.js' ],
-				dest: '<%= pkg.name %>+json2.js'
 			},
 			color: colorScheme
 		},
@@ -128,7 +124,7 @@ module.exports = function( grunt ) {
 			},
 			build: {
 				expand: true,
-				src: [ '<%= pkg.name %>.js', '<%= pkg.name %>+json2.js' ],
+				src: [ '<%= pkg.name %>.js' ],
 				ext: '.min.js'
 			}
 		},
@@ -160,6 +156,6 @@ module.exports = function( grunt ) {
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
 	grunt.registerTask( 'default', [ 'clean', 'concat', 'usebanner', 'less', 'uglify', 'jshint' ] );
-	grunt.registerTask( 'js', [ 'clean', 'concat:release', 'concat:plusjson', 'usebanner', 'uglify' ] );
+	grunt.registerTask( 'js', [ 'clean', 'concat:release', 'usebanner', 'uglify' ] );
 	grunt.registerTask( 'theme', [ 'concat:color', 'less' ] );
 }

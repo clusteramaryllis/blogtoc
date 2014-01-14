@@ -98,7 +98,7 @@
                 includeAlphabetLabelAll: true,
                 setupAlphabet: 'All',
                 cloudAlphabetLabel: false,
-                symbolicAlphabetRegex: /^[^A-Z]/i, // /^[0-9\-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/i,
+                symbolicAlphabetFilter: '[^A-Z]', // /^[0-9\-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/i,
                 alphabetMember: alphabet
               },
               language: {
@@ -414,7 +414,7 @@
                 // can be use only on the same domain
                 // see CORS reference
                 successCallback = i < request - 1 ? function( req ) {
-                  json = JSON.parse( req.responseText ); // need json2.js for older browser
+                  json = _parseJSON( req.responseText );
                   _self.loadFeed( json );
 
                   sequenceFn( i + 1 );
@@ -1130,7 +1130,7 @@
                 alphaRegex;
                 
               if ( val === '#' ) { // symbolic
-                alphaRegex = opts.label.symbolicAlphabetRegex;
+                alphaRegex = new RegExp( '^' + opts.label.symbolicAlphabetFilter, 'i' );
               } else { // alphabetic
                 alphaRegex = new RegExp( '^' + val, 'i' );
               }
@@ -1992,6 +1992,40 @@
         }
 
         return xmlhttp;
+      };
+
+      /* JSON.parse
+       * @param : <string> data
+       * https://github.com/jquery/jquery/blob/1.9.1/src/core.js
+       ********************************************************************/
+      var _parseJSON = function( data ) {
+        if ( window.JSON && window.JSON.parse ) {
+          return window.JSON.parse( data );
+        }
+
+        if ( data === null ) {
+          return false;
+        }
+
+        var rvalidchars = /^[\],:{}\s]*$/,
+          rvalidbraces = /(?:^|:|,)(?:\s*\[)+/g,
+          rvalidescape = /\\(?:["\\\/bfnrt]|u[\da-fA-F]{4})/g,
+          rvalidtokens = /"[^"\\\r\n]*"|true|false|null|-?(?:\d+\.|)\d+(?:[eE][+-]?\d+|)/g;
+
+        if ( typeof data === 'string' ) {
+          data = data.trim();
+
+          if ( data )  {
+            if ( rvalidchars.test( data.replace( rvalidescape, "@" )
+                   .replace( rvalidtokens, "]" )
+                   .replace( rvalidbraces, "" ) )
+              ) {
+              return ( new Function ( "return " + data ) )();
+            }
+          }
+        }
+
+        throw new SyntaxError( 'JSON.parse' );
       };
 
       /* very simple append string
