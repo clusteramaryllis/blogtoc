@@ -41,6 +41,7 @@ data.json
 data2.json
 example.html
 src/blogtoc.temp.js
+src/blogtoc.obfuscate.js
 
 # Komodo
 *.komodoproject
