@@ -413,7 +413,7 @@
               config.cache.req[ i + 1 ] = scriptID;
 
               if ( jsonp ) {
-                successCallback = i < request - 1 ? 
+                successCallback = ( i < request - 1 ) ? 
                   function(){ _sequenceFn( i + 1 ); } :
                   null;
 
@@ -422,12 +422,13 @@
               } else {
                 // can be use only on the same domain
                 // see CORS reference
-                successCallback = i < request - 1 ? function( req ) {
+                successCallback = function( req ) {
+
                   json = _parseJSON( req.responseText );
                   _self.loadFeed( json );
 
-                  sequenceFn( i + 1 );
-                } : null;
+                  if ( i < request - 1 ) { sequenceFn( i + 1 ); }
+                };
 
                 _ajaxRequest( newUrl + '&start-index=' + startIdx, successCallback );
               }
@@ -770,8 +771,9 @@
             window[ 'BTJSONCallback_' + root.id ] = null;
             window[ 'BTLDJSONCallback_' + root.id ] = null;
 
-            for ( var k = 0, rLen = config.cache.req.length; k < rLen; k++ ) {
-              _removeElement( _getId( config.cache.req[ k ] ) );
+            for ( var k = 0, elm, rLen = config.cache.req.length; k < rLen; k++ ) {
+              elm = _getId( config.cache.req[ k ] );
+              if ( elm ) { _removeElement( elm ); }
             }
           },
           
