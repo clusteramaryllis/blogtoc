@@ -160,6 +160,6 @@ module.exports = function( grunt ) {
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
 	grunt.registerTask( 'default', [ 'clean', 'concat', 'usebanner', 'less', 'uglify', 'jshint' ] );
-	grunt.registerTask( 'js', [ 'clean', 'concat:release', 'usebanner', 'uglify' ] );
+	grunt.registerTask( 'js', [ 'clean', 'concat:release', 'concat:plusjson', 'usebanner', 'uglify' ] );
 	grunt.registerTask( 'theme', [ 'concat:color', 'less' ] );
 }
