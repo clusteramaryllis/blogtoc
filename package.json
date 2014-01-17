@@ -4,9 +4,8 @@
   "author": "Cluster Amaryllis",
   "licenses": [
     {
-      "name": "Apache License v2.0",
-      "type": "Apache-2.0",
-      "url": "http://www.apache.org/licenses/LICENSE-2.0"
+      "type": "MIT",
+      "url": "https://github.com/clusteramaryllis/blogtoc/blob/develop/LICENSE"
     }
   ],
   "devDependencies": {
