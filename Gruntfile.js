@@ -114,9 +114,10 @@ module.exports = function( grunt ) {
 				"nonew": true,
 				"-W009": true,
 				"-W041": true,
+				"-W083": true,
 				"-W107": true
 			},
-			release: [ '<%= pkg.name %>.js', 'lang/**/*.js', 'theme/**/*.js' ]
+			release: [ 'src/<%= pkg.name %>.js', '<%= pkg.name %>.js', 'lang/**/*.js', 'theme/**/*.js' ]
 		},
 		uglify: {
 			options: {
@@ -156,6 +157,6 @@ module.exports = function( grunt ) {
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
 	grunt.registerTask( 'default', [ 'clean', 'concat', 'usebanner', 'less', 'uglify', 'jshint' ] );
-	grunt.registerTask( 'js', [ 'clean', 'concat:release', 'usebanner', 'uglify' ] );
+	grunt.registerTask( 'js', [ 'clean', 'concat:release', 'usebanner', 'uglify', 'jshint' ] );
 	grunt.registerTask( 'theme', [ 'concat:color', 'less' ] );
 }
