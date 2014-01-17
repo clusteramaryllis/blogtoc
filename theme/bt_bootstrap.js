@@ -1,5 +1,5 @@
 // BlogToc theme configuration
-// theme : bootstrap, @link http://twbs.github.io/bootstrap/
+// theme : bootstrap v3, @link http://getbootstrap.com/
 // author : Cluster Amaryllis
 
 (function(){
@@ -16,18 +16,20 @@
         /*"header": "",*/
         /*"label": "",*/
         /*"alphabet": "",*/
-        "button": "btn",
+        "button": "btn btn-default",
         "filter": "clearfix",
-        "display": "pull-left",
-        "search": "pull-right",
-        /*"query": "",*/
+        "display": "bt-form-inline",
+        "search": "bt-form-inline",
+        "query": "form-control",
         "table": "table",
         "footer": "clearfix",
-        "result": "pull-left",
-        "pagination": "pull-right pagination",
-        /*"pagination ul": "",*/
+        /*"result": "",
+        "pagination": "",*/
+        "pagination ul": "pagination",
         "pagination current": "active",
-        "pagination disabled": "disabled"
+        "pagination disabled": "disabled",
+        // "copyright": "",
+        "copyright button": "btn btn-default btn-xs"
       });
       /*****************************************************************
        * End changing lines                                            *

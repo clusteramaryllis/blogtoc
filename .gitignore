@@ -28,14 +28,20 @@ nbproject
 *.sublime-workspace
 
 _config.yml
-example.html
 
 css/custom.css
 css/blogger.css
-third_party/custom.less
-third_party/blogger.less
-third_party/lesshat.less
-third_party/gallery.less
+less/custom.less
+less/blogger.less
+less/gallery.less
+less/lesshat.less
+
+# Playground files
+data.json
+data2.json
+example.html
+src/blogtoc.temp.js
+src/blogtoc.obfuscate.js
 
 # Komodo
 *.komodoproject

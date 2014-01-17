@@ -11,39 +11,46 @@ module.exports = function( grunt ) {
 			id: 'bt_bootstrap',
 			baseDir: 'css/bootstrap/',
 			dest: 'css/bootstrap/bt_bootstrap.css',
-			src: 'third_party/bootstrap/less/bt_bootstrap/bt_bootstrap.less'
-		},
-		dark_bootstrap: {
+			src: 'less/bootstrap/bt_bootstrap.less'
+		}
+		// Deprecated
+		/*bootstrap_v2: {
+			id: 'bt_bootstrap-3',
+			baseDir: 'css/bootstrap-3/',
+			dest: 'css/bootstrap-3/bt_bootstrap-3.css',
+			src: 'less/bootstrap-3/bt_bootstrap-3.less'
+		},*/
+		/*dark_bootstrap: {
 			id: 'bt_dark-bootstrap',
 			baseDir: 'css/bootstrap/',
 			dest: 'css/bootstrap/bt_dark-bootstrap.css',
-			src: 'third_party/bootstrap/less/bt_bootstrap/bt_dark-bootstrap.less'
+			src: 'less/bootstrap/bt_dark-bootstrap.less'
 		},
 		todc_bootstrap: {
 			id: 'bt_todc-bootstrap',
 			baseDir: 'css/bootstrap/',
 			dest: 'css/todc-bootstrap/bt_todc-bootstrap.css',
-			src: 'third_party/todc-bootstrap/less/bt_todc-bootstrap/bt_todc-bootstrap.less'
+			src: 'less/todc-bootstrap/bt_todc-bootstrap.less'
 		},
 		bootmetro: {
 			id: 'bt_bootmetro',
 			baseDir: 'css/bootmetro/',
 			dest: 'css/bootmetro/bt_bootmetro.css',
-			src: 'third_party/bootmetro/less/bt_bootmetro/bt_bootmetro.less'
-		},
+			src: 'less/bootmetro/bt_bootmetro.less'
+		},*/
 	};
 
 	var colorSchemeSettings = {
-		bootstrap: {
-			dir: 'third_party/bootstrap/less/bt_bootstrap/color_scheme/variables/',
-			dest: 'third_party/bootstrap/less/bt_bootstrap/color_scheme/',
+		/*bootstrap: {
+			dir: 'less/bootstrap/color_scheme/variables/',
+			dest: 'less/bootstrap/color_scheme/',
 			src: function( dir, path ) {
 				return [ dir + '../../color_header.less', dir + path, dir + '../../color_footer.less' ];
 			},
 			filter: function( path ) {
 				return path.substring( 0, path.indexOf('_') ) + '.less';
 			}
-		}
+		}*/
 	};
 
 	// Read directories
@@ -82,17 +89,16 @@ module.exports = function( grunt ) {
 		banner: '/**!\n' +
 		  '* BlogToc v<%= pkg.version %>\n' +
 		  '* Copyright <%= grunt.template.today("yyyy") %> <%= pkg.author %>\n' +
-		  '* Licensed under the <%= _.pluck(pkg.licenses, "name").join(", ") %>\n' +
-		  '* <%= _.pluck(pkg.licenses, "url").join(", ") %>\n' +
+		  '* Licensed in (<%= _.pluck(pkg.licenses, "url").join(", ") %>)\n' +
 		  '* \n' +
 		  '* A javascript plugin to make table of contents for blogspot using Blogger Feed API.\n' + 
 		  '*/\n',
 		clean: {
-			release: ['<%= pkg.name %>.js']
+			release: [ '<%= pkg.name %>.js' ]
 		},
 		concat: {
 			release: {
-				src: 'src/<%= pkg.name %>.js',
+				src: [ 'src/<%= pkg.name %>.js', 'lang/en-US.js', 'theme/bt_bootstrap.js' ],
 				dest: '<%= pkg.name %>.js'
 			},
 			color: colorScheme
@@ -107,9 +113,10 @@ module.exports = function( grunt ) {
 				"nonew": true,
 				"-W009": true,
 				"-W041": true,
+				"-W083": true,
 				"-W107": true
 			},
-			release: [ '<%= pkg.name %>.js', 'lang/**/*.js', 'theme/**/*.js' ]
+			release: [ 'src/<%= pkg.name %>.js', '<%= pkg.name %>.js', 'lang/**/*.js', 'theme/**/*.js' ]
 		},
 		uglify: {
 			options: {
@@ -117,7 +124,7 @@ module.exports = function( grunt ) {
 			},
 			build: {
 				expand: true,
-				src: '<%= pkg.name %>.js',
+				src: [ '<%= pkg.name %>.js' ],
 				ext: '.min.js'
 			}
 		},
@@ -149,6 +156,6 @@ module.exports = function( grunt ) {
 	grunt.loadNpmTasks('grunt-contrib-watch');
 
 	grunt.registerTask( 'default', [ 'clean', 'concat', 'usebanner', 'less', 'uglify', 'jshint' ] );
-	grunt.registerTask( 'js', [ 'clean', 'concat:release', 'usebanner', 'uglify' ] );
+	grunt.registerTask( 'js', [ 'clean', 'concat:release', 'usebanner', 'uglify', 'jshint' ] );
 	grunt.registerTask( 'theme', [ 'concat:color', 'less' ] );
 }
