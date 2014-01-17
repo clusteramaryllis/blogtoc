@@ -93,8 +93,11 @@
               },
               extendClass: {},
               feed: {
-                type: 'default',
-                requestCount: 500
+                appendQuery: '',
+                chunkRequest: 1,
+                limit: null,
+                requestCount: 500,
+                type: 'default'
               },
               label: { 
                 define: [], 
@@ -107,7 +110,7 @@
                 includeAlphabetLabelAll: true,
                 setupAlphabet: 'All',
                 cloudAlphabetLabel: false,
-                symbolicAlphabetFilter: '[^A-Z]', // /^[0-9\-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/i,
+                symbolicAlphabetFilter: '[^A-Z]', // /^[0-9\-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/i, experimental
                 alphabetMember: alphabet
               },
               language: {
@@ -162,7 +165,8 @@
               search: {
                 markerRender: function( match ) {
                   return '<b>' + match + '</b>';
-                }
+                },
+                textAsPlaceholder: false
               },
               sorting: { 
                 key: 'title', 
@@ -388,59 +392,72 @@
 
             // jsonp ?
             var jsonp = !!~opts.dataType.toLowerCase().indexOf('jsonp'),
-              dataType;
+              dataType, req, count;
 
             dataType = jsonp ? 'json-in-script' : 'json';
+            // don't exceed more than 500
+            req = opts.feed.requestCount > 500 ? 500 : opts.feed.requestCount;
+            count = opts.feed.limit ? opts.feed.limit : feed.count;
 
-            var i = 0, startIdx = 0, req = opts.feed.requestCount,
-              request = Math.ceil( feed.count / req ),
+            var i = 0, startIdx = 0, maxResults,
+              request = Math.ceil( count / req ),
+              appendQuery = opts.feed.appendQuery,
+              chunk = opts.feed.chunkRequest,
               url = opts.url.replace( httpRegex, '' ),
-              newUrl, scriptID, successCallback;
+              newUrl, scriptID, _sequenceFn;
 
             newUrl = 'http://' + url + 
               '/feeds/posts/'+ opts.feed.type +
-              '/?' + 
-              'max-results=' + req + '&' + 
+              '/?' +
               'alt=' + dataType + '&';
+
+            // chunk can't be exceeded the request
+            chunk = chunk > request ? request : chunk;
+            // determine the max-results
+            var _setMaxResults = function( i, req, count ) {
+              return count < ( ( i + 1 ) * req ) ? count - ( i * req ) : req;
+            };
 
             if ( jsonp ) {
               newUrl += 'callback=BTLDJSONCallback_' + root.id;
-            }
 
-            var _sequenceFn = function( i ) {
-              startIdx = ( i * req ) + 1;
-              scriptID = url + '_' + _uniqueNumber();
-              config.cache.req[ i + 1 ] = scriptID;
+              _sequenceFn = function( i ) {
+                startIdx = ( i * req ) + 1;
+                scriptID = url + '_' + _uniqueNumber();
+                config.cache.req[ i + 1 ] = scriptID;
+                maxResults = _setMaxResults( i, req, count );
 
-              if ( jsonp ) {
-                successCallback = ( i < request - 1 ) ? 
-                  function(){ _sequenceFn( i + 1 ); } :
-                  null;
+                _addJS( newUrl + '&max-results=' + maxResults + '&start-index=' + startIdx + appendQuery, scriptID, function() {
+                  if ( i + chunk < request ) { _sequenceFn( i + chunk ); }
+                });                
+              };
+            } else {
+              _sequenceFn = function( i ) {
+                startIdx = ( i * req ) + 1;
+                maxResults = _setMaxResults( i, req, count );
 
-                _addJS( newUrl + '&start-index=' + startIdx, scriptID, successCallback );
-
-              } else {
-                // can be use only on the same domain
-                // see CORS reference
-                successCallback = function( req ) {
+                // must be on the same domain, see CORS reference
+                _ajaxRequest( newUrl + '&max-results=' + maxResults + '&start-index=' + startIdx + appendQuery, function( req ) {
 
                   json = _parseJSON( req.responseText );
                   _self.loadFeed( json );
 
-                  if ( i < request - 1 ) { _sequenceFn( i + 1 ); }
-                };
+                  if ( i + chunk < request ) { _sequenceFn( i + chunk ); }
+                });                
+              };
+            }
 
-                _ajaxRequest( newUrl + '&start-index=' + startIdx, successCallback );
-              }
-            };
-
-            _sequenceFn( i );
+            // do x times request at one time
+            for ( var k = 0; k < chunk; k++ ) {
+              _sequenceFn( i );
+              i++;
+            }
           },
           
           /* Load the main feed from JSON callback
            * @param : <json>json
            ****************************************************************/
-          loadFeed : function( json ) {
+          loadFeed: function( json ) {
             
             var _self = this;
             
@@ -449,7 +466,7 @@
               obj = {};
               
             var data = feed.data,
-              count = feed.count,
+              count = opts.feed.limit ? opts.feed.limit : feed.count,
               size = opts.thumbnail.size,
               asize = opts.thumbnail.authorSize,
               notfound = opts.thumbnail.notFound,
@@ -467,7 +484,7 @@
               
               var saveFeed = function() {
               
-                setTimeout( function(){
+                setTimeout( function() {
 
                   var entry = jfeed.entry[i];
 
@@ -611,7 +628,8 @@
               size = opts.thumbnail.size,
               display = config.display,
               sortingOrder = opts.sorting.order,
-              sortingKey = opts.sorting.key;
+              sortingKey = opts.sorting.key,
+              placeHolder = opts.search.textAsPlaceholder;
             
             var labelFn = "BlogToc.label(this, this.value, document.getElementById('"+ root.id +"')); return false;",
               alphaFn = "BlogToc.alphabet(this, this.value, document.getElementById('"+ root.id +"')); return false;",
@@ -658,7 +676,7 @@
             _extendClass( div, klass.blogtoc_search );
 
             label = _createElement('label');
-            spn = _createElement( 'span', null, opts.language.custom.search );
+            spn = _createElement( 'span', null, !placeHolder ? opts.language.custom.search : ''  );
 
             input = _createElement( 'input', { 
               type: 'text', 
@@ -756,6 +774,27 @@
                 _self.displayLabel( config.currentLabel, null, null, true );
               } else {
                 _self.displayAlphabet( config.currentAlphabet, null, null, true );
+              }
+            }
+
+            // set the placeholder support after the data compile called
+            // in IE, have strange behaviour when data show blank if this set before data compile
+            if ( placeHolder ) {
+              // check html5 placeholder support
+              if ( 'placeholder' in input ) {
+                input.placeholder = opts.language.custom.search;
+              } else {
+                input.value = opts.language.custom.search;
+                input.onfocus = function() {
+                  if ( this.value === opts.language.custom.search ) {
+                    this.value = '';
+                  }
+                };
+                input.onblur = function() {
+                  if ( this.value === '' ) {
+                    this.value = opts.language.custom.search;
+                  }
+                };
               }
             }
 
@@ -1996,6 +2035,10 @@
         for ( var i = 0; i < XMLHTTPFactories.length; i++ ) {
           try {
             xmlhttp = XMLHTTPFactories[i]();
+            // faster
+            _createXMLHTTPObject = function() {
+              return XMLHTTPFactories[i]();
+            };
           } catch ( e ) {
             continue;
           }
