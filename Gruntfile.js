@@ -89,8 +89,7 @@ module.exports = function( grunt ) {
 		banner: '/**!\n' +
 		  '* BlogToc v<%= pkg.version %>\n' +
 		  '* Copyright <%= grunt.template.today("yyyy") %> <%= pkg.author %>\n' +
-		  '* Licensed under the <%= _.pluck(pkg.licenses, "name").join(", ") %>\n' +
-		  '* <%= _.pluck(pkg.licenses, "url").join(", ") %>\n' +
+		  '* Licensed in (<%= _.pluck(pkg.licenses, "url").join(", ") %>)\n' +
 		  '* \n' +
 		  '* A javascript plugin to make table of contents for blogspot using Blogger Feed API.\n' + 
 		  '*/\n',
