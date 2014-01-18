@@ -1,8 +1,7 @@
 /**!
-* BlogToc v1.5.0
-* Copyright 2013 Cluster Amaryllis
-* Licensed under the Apache License v2.0
-* http://www.apache.org/licenses/LICENSE-2.0
+* BlogToc v1.6.0
+* Copyright 2014 Cluster Amaryllis
+* Licensed in (https://github.com/clusteramaryllis/blogtoc/blob/develop/LICENSE)
 * 
 * A javascript plugin to make table of contents for blogspot using Blogger Feed API.
 */
@@ -15,11 +14,13 @@
     
     (function() {
 
-      var VERSION = '1.5.0';
+      var VERSION = '1.6.0';
 
       var BASE_URL = '//blogtoc2.googlecode.com/svn/trunk/' + VERSION + '/';
 
-      var alphabet = '#|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z'.split('|'),
+      var HOMEPAGE = 'http://clusteramaryllisblog.blogspot.com/2013/10/blogspot-table-of-contents-blogtoc.html';
+
+      var alphabet = 'A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z'.split('|'),
         days = 'Sunday|Monday|Tuesday|Wednesday|Thursday|Friday|Saturday'.split('|'),
         months = 'January|February|March|April|May|June|July|August|September|October|November|December'.split('|');
 
@@ -32,6 +33,7 @@
         thumbRegex = /s\d+\-?\w?/gi, // thumbnail regex
         whitespaceRegex = /(^\s+|\s{2,}|\s+$)/g, // remove whitespace
         stripHtmlRegex = /(<([^>]+)>)/ig, // strip html tags
+        removeScriptRegex = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, // remove script 
         noSortRegex = /^(index|thumbnail|label)$/i, // don't sorting
         noGenerateRegex = /^(actualImage|authorThumbnail|authorUrl|badge|category|commentURL|fullSummary|publishDateFormat|titleURL|thumbConfig|updateDateFormat)$/i; // don't generate
 
@@ -50,7 +52,7 @@
       
         var _parent = element,
           opts, config, feed,
-          root, loader, contenter, header, filter, tabler, footer, resulter, paging;
+          root, loader, contenter, header, filter, tabler, footer, resulter, paging, copyright;
 
         var _alpha;
         
@@ -73,6 +75,7 @@
                 onLiveDataChange: null,
                 onLoaded: null
               },
+              dataType: "JSONP",
               date: {
                 day: days,
                 month: months,
@@ -88,7 +91,13 @@
                 template: [ 5, 10, 25, 50, 'All' ]
               },
               extendClass: {},
-              feedType: 'default',
+              feed: {
+                appendQuery: '',
+                chunkRequest: 1,
+                limit: null,
+                requestCount: 500,
+                type: 'default'
+              },
               label: { 
                 define: [], 
                 exception: false,
@@ -99,16 +108,29 @@
                 showAlphabetLabel: false,
                 includeAlphabetLabelAll: true,
                 setupAlphabet: 'All',
-                cloudAlphabetLabel: false
+                cloudAlphabetLabel: false,
+                symbolicAlphabetFilter: '[^A-Z]', // /^[0-9\-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/i, experimental
+                alphabetMember: alphabet
               },
               language: {
                 setup: defaultLanguage,
                 custom: {}
               },
+              linkTarget: {
+                author: '_self',
+                thumbnail: '_self',
+                title: '_self',
+                comment: '_self' 
+              },
               newBadge: {
                 setup: 5,
                 render: function( language ) {
                   return '<span class="label">' + language + '</span>';
+                }
+              },
+              number: {
+                render: function( idx ) {
+                  return idx;
                 }
               },
               pagination: {
@@ -138,10 +160,12 @@
                   }
                 }
               },
+              rightToLeft: false,
               search: {
                 markerRender: function( match ) {
                   return '<b>' + match + '</b>';
-                }
+                },
+                textAsPlaceholder: false
               },
               sorting: { 
                 key: 'title', 
@@ -165,8 +189,7 @@
                 updateDateWidthPoint : 12.5
               },
               theme: {
-                setup: defaultTheme,
-                standalone: false
+                setup: defaultTheme
               },
               thumbnail: {
                 blank: blankThumb,
@@ -198,6 +221,14 @@
               searchState: false
             };
 
+            // Init languages && themes 
+            if ( !languages[ opts.language.setup ] ) {
+              languages[ opts.language.setup ] = { option: {} };
+            }
+            if ( !themes[ opts.theme.setup ] ) {
+              themes[ opts.theme.setup ] = { option: {} };
+            }
+
             // Build language starter
             _BTBuildLang( opts.language.setup, languages, opts.language.custom );
             // Build theme starter
@@ -211,6 +242,7 @@
             filter = _nextElement( header );
             tabler = _nextElement( filter );
             footer = _nextElement( tabler );
+            copyright = _nextElement( footer );
             
             // apply classes
             _extendClass( root, opts.extendClass.blogtoc_id );
@@ -220,9 +252,15 @@
             _extendClass( filter, opts.extendClass.blogtoc_filter );
             _extendClass( tabler, opts.extendClass.blogtoc_table );
             _extendClass( footer, opts.extendClass.blogtoc_footer );
+            _extendClass( copyright, opts.extendClass.blogtoc_copyright );
             
             // init progressbar / loader
             opts.progress.render( loader, 0 );
+            // check right-to-left support
+            if ( opts.rightToLeft ) {
+              root.setAttribute( 'dir', 'rtl' );
+              _extendClass( root, 'bt-rtl' );
+            }
 
             // cache the request
             config.cache.req = new Array();
@@ -334,10 +372,11 @@
             if ( opts.label.includeLabelAll ) { 
               feed.label.unshift( opts.label.setup ); 
             }
-            // add alphabet label all
-            _alpha = alphabet.slice(0);
+            // add alphabet label all & '#' on beginning
+            _alpha = opts.label.alphabetMember.slice(0);
 
             if ( opts.label.includeAlphabetLabelAll ) {
+              _alpha.unshift('#');
               _alpha.unshift( opts.label.setupAlphabet );
             }
 
@@ -350,40 +389,74 @@
               _self.loadFeed( json );
             };
 
-            var i = 0, startIdx = 0,
-              request = Math.ceil( feed.count / 500 ),
+            // jsonp ?
+            var jsonp = !!~opts.dataType.toLowerCase().indexOf('jsonp'),
+              dataType, req, count;
+
+            dataType = jsonp ? 'json-in-script' : 'json';
+            // don't exceed more than 500
+            req = opts.feed.requestCount > 500 ? 500 : opts.feed.requestCount;
+            count = opts.feed.limit ? opts.feed.limit : feed.count;
+
+            var i = 0, startIdx = 0, maxResults,
+              request = Math.ceil( count / req ),
+              appendQuery = opts.feed.appendQuery,
+              chunk = opts.feed.chunkRequest,
               url = opts.url.replace( httpRegex, '' ),
-              scriptID;
+              newUrl, scriptID, _sequenceFn;
 
-            url = 'http://' + url + 
-              '/feeds/posts/'+ opts.feedType +
-              '/?' + 
-              'max-results=500&' + 
-              'alt=json-in-script&' + 
-              'callback=BTLDJSONCallback_' + root.id;
+            newUrl = 'http://' + url + 
+              '/feeds/posts/'+ opts.feed.type +
+              '/?' +
+              'alt=' + dataType + '&';
 
-            var sequenceFn = function( i ) {
-
-              startIdx = ( i * 500 ) + 1;
-              scriptID = url + '_' + _uniqueNumber();
-              config.cache.req[ i + 1 ] = scriptID;
-
-              if ( i < request - 1 ) {
-                _addJS( url + '&start-index=' + startIdx, scriptID, function(){ 
-                  sequenceFn( i + 1 );
-                });                
-              } else {
-                _addJS( url + '&start-index=' + startIdx, scriptID );                
-              }
+            // chunk can't be exceeded the request
+            chunk = chunk > request ? request : chunk;
+            // determine the max-results
+            var _setMaxResults = function( i, req, count ) {
+              return count < ( ( i + 1 ) * req ) ? count - ( i * req ) : req;
             };
 
-            sequenceFn( i );
+            if ( jsonp ) {
+              newUrl += 'callback=BTLDJSONCallback_' + root.id;
+
+              _sequenceFn = function( i ) {
+                startIdx = ( i * req ) + 1;
+                scriptID = url + '_' + _uniqueNumber();
+                config.cache.req[ i + 1 ] = scriptID;
+                maxResults = _setMaxResults( i, req, count );
+
+                _addJS( newUrl + '&max-results=' + maxResults + '&start-index=' + startIdx + appendQuery, scriptID, function() {
+                  if ( i + chunk < request ) { _sequenceFn( i + chunk ); }
+                });                
+              };
+            } else {
+              _sequenceFn = function( i ) {
+                startIdx = ( i * req ) + 1;
+                maxResults = _setMaxResults( i, req, count );
+
+                // must be on the same domain, see CORS reference
+                _ajaxRequest( newUrl + '&max-results=' + maxResults + '&start-index=' + startIdx + appendQuery, function( req ) {
+
+                  json = _parseJSON( req.responseText );
+                  _self.loadFeed( json );
+
+                  if ( i + chunk < request ) { _sequenceFn( i + chunk ); }
+                });                
+              };
+            }
+
+            // do x times request at one time
+            for ( var k = 0; k < chunk; k++ ) {
+              _sequenceFn( i );
+              i++;
+            }
           },
           
           /* Load the main feed from JSON callback
            * @param : <json>json
            ****************************************************************/
-          loadFeed : function( json ) {
+          loadFeed: function( json ) {
             
             var _self = this;
             
@@ -392,7 +465,7 @@
               obj = {};
               
             var data = feed.data,
-              count = feed.count,
+              count = opts.feed.limit ? opts.feed.limit : feed.count,
               size = opts.thumbnail.size,
               asize = opts.thumbnail.authorSize,
               notfound = opts.thumbnail.notFound,
@@ -410,7 +483,7 @@
               
               var saveFeed = function() {
               
-                setTimeout( function(){
+                setTimeout( function() {
 
                   var entry = jfeed.entry[i];
 
@@ -430,9 +503,9 @@
 
                   // summary section
                   var fullSummary = ( 'summary' in  entry ) ? 
-                    entry.summary.$t : 
+                    entry.summary.$t.replace( removeScriptRegex, '' ) : 
                     ( ('content' in entry) ? 
-                      entry.content.$t : ''
+                      entry.content.$t.replace( removeScriptRegex, '' ) : ''
                     ), summary;
 
                   // remove whitespace and strip html tags
@@ -554,7 +627,8 @@
               size = opts.thumbnail.size,
               display = config.display,
               sortingOrder = opts.sorting.order,
-              sortingKey = opts.sorting.key;
+              sortingKey = opts.sorting.key,
+              placeHolder = opts.search.textAsPlaceholder;
             
             var labelFn = "BlogToc.label(this, this.value, document.getElementById('"+ root.id +"')); return false;",
               alphaFn = "BlogToc.alphabet(this, this.value, document.getElementById('"+ root.id +"')); return false;",
@@ -569,8 +643,8 @@
             _self.makeLabel( feed.label, 'showLabel', 'cloudLabel', 'setup', 'blogtoc_label', klass.blogtoc_label, labelFn );
             _self.makeLabel( _alpha, 'showAlphabetLabel', 'cloudAlphabetLabel', 'setupAlphabet', 'blogtoc_alphabet', klass.blogtoc_alphabet, alphaFn );
             
-            var j = 0, dLen = display.num.length, dVal,
-              div, select, input, option, label, spn;
+            var j = 0, dLen = display.length, dVal,
+              div, select, input, option, label, spn, btn;
             
             // display section
             div = _createElement( 'div', null, null, 'blogtoc_display' );
@@ -581,10 +655,10 @@
             spn = _createElement( 'span', null, opts.language.custom.display );
             
             for ( ; j < dLen; j++ ) {
-              option  = _createElement( 'option', { value: display.num[ j ] }, display.name[ j ] );
+              option  = _createElement( 'option', { value: display[ j ].num }, display[ j ].name );
               
               // arrange to the default setup selected
-              if ( display.num[ j ] === config.records ) {
+              if ( display[ j ].num === config.records ) {
                 option.selected = true;
               }
               
@@ -601,7 +675,7 @@
             _extendClass( div, klass.blogtoc_search );
 
             label = _createElement('label');
-            spn = _createElement( 'span', null, opts.language.custom.search );
+            spn = _createElement( 'span', null, !placeHolder ? opts.language.custom.search : ''  );
 
             input = _createElement( 'input', { 
               type: 'text', 
@@ -664,13 +738,17 @@
             }
             
             // footer section
-            resulter = _createElement( 'div', null, null,'blogtoc_result' );
+            resulter = _createElement( 'div', null, null, 'blogtoc_result' );
             _extendClass( resulter, klass.blogtoc_result );
             footer.appendChild( resulter );
 
             paging = _createElement( 'div', null, null, 'blogtoc_pagination' );
             _extendClass( paging, klass.blogtoc_pagination );
             footer.appendChild( paging );
+
+            // copyright section
+            btn = _createElement( 'button', { onclick: "window.location = '" + HOMEPAGE + "';" }, 'Get this Widget', klass['blogtoc_copyright button'] );
+            copyright.appendChild( btn );
             
             // setting up new badge
             _self.addBadge();
@@ -698,6 +776,27 @@
               }
             }
 
+            // set the placeholder support after the data compile called
+            // in IE, have strange behaviour when data show blank if this set before data compile
+            if ( placeHolder ) {
+              // check html5 placeholder support
+              if ( 'placeholder' in input ) {
+                input.placeholder = opts.language.custom.search;
+              } else {
+                input.value = opts.language.custom.search;
+                input.onfocus = function() {
+                  if ( this.value === opts.language.custom.search ) {
+                    this.value = '';
+                  }
+                };
+                input.onblur = function() {
+                  if ( this.value === '' ) {
+                    this.value = opts.language.custom.search;
+                  }
+                };
+              }
+            }
+
             // Tells that apps already loaded
             _parent.BTLoaded = true;
 
@@ -710,8 +809,9 @@
             window[ 'BTJSONCallback_' + root.id ] = null;
             window[ 'BTLDJSONCallback_' + root.id ] = null;
 
-            for ( var k = 0, rLen = config.cache.req.length; k < rLen; k++ ) {
-              _removeElement( _getId( config.cache.req[ k ] ) );
+            for ( var k = 0, elm, rLen = config.cache.req.length; k < rLen; k++ ) {
+              elm = _getId( config.cache.req[ k ] );
+              if ( elm ) { _removeElement( elm ); }
             }
           },
           
@@ -731,7 +831,8 @@
               adj = opts.pagination.adjacents, adjJump = adj * 2,
               rID = root.id, hClass = 'blogtoc_responsive_hide',
               fClass = 'blogtoc_first_page', lClass = 'blogtoc_last_page', 
-              pClass = 'blogtoc_prev_page', nClass = 'blogtoc_next_page', 
+              pClass = 'blogtoc_prev_page', nClass = 'blogtoc_next_page',
+              rtl = opts.rightToLeft, num = opts.number.render,
               ul, ulRecent, li; 
 
             // limit more than one
@@ -742,17 +843,17 @@
                 // first page
                 if ( opts.pagination.showFirstPage ) {
                   li = _BTMakePageList( 1, opts.language.custom.firstPage, 'a', rID, fClass );
-                  ul.appendChild( li );
+                  rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
                 }
                 // prev page
                 if ( opts.pagination.showPrevPage ) {
                   li = _BTMakePageList( prev_page, opts.language.custom.prevPage, 'a', rID, pClass );
-                  ul.appendChild( li );
+                  rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
                 }
               } else {
                 if ( opts.pagination.showPrevPage ) {
                   li = _BTMakePageList( null, opts.language.custom.prevPage, 'span', rID, _appendStr( pClass, dClass ) );
-                  ul.appendChild( li );
+                  rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
                 }
               }
               
@@ -760,80 +861,80 @@
               if ( limit < 7 + adjJump ) {
                 for ( i = 1; i <= limit; i++ ) {
                   if ( i === page ) {
-                    li = _BTMakePageList( null, i, 'span', rID, cClass );
+                    li = _BTMakePageList( null, num( i ), 'span', rID, cClass );
                   } else {
-                    li = _BTMakePageList( i, i, 'a', rID, hClass );
+                    li = _BTMakePageList( i, num( i ), 'a', rID, hClass );
                   }
-                  ul.appendChild( li );
+                  rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
                 }
               } else if ( limit > 5 + adjJump ) {
                 // left pages lapping
                 if ( lppl - adjJump > 1 ) {
                   i = lppl - adjJump;
-                  li = _BTMakePageList( i, i, 'a', rID, hClass );
-                  ul.appendChild( li );
+                  li = _BTMakePageList( i, num( i ), 'a', rID, hClass );
+                  rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
                 }
                 if ( sppl - adjJump > 1 ) {
                   i = sppl - adjJump; 
-                  li = _BTMakePageList( i, i, 'a', rID, hClass );
-                  ul.appendChild( li );
+                  li = _BTMakePageList( i, num( i ), 'a', rID, hClass );
+                  rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
                 }
                 
                 // beginning, middle, ending
                 if (page < 2 + adjJump) {
                   for ( i = 1; i < 4 + adjJump; i++ ) {
                     if ( i === page ) {
-                      li = _BTMakePageList( null, i, 'span', rID, cClass );
+                      li = _BTMakePageList( null, num( i ), 'span', rID, cClass );
                     } else {
-                      li = _BTMakePageList( i, i, 'a', rID, hClass );
+                      li = _BTMakePageList( i, num( i ), 'a', rID, hClass );
                     }               
-                    ul.appendChild( li );
+                    rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
                   }
 
                   li = _BTMakePageList( null, '...', 'span' , rID, hClass );
-                  ul.appendChild(li);
+                  rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
 
                 } else if ( limit - adjJump > page && page > 1 + adjJump ) { 
                   li = _BTMakePageList( null, '...', 'span', rID, hClass );
-                  ul.appendChild( li );
+                  rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
 
                   for ( i = page - adj; i <= page + adj; i++ ) {
                     if ( i === page ) {
-                      li = _BTMakePageList( null, i, 'span', rID, cClass );
+                      li = _BTMakePageList( null, num( i ), 'span', rID, cClass );
                     } else {
-                      li = _BTMakePageList( i, i, 'a', rID, hClass );
+                      li = _BTMakePageList( i, num( i ), 'a', rID, hClass );
                     }               
-                    ul.appendChild( li );
+                    rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
                   }
 
                   li = _BTMakePageList( null, '...', 'span', rID, hClass );
-                  ul.appendChild( li );
+                  rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
 
                 } else { 
 
                   li = _BTMakePageList( null, '...', 'span', rID, hClass );
-                  ul.appendChild( li );
+                  rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
 
                   for ( i=limit - (2 + adjJump); i <= limit; i++ ) {
                     if ( i === page ) {
-                      li = _BTMakePageList( null, i, 'span', rID, cClass );
+                      li = _BTMakePageList( null, num( i ), 'span', rID, cClass );
                     } else {
-                      li = _BTMakePageList( i, i, 'a', rID, hClass );
+                      li = _BTMakePageList( i, num( i ), 'a', rID, hClass );
                     }               
-                    ul.appendChild( li );
+                    rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
                   }
                 }
                 
                 // right pages lapping
                 if ( snpl + adjJump < limit ) {
                   i = snpl + adjJump;
-                  li = _BTMakePageList( i, i, 'a', rID, hClass );
-                  ul.appendChild( li );
+                  li = _BTMakePageList( i, num( i ), 'a', rID, hClass );
+                  rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
                 }
                 if ( lnpl + adjJump < limit ) {
                   i = lnpl + adjJump;
-                  li = _BTMakePageList( i, i, 'a', rID, hClass );
-                  ul.appendChild( li );
+                  li = _BTMakePageList( i, num( i ), 'a', rID, hClass );
+                  rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
                 }
               }
               
@@ -842,17 +943,17 @@
                 // next page
                 if ( opts.pagination.showNextPage ) {
                   li = _BTMakePageList( next_page, opts.language.custom.nextPage, 'a', rID, nClass );
-                  ul.appendChild( li );
+                  rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
                 }
                 // last page
                 if ( opts.pagination.showLastPage ) {
                   li = _BTMakePageList( limit, opts.language.custom.lastPage, 'a', rID, lClass );
-                  ul.appendChild( li );
+                  rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
                 }
               } else {
                 if ( opts.pagination.showNextPage ) {
                   li = _BTMakePageList( null, opts.language.custom.nextPage, 'span', rID, _appendStr( nClass, dClass ) );
-                  ul.appendChild( li );
+                  rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
                 }
               }
             }
@@ -946,6 +1047,7 @@
           buildResult: function() {
             
             var len = feed.data.length,
+              num = opts.number.render,
               max = config.page * config.records;
               
             var lookup = {
@@ -954,7 +1056,7 @@
               total: len
             }, 
               output = opts.language.custom.result.replace( /\{(.*?)\}/gi, function ( match, p1 ) {
-                return "<b>" + lookup[ p1 ] + "</b>";
+                return "<b>" + num( lookup[ p1 ] ) + "</b>";
             });
             
             resulter.innerHTML = output;
@@ -1077,9 +1179,9 @@
                 alphaRegex;
                 
               if ( val === '#' ) { // symbolic
-                alphaRegex = new RegExp( '^[^A-Z]{1,}.*', 'i' );
+                alphaRegex = new RegExp( '^' + opts.label.symbolicAlphabetFilter, 'i' );
               } else { // alphabetic
-                alphaRegex = new RegExp( '^' + val + '{1,}.*', 'i' );
+                alphaRegex = new RegExp( '^' + val, 'i' );
               }
               
               // filter data that only match with first alphabet
@@ -1373,7 +1475,7 @@
               // use the most data limit as possible
               blob = ( end <= records && end <= count ) ? 
                 end :
-                ( records <= count) ? 
+                ( records <= count ) ? 
                   records : 
                   count;
               
@@ -1400,6 +1502,7 @@
                 }
                 el.appendChild( tr );
 
+                // call binding if data is still continue streaming
                 if ( j === ( blob - 1 ) && typeof bOpts.binding.onLiveDataChange === 'function' ) {
                     bOpts.binding.onLiveDataChange();
                 }
@@ -1467,32 +1570,11 @@
             filledInViewPort( root );
             evtHandler();
           }
+
         };
 
-        // Initialization before running
-        var setLanguage, setTheme;
-
-        // check the current language setting
-        if ( option.language && option.language.setup ) {
-          setLanguage = option.language.setup;
-        } else {
-          setLanguage = defaultLanguage;
-        }
-
-        // check the current theme setting
-        if ( option.theme && option.theme.setup ) {
-          // check if theme already has default settings
-          if ( option.theme.standalone ) {
-            themes[ option.theme.setup ] = {};
-            themes[ option.theme.setup ].option = {};
-          }
-          setTheme = option.theme.setup;
-        } else {
-          setTheme = defaultTheme;
-        }
-
         // Run
-        _runAfterPluginLoaded( _parent, setLanguage, setTheme, option );
+        _runApp( _parent, option );
 
         return this;
       };
@@ -1709,7 +1791,7 @@
       /* Check whether element has certain class name
        * @param  : <HTMLElement>el
        * @param  : <string>className
-       * @link taken from https://github.com/jquery/jquery/blob/1.7.2/src/attributes.js
+       * taken from https://github.com/jquery/jquery/blob/1.7.2/src/attributes.js
        ********************************************************************/ 
       var _hasClass = function( el, className ) {
         
@@ -1910,6 +1992,95 @@
         document.getElementsByTagName('head')[0].appendChild( script );
       };
 
+      /* Simple make ajax request
+       * @param  : <string>url
+       * @param  : <function>callback
+       * @param  : <object>postData
+       * taken from http://www.quirksmode.org/js/xmlhttp.html
+       ********************************************************************/
+      var _ajaxRequest = function( url, callback, postData ) {
+        var req = _createXMLHTTPObject();
+
+        if ( !req ) { return; }
+
+        var method = postData ? "POST" : "GET";
+
+        req.open( method, _sanitizeURL( url ), true );
+        req.setRequestHeader( 'User-Agent', 'XMLHTTP/1.0' );
+        if ( postData ) {
+          req.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
+        }
+        req.onreadystatechange = function() {
+          if ( req.readyState != 4 ) { return; }
+          if ( req.status != 200 && req.status != 304 ) { return; }
+
+          if ( typeof callback === 'function' ) { callback( req ); }
+        };
+        if ( req.readyState == 4 ) { return; }
+        req.send( postData );
+      };
+
+      /* Get XMLHTTP object
+       * taken from http://www.quirksmode.org/js/xmlhttp.html
+       ********************************************************************/
+      var _createXMLHTTPObject = function() {
+        var XMLHTTPFactories = [
+          function() { return new XMLHttpRequest(); },
+          function() { return new ActiveXObject("Msxml2.XMLHTTP"); },
+          function() { return new ActiveXObject("Msxml3.XMLHTTP"); },
+          function() { return new ActiveXObject("Microsoft.XMLHTTP"); },
+        ], xmlhttp = false;
+
+        for ( var i = 0; i < XMLHTTPFactories.length; i++ ) {
+          try {
+            xmlhttp = XMLHTTPFactories[i]();
+            // faster
+            _createXMLHTTPObject = function() {
+              return XMLHTTPFactories[i]();
+            };
+          } catch ( e ) {
+            continue;
+          }
+          break;
+        }
+
+        return xmlhttp;
+      };
+
+      /* JSON.parse
+       * @param : <string> data
+       * https://github.com/jquery/jquery/blob/1.9.1/src/core.js
+       ********************************************************************/
+      var _parseJSON = function( data ) {
+        if ( window.JSON && window.JSON.parse ) {
+          return window.JSON.parse( data );
+        }
+
+        if ( data === null ) {
+          return false;
+        }
+
+        var rvalidchars = /^[\],:{}\s]*$/,
+          rvalidbraces = /(?:^|:|,)(?:\s*\[)+/g,
+          rvalidescape = /\\(?:["\\\/bfnrt]|u[\da-fA-F]{4})/g,
+          rvalidtokens = /"[^"\\\r\n]*"|true|false|null|-?(?:\d+\.|)\d+(?:[eE][+-]?\d+|)/g;
+
+        if ( typeof data === 'string' ) {
+          data = data.trim();
+
+          if ( data )  {
+            if ( rvalidchars.test( data.replace( rvalidescape, "@" )
+                   .replace( rvalidtokens, "]" )
+                   .replace( rvalidbraces, "" ) )
+              ) {
+              return ( new Function ( "return " + data ) )();
+            }
+          }
+        }
+
+        throw new SyntaxError( 'JSON.parse' );
+      };
+
       /* very simple append string
        * @param  : <string>def
        * @param  : <string>option
@@ -1989,26 +2160,21 @@
         }
 
         var i = 0, len = template.length,
-          temp = {
-            name : [],
-            num: []
-          };
+          temp = [];
         
         for ( ; i < len; i++ ) {
-          if ( typeof template[ i ] === 'string' ) {
-            temp.num.push( count );
+          // check if a number @link http://stackoverflow.com/a/1830844
+          if ( _isNumber( template[ i ] ) ) {
+            temp.push( { num: template[ i ], name: template[ i ] } );
           } else {
-            temp.num.push( template[ i ] );
+            temp.push( { num: count, name: template[ i ] } );
           }
         }
 
-        temp.num = temp.num.sort( function ( a, b ){
-          return a - b;
+        // Sort number first then string @link http://stackoverflow.com/a/19276824/2863460
+        temp = temp.sort(function ( x, y ) {
+          return !_isNumber( x.name ) ? 1 : x.num - y.num;
         });
-
-        for ( i = 0; i < len; i++ ) {
-          temp.name.push( template[ i ] );
-        }
 
         return temp;
       };
@@ -2021,6 +2187,14 @@
           return false;
         }
         return true;
+      };
+
+      /* Check whether object is number
+       * @param  : <JSObject>obj
+       * @link http://stackoverflow.com/a/1830844
+       ********************************************************************/    
+      var _isNumber = function( obj ) {
+        return !isNaN( parseFloat( obj ) ) && isFinite( obj );
       };
 
       /* Return new Date Object
@@ -2046,23 +2220,13 @@
         return Math.floor( Math.random() * ( y - x + 1 ) + x );
       };
 
-      /* Run apps after all needed plugins loaded
+      /* Run apps 
        * @param  : <node>elem
-       * @param  : <string>lang
-       * @param  : <string>theme
        * @param  : <JSObject>option
        ********************************************************************/
-      var _runAfterPluginLoaded = function( elem, lang, theme, option ) {
-        setTimeout( function() {
-          // run apps after the language & theme setting is fully loaded
-          if ( ( !_isEmptyObj( lang ) && languages[ lang ] ) &&
-               ( !_isEmptyObj( theme ) && themes[ theme ] ) ) {
-            elem.BTID.style.display = 'block';
-            elem.BTAPP.run( option );
-          } else {
-            _runAfterPluginLoaded( elem, lang, theme, option );
-          }
-        }, 100 );
+      var _runApp = function( elem, option ) {
+        elem.BTID.style.display = 'block';
+        elem.BTAPP.run( option );
       };
 
       /* Return the base url of url
@@ -2160,7 +2324,7 @@
         obj = {
           author: function() {
             var span = _createElement( 'span', null ),
-              anchor = _createElement( 'a', { href: data.authorUrl }, data.author ),
+              anchor = _createElement( 'a', { href: data.authorUrl, target: option.linkTarget.author }, data.author ),
               node = _createElement( 'div', null, null, 'blogtoc_authorthumbnail' );
 
             if ( option.thumbnail.authorThumbnail ) {
@@ -2183,11 +2347,19 @@
             return node;
           },
           comment: function() {
+            var num = option.number.render,
+              commentContent = option.rightToLeft ?
+                num( data.comment ).toString() + '<span class="icon icon-comment-2">&nbsp;</span>' :
+                '<span class="icon icon-comment-2">&nbsp;</span>' + num( data.comment ).toString();
+
             return _createElement( 'a', {
-              href: data.commentURL
-            }, '<span class="icon icon-comment-2">&nbsp;</span>' + data.comment.toString() );
+              href: data.commentURL,
+              target: option.linkTarget.comment
+            }, commentContent );
           },
           index: function() {
+            idx = option.number.render( idx );
+
             return document.createTextNode( idx );
           },
           label: function() {
@@ -2207,7 +2379,8 @@
 
             var node = _createElement( 'a', {
               href: data.actualImage,
-              style: config.tbwrapper
+              style: config.tbwrapper,
+              target: option.linkTarget.thumbnail
             }, null, 'blogtoc_thumbnail' );
 
             node.appendChild( img );
@@ -2228,7 +2401,8 @@
 
             anchor = _createElement( 'a', {
               href: data.titleURL,
-              title: data.summary
+              title: data.summary,
+              target: option.linkTarget.title
             }, title, 'blogtoc_post' );
 
             container.appendChild( anchor );
@@ -2398,6 +2572,7 @@
             '<div class="blogtoc_filter"></div>',
             '<table class="blogtoc_table"></table>',
             '<div class="blogtoc_footer"></div>',
+            '<div class="blogtoc_copyright"></div>',
             '</div>',
             '</div>'
           ].join('');
@@ -2423,12 +2598,14 @@
           _filter = _nextElement( _header ),
           _tabler = _nextElement( _filter ),
           _footer = _nextElement( _tabler );
+          _copyright = _nextElement( _footer );
 
         _loader.innerHTML = '';
         _header.innerHTML = '';
         _filter.innerHTML = '';
         _tabler.innerHTML = '';
         _footer.innerHTML = '';
+        _copyright.innerHTML = '';
 
         // reset class
         _root.className = '';
@@ -2438,6 +2615,7 @@
         _filter.className = 'blogtoc_filter';
         _tabler.className = 'blogtoc_table';
         _footer.className = 'blogtoc_footer';
+        _copyright.className = 'blogtoc_copyright';
 
         _root.style.display = 'block';
         _loader.style.display = 'block';
@@ -2572,30 +2750,8 @@
         _resetState( element );
         element.BTLoaded = false;
 
-        // Initialization before running
-        var setLanguage, setTheme;
-
-        // check the current language setting
-        if ( options.language && options.language.setup ) {
-          setLanguage = options.language.setup;
-        } else {
-          setLanguage = element.BTOptions.language.setup;
-        }
-
-        // check the current theme setting
-        if ( options.theme && options.theme.setup ) {
-          // check if theme already has default settings
-          if ( options.theme.standalone ) {
-            themes[ options.theme.setup ] = {};
-            themes[ options.theme.setup ].option = {};
-          }
-          setTheme = options.theme.setup;
-        } else {
-          setTheme = element.BTOptions.theme.setup;
-        }
-
         // Run
-        _runAfterPluginLoaded( element, setLanguage, setTheme, options );
+        _runApp( element, options );
 
         return this;
       };
@@ -2715,16 +2871,102 @@
      * ADD EXTERNAL ICON SET                                            *
      ********************************************************************/
     BlogToc.addCSS('//cdn.jsdelivr.net/bootmetro/1.0.0a1/css/bootmetro-icons.min.css');
+  }
 
-    /********************************************************************
-     * SET DEFAULT LANGUAGE                                             *
-     ********************************************************************/
-    BlogToc.addJS('lang/en-US.js');
+})();
+// BlogToc language configuration
+// language : English (America)
+// author : Cluster Amaryllis
 
-    /********************************************************************
-     * SET DEFAULT THEME                                                *
-     ********************************************************************/
-    BlogToc.addJS('theme/bt_bootstrap.js');
+(function(){
+  
+  var loadLang = function( BlogToc ) {
+    (function(){
+
+      /*****************************************************************
+       * You can change these lines                                    *
+       *****************************************************************/
+      BlogToc.language( 'en-US', {
+        labelAll: 'All',
+        newLabel: 'New',
+        index: '#',
+        thumbnail: 'Thumb',
+        title: 'Titles',
+        author: 'Authors',
+        comment: 'Comments',
+        publishDate: 'Published',
+        updateDate: 'Updated',
+        summary: 'Summaries',
+        display: ' records per page',
+        search: 'Search :',
+        noRecords: 'No matching records found',
+        result: 'Showing {begin} to {end} out of {total}',
+        firstPage: '&laquo; First',
+        lastPage: 'Last &raquo;',
+        prevPage: '&lsaquo; Prev',
+        nextPage: 'Next &rsaquo;',
+        errorMessage: 'This error message is part of BlogToc application & occurred because one of following reasons :' + 
+          '\n' +
+          '\n • The URL you provide is not valid.' +
+          '\n • The URL you provide is not a blogspot service.' +
+          '\n • The blog is a private blog.' +
+          '\n • The blog has been deleted.' +
+          '\n • There is a trouble in your internet connection.'
+      });
+      /*****************************************************************
+       * End changing lines                                            *
+       *****************************************************************/
+
+    })();
+  };
+
+  if ( typeof window !== 'undefined' && window.BlogToc ) {
+    loadLang( window.BlogToc );
+  }
+
+})();
+// BlogToc theme configuration
+// theme : bootstrap v3, @link http://getbootstrap.com/
+// author : Cluster Amaryllis
+
+(function(){
+  
+  var loadTheme = function( BlogToc ) {
+    (function(){
+
+      /*****************************************************************
+       * You can change these lines                                    *
+       *****************************************************************/
+      BlogToc.theme( 'bootstrap', 'css/bootstrap/bt_bootstrap.css', {
+        "id": "bootstrap",
+        /*"loader": "",*/
+        /*"header": "",*/
+        /*"label": "",*/
+        /*"alphabet": "",*/
+        "button": "btn btn-default",
+        "filter": "clearfix",
+        "display": "bt-form-inline",
+        "search": "bt-form-inline",
+        "query": "form-control",
+        "table": "table",
+        "footer": "clearfix",
+        /*"result": "",
+        "pagination": "",*/
+        "pagination ul": "pagination",
+        "pagination current": "active",
+        "pagination disabled": "disabled",
+        // "copyright": "",
+        "copyright button": "btn btn-default btn-xs"
+      });
+      /*****************************************************************
+       * End changing lines                                            *
+       *****************************************************************/
+
+    })();
+  };
+
+  if ( typeof window !== 'undefined' && window.BlogToc ) {
+    loadTheme( window.BlogToc );
   }
 
 })();

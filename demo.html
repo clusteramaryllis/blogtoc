@@ -133,6 +133,38 @@ extendclass: [
             </div>
           </div>
         </div>
+        <!-- group zero-two -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a href="#collapseZeroTwo" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+              Data Type
+            </a>
+          </div>
+          <div id="collapseZeroTwo" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <!-- binding -->
+              <form>
+              <!-- feed type -->
+              <label for="bt-data-type">
+                <span class="label label-inverse">Type</span>
+              </label>
+              <select name="bt-data-type" id="bt-data-type" ng-model="preModel.dataType">
+                <option value="JSONP">JSONP</option>
+                <!-- <option value="JSON">JSON</option> -->
+              </select>
+              <p class="help-block">
+                The request data type we're gonna using, either <code>JSONP</code> or <code>JSON</code>.
+                In this demo the <code>JSON</code> data type will not going to work because it must at the same domain
+                of the blog url. (See Cross Domain Origin Policy <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Same_origin_policy_for_JavaScript">link</a>)<br>
+                <ul>
+                  <li><code>JSONP</code> use asynchronous script request using <code>&lt;script&gt;</code> tag.</li>
+                  <li><code>JSON</code> use ajax request.</li>
+                </ul>
+              </p>
+              </form>
+            </div>
+          </div>
+        </div>
         <!-- group one -->
         <div class="accordion-group">
           <div class="accordion-heading">
@@ -244,11 +276,49 @@ callback( date, option ) {
           <div id="collapseFour" class="accordion-body collapse">
             <div class="accordion-inner">
               <form>
+              <!-- feed append query -->
+              <label for="bt-feed-append-query">
+                <span class="label label-inverse">Append Query</span>
+              </label>
+              <textarea class="btn-block" id="bt-feed-append-query" name="bt-feed-append-query" ng-model="preModel.feed.appendQuery"></textarea>
+              <p class="help-block">
+                Query parameter to be added when fetch the blogspot feed. <i>e.g.</i> 
+                <code>&amp;updated-min=2008-03-16T00:00:00</code><br>
+                <code>&amp;updated-max=2008-03-24T23:59:59</code><br>
+                <code>&amp;orderby=updated</code> 
+                (See <a href="https://developers.google.com/blogger/docs/2.0/reference#Parameters">Reference</a></code>).
+                <br>
+                <span class="badge badge-warning">Notes</span> Do not use these forbidden parameters => <code>start-index</code>, <code>max-results</code>, <code>alt</code>, <code>callback</code>. It will give unexpected response.
+              </p>  
+              <!-- feed chunk request -->
+              <label for="bt-feed-chunk-request">
+                <span class="label label-inverse">Chunk Request</span>
+              </label>
+              <input type="number" id="bt-feed-chunk-request" name="bt-feed-chunk-request" class="span3" ng-model="preModel.feed.chunkRequest" min="1">
+              <p class="help-block">
+                Split how many request can be made to fetch blogspot feed at one time.
+              </p>
+              <!-- feed limit -->
+              <label for="bt-feed-limit">
+                <span class="label label-inverse">Limit</span>
+              </label>
+              <input type="number" id="bt-feed-limit" name="bt-feed-limit" class="span3" ng-model="preModel.feed.limit" min="0">
+              <p class="help-block">
+                Limit How many post will be fetched. Set to <code>0</code> or <code>null</code> to fetch all posts.
+              </p>
+              <!-- feed request count -->
+              <label for="bt-feed-request-count">
+                <span class="label label-inverse">Request Count</span>
+              </label>
+              <input type="number" id="bt-feed-request-count" name="bt-feed-request-count" class="span3" ng-model="preModel.feed.requestCount" min="1" max="500">
+              <p class="help-block">
+                Set the max-results value. Max value is <b>500</b> and Min value is <b>1</b>.
+              </p>
               <!-- feed type -->
               <label for="bt-feed-type">
                 <span class="label label-inverse">Type</span>
               </label>
-              <select name="bt-feed-type" id="bt-feed-type" ng-model="preModel.feedType">
+              <select name="bt-feed-type" id="bt-feed-type" ng-model="preModel.feed.type">
                 <option value="default">default</option>
                 <option value="summary">summary</option>
               </select>
@@ -363,6 +433,26 @@ callback( date, option ) {
               <p class="help-block">
                 Option for showing alphabet label in <code>dropdown</code> or <code>cloud</code> mode.
               </p>
+              <!-- label symbolic alpha filter-->
+              <label for="bt-symbolic-alpha-filter">
+                <span class="label label-inverse">Symbolif Alphabet Filter</span>
+              </label>
+              <input type="text" id="bt-symbolic-alpha-filter" name="bt-symbolic-alpha-filter" class="span12" ng-model="preModel.symbolicAlphabetFilter">
+              <p class="help-block">
+                Regular Expression to filter symbolic character. Symbolic Character will be stored in <b>"#"</b> hashtag alphabet label.
+                <br>
+                The Example above will be parse to <code>/^[^A-Z]/i</code>, means find character other than A to Z.
+              </p>
+              <!-- label alphabet member -->
+              <label for="bt-label-alphabet-member">
+                <span class="label label-inverse">Alphabet Member</span>
+              </label>
+              <input type="hidden" id="bt-label-alphabet-member" name="bt-label-alphabet-member" ng-model="preModel.label.alphabetMember" ui-select2="select2Options.labelAlphabetMember" class="span12">
+              <p class="help-block">
+                The Array of Alphabet Character, why this option included ?
+                <br>
+                Not All Country used Standard Alphabet (A to Z) which represent phonemes of their spoken language.
+              </p>
               </form>
             </div>
           </div>
@@ -437,6 +527,56 @@ callback( date, option ) {
             </div>
           </div>
         </div>
+        <!-- group six one -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a href="#collapseSixOne" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+              Link Target
+            </a>
+          </div>  
+          <div id="collapseSixOne" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <form>
+              <!-- link target author -->
+              <label for="bt-link-target-author">
+                <span class="label label-inverse">Author</span>
+              </label>
+              <select name="bt-link-target-author" id="bt-link-target-author" ng-model="preModel.linkTarget.author" ng-options="cc for cc in targetLinks">
+              </select>
+              <p class="help-block">
+                The link's target of author's link.
+              </p>
+              <!-- link target comment -->
+              <label for="bt-link-target-comment">
+                <span class="label label-inverse">Comment</span>
+              </label>
+              <select name="bt-link-target-comment" id="bt-link-target-comment" ng-model="preModel.linkTarget.comment" ng-options="cc for cc in targetLinks">
+              </select>
+              <p class="help-block">
+                The link's target of comment's link.
+              </p>  
+              <!-- link target thumbnail -->
+              <label for="bt-link-target-thumbnail">
+                <span class="label label-inverse">Thumbnail</span>
+              </label>
+              <select name="bt-link-target-thumbnail" id="bt-link-target-thumbnail" ng-model="preModel.linkTarget.thumbnail" ng-options="cc for cc in targetLinks">
+              </select>
+              <p class="help-block">
+                The link's target of thumbnail's link.
+              </p>
+              <!-- link target title -->
+              <label for="bt-link-target-title">
+                <span class="label label-inverse">Title</span>
+              </label>
+              <select name="bt-link-target-title" id="bt-link-target-title" ng-model="preModel.linkTarget.title" ng-options="cc for cc in targetLinks">
+              </select>
+              <p class="help-block">
+                The link's target of title's link.
+              </p>
+              </form>
+            </div>
+          </div>
+        </div>
         <!-- group seven -->
         <div class="accordion-group">
           <div class="accordion-heading">
@@ -448,10 +588,10 @@ callback( date, option ) {
             <div class="accordion-inner">
               <form>
               <!-- new badge setup -->
-              <label for="bt-new-badge-setup">
+              <label for="bt-feed-chunk-request">
                 <span class="label label-inverse">Setup</span>
               </label>
-              <input type="number" id="bt-new-badge-setup" name="bt-new-badge-setup" class="span3" ng-model="preModel.newBadge.setup">
+              <input type="number" id="bt-feed-chunk-request" name="bt-feed-chunk-request" class="span3" ng-model="preModel.newBadge.setup">
               <p class="help-block">
                 The initial setup how many <span class="badge badge-info">New</span> label will be glued to the newest published post (Must be a number).
               </p>
@@ -467,6 +607,33 @@ callback( language ) {
 // display the label
 }</pre>
                 <code>language</code> is the language you set in language section option, refer to <a id="reveal-new-label" href="#bt-language-custom-new-label">this</a>.
+              </p>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- group seven one -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a href="#collapseSevenOne" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+              Number
+            </a>
+          </div>  
+          <div id="collapseSevenOne" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <form>
+              <!-- number render -->
+              <label for="bt-post-label-render">
+                <span class="label label-inverse">Render</span>
+              </label>
+              <textarea class="btn-block" name="bt-number-render" id="bt-number-render" ng-model="preModel.number.renderNumberText"></textarea>
+              <p class="help-block">
+                Format the number in index column, pagination, and page report. Callback function with one parameter ( <code>idx</code> ) =>
+<pre class="prettyprint">
+callback( idx ) {
+// format the number
+}</pre>
+                <code>idx</code> is the number.
               </p>
               </form>
             </div>
@@ -569,6 +736,30 @@ callback( elem, progress ) {
 // animate your waiting progress
 }</pre>
                 <code>elem</code> is the element that the progress will be apended and <code>progress</code> is percentage value of progress ( current loading text state ).
+              </p>
+              </form>
+            </div>
+          </div>
+        </div>
+        <!-- group nine one -->
+        <div class="accordion-group">
+          <div class="accordion-heading">
+            <a href="#collapseNineOne" class="accordion-toggle" data-toggle="collapse" data-parent="#options">
+              Right To Left (RTL)
+            </a>
+          </div>  
+          <div id="collapseNineOne" class="accordion-body collapse">
+            <div class="accordion-inner">
+              <form>
+              <!-- label exception -->
+              <label for="bt-right-to-left">
+                <span class="label label-inverse">Right to Left Mode</span>
+              </label>
+              <label class="checkbox inline">
+                <input type="checkbox" name="bt-right-to-left" ng-model="preModel.rightToLeft" > [[preModel.rightToLeft]]
+              </label>
+              <p class="help-block">
+                Make the direction Right to Left.
               </p>
               </form>
             </div>
@@ -715,14 +906,14 @@ callback( match ) {
               </label>
               <select name="bt-theme-default" id="bt-theme-default" ng-model="preModel.theme.setup" ng-disabled="!builtInMode" class="span12">
                 <option value="bootstrap">bootstrap</option>
-                <option value="dark-bootstrap">dark-bootstrap</option>
+                <!-- <option value="dark-bootstrap">dark-bootstrap</option>
                 <option value="bootmetro">bootmetro</option>
-                <option value="todc-bootstrap">todc-bootstrap</option>
+                <option value="todc-bootstrap">todc-bootstrap</option> -->
               </select>
               <!-- theme setup -->
               <input type="text" id="bt-theme-custom" name="bt-theme-custom" ng-model="preModel.theme.setup" ng-disabled="builtInMode" class="span12">
               <!-- theme standalone -->
-              <label for="bt-theme-standalone">
+              <!-- <label for="bt-theme-standalone">
                 <span class="label label-inverse">Standalone</span>
               </label>
               <label class="checkbox inline">
@@ -730,20 +921,16 @@ callback( match ) {
               </label>
               <p class="help-block">
                 Set the standalone to <code>true</code> if you're not using theme bundle (<a href="detail.html#theme-bundle">See Detail</a>).
-              </p>
+              </p> -->
               <!-- change background color -->
-              <p class="help-block">Change background color</p>
+              <!-- <p class="help-block">Change background color</p>
               <div class="input-append colorpicker-component cbsp" data-color="rgb(255, 255, 255)" data-color-format="rgb" id="cp3">
                 <input type="text" value="rgb(255, 255, 255)">
                 <span class="add-on"><i style="background-color: rgb(255, 255, 255)"></i></span>
-              </div>
+              </div> -->
               <p class="help-block">
-                Select your theme. We use these awesome project for base theme of our built in theme:
-                <ul>
-                  <li><a href="http://getbootstrap.com/2.3.2/">Twitter bootstrap</a></li>
-                  <li><a href="http://aozora.github.io/bootmetro/">Bootmetro</a></li>
-                  <li><a href="http://todc.github.io/todc-bootstrap/">TODC bootstrap</a></li>
-                </ul>
+                For now we only provide <a href="http://getbootstrap.com/">Twitter bootstrap</a> as our basic theme.
+                <br>
                 If you use your custom theme. You might be have to write your own CSS for customing. <br>
                 You might consider to add your own custom theme to become one of our built theme by contributing on <a href="https://github.com/clusteramaryllis/blogtoc">github</a> page.
               </p>
@@ -871,6 +1058,7 @@ callback( match ) {
   var _def = {
     blogtocId: '',
     binding: {},
+    dataType: 'JSONP',
     date: {
       day: ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'],
       month: 'January,February,March,April,May,June,July,August,September,October,November,December'.split(','),
@@ -880,7 +1068,13 @@ callback( match ) {
       setup: '10',
       template: ['5','10','25','50','All']
     },
-    feedType: 'default',
+    feed: {
+      appendQuery: '',
+      chunkRequest: 1,
+      limit: 0,
+      requestCount: 500,
+      type: 'default'
+    },
     extendClass: {},
     label: {
       define: [],
@@ -892,7 +1086,9 @@ callback( match ) {
       showAlphabetLabel: false,
       includeAlphabetLabelAll: true,
       setupAlphabet: "All",
-      cloudAlphabetLabel: false
+      cloudAlphabetLabel: false,
+      symbolicAlphabetFilter: '[^A-Z]',
+      alphabetMember: ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
     },
     language: {
       setup: 'en-US',
@@ -901,9 +1097,18 @@ callback( match ) {
         errorMessage: ''
       }
     },
+    linkTarget: {
+      author: '_self',
+      thumbnail: '_self',
+      title: '_self',
+      comment: '_self' 
+    },
     newBadge: {
       setup: 5,
       renderBadgeText: "'<span class=\"label\">' + language + '</span>'"
+    },
+    number: {
+      renderNumberText: "idx;"
     },
     pagination: {
       adjacents: 2
@@ -915,6 +1120,7 @@ callback( match ) {
       separator: '',
       renderPostLabelText: "'<span>' + label + '</span>'"
     },
+    rightToLeft: false,
     search: {
       renderSearchText: "'<b>' + match + '</b>'"
     },
@@ -998,6 +1204,7 @@ callback( match ) {
     $scope.preModel = {
       blogtocId: _def.blogtocId,
       binding: {},
+      dataType: _def.dataType,
       date: {
         day: _def.date.day,
         month: _def.date.month,
@@ -1008,7 +1215,13 @@ callback( match ) {
         template: _def.display.template
       },
       extendClass: {},
-      feedType: _def.feedType,
+      feed: {
+        appendQuery: _def.feed.appendQuery,
+        chunkRequest: _def.feed.chunkRequest,
+        limit: _def.feed.limit,
+        requestCount: _def.feed.requestCount,
+        type: _def.feed.type
+      },
       label: {
         define: _def.label.define,
         exception: _def.label.exception,
@@ -1019,15 +1232,26 @@ callback( match ) {
         showAlphabetLabel: _def.label.showAlphabetLabel,
         includeAlphabetLabelAll: _def.label.includeAlphabetLabelAll,
         setupAlphabet: _def.label.setupAlphabet,
-        cloudAlphabetLabel: _def.label.cloudAlphabetLabel
+        cloudAlphabetLabel: _def.label.cloudAlphabetLabel,
+        symbolicAlphabetFilter: _def.label.symbolicAlphabetFilter,
+        alphabetMember: _def.label.alphabetMember
       },
       language: {
         setup: _def.language.setup,
         custom: {}
       },
+      linkTarget: {
+        author: _def.linkTarget.author,
+        thumbnail: _def.linkTarget.thumbnail,
+        title: _def.linkTarget.title,
+        comment: _def.linkTarget.comment
+      },
       newBadge: {
         setup: _def.newBadge.setup,
         renderBadgeText: _def.newBadge.renderBadgeText
+      },
+      number: {
+        renderNumberText: _def.number.renderNumberText
       },
       search: {
         renderSearchText: _def.search.renderSearchText
@@ -1049,12 +1273,12 @@ callback( match ) {
         separator: _def.postLabel.separator,
         renderPostLabelText: _def.postLabel.renderPostLabelText
       },
+      rightToLeft: _def.rightToLeft,
       table: {
         order: _def.table.order
       },
       theme: {
-        setup: _def.theme.setup,
-        standalone: _def.theme.standalone
+        setup: _def.theme.setup
       },
       thumbnail: {
         blank: _def.thumbnail.blank,
@@ -1079,6 +1303,7 @@ callback( match ) {
     $scope.renderStr = '';
     $scope.displayTemp = $scope.preModel.display.template;
     $scope.sortingKey = removeArray( $scope.preModel.table.order.slice(0), "index", "thumbnail" );
+    $scope.targetLinks = ["_self", "_blank", "_top", "_parent","_new"];
     $scope.exceptionState = false;
     $scope.showLabelState = true;
     $scope.builtInMode = true;
@@ -1129,6 +1354,11 @@ callback( match ) {
         'simple_tags': true,
         tags: function() { return _junk.label.define; }
       },
+      labelAlphabetMember: {
+        'multiple': true,
+        'simple_tags': true,
+        'tags': _def.label.alphabetMember
+      },
       tableOrder: {
         'multiple': true,
         'simple_tags': true,
@@ -1146,6 +1376,7 @@ callback( match ) {
       parseTags( $("#bt-date-month") );
       parseTags( $("#bt-display-template") );
       parseTags( $("#bt-label-define") );
+      parseTags( $("#bt-label-alphabet-member") );
       parseTags( $("#bt-table-order") );
 
       // parse the data
@@ -1158,7 +1389,7 @@ callback( match ) {
       _final = $scope.objModel; // assign to object model
 
       // provide language and theme
-      if ( $scope.preModel.language.setup !== 'en-US' ) {
+      /*if ( $scope.preModel.language.setup !== 'en-US' ) {
         $scope.addExternalLanguage = "BlogToc.addJS(\"lang/" + $scope.preModel.language.setup + ".js\");\n\n";
       } else {
         $scope.addExternalLanguage = '';
@@ -1167,7 +1398,7 @@ callback( match ) {
         $scope.addExternalTheme = "BlogToc.addJS(\"theme/bt_" + $scope.preModel.theme.setup + ".js\");\n\n";
       } else {
         $scope.addExternalTheme = '';
-      }
+      }*/
 
       $("#result-00").text( "<script type=\"text/javascript\" src=\""+ $scope.CDN +"blogtoc.min.js\"><\/script>" );
       $("#result-01").text( str );
@@ -1295,8 +1526,8 @@ callback( match ) {
     var str = "<div id=\"blogtoc\"></div>\n\n" + 
       "<script type=\"text/javascript\">\n" +
       "var myDiv = document.getElementById('blogtoc');\n\n" +
-      scope.addExternalLanguage +
-      scope.addExternalTheme +
+      // scope.addExternalLanguage +
+      // scope.addExternalTheme +
       "BlogToc( myDiv ).build(" +
       scope.renderStr + 
       ");\n" +
@@ -1395,6 +1626,8 @@ callback( match ) {
               result['markerRender'] = 'function(match) { return ' + obj[key] + '; }';
             } else if ( key === 'renderPostLabelText' ) { 
               result['render'] = 'function(label) { return ' + obj[key] + '; }';
+            } else if ( key === 'renderNumberText' ) { 
+              result['render'] = 'function(idx) { return ' + obj[key] + '; }';
             } else if ( bindingTest.test(key) ) { 
               result[key] = 'function() { ' + obj[key] + ' }';
             } else if ( key === 'setup' ) {
