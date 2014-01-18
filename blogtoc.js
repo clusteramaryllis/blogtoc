@@ -54,7 +54,7 @@
           opts, config, feed,
           root, loader, contenter, header, filter, tabler, footer, resulter, paging, copyright;
 
-        var _alpha;
+        var _alpha, _contentType;
         
         _parent.BTAPP = {
       
@@ -262,6 +262,9 @@
               _extendClass( root, 'bt-rtl' );
             }
 
+            // content type base on feed type
+            _contentType = opts.feed.type === "default" ? "content" : "summary";
+
             // cache the request
             config.cache.req = new Array();
             // prepare cache for table header
@@ -396,7 +399,7 @@
             dataType = jsonp ? 'json-in-script' : 'json';
             // don't exceed more than 500
             req = opts.feed.requestCount > 500 ? 500 : opts.feed.requestCount;
-            count = opts.feed.limit ? opts.feed.limit : feed.count;
+            count = opts.feed.limit || feed.count;
 
             var i = 0, startIdx = 0, maxResults,
               request = Math.ceil( count / req ),
@@ -465,7 +468,7 @@
               obj = {};
               
             var data = feed.data,
-              count = opts.feed.limit ? opts.feed.limit : feed.count,
+              count = opts.feed.limit || feed.count,
               size = opts.thumbnail.size,
               asize = opts.thumbnail.authorSize,
               notfound = opts.thumbnail.notFound,
@@ -502,11 +505,7 @@
                   obj.updateDate  = render( obj.updateDateFormat, opts );
 
                   // summary section
-                  var fullSummary = ( 'summary' in  entry ) ? 
-                    entry.summary.$t.replace( removeScriptRegex, '' ) : 
-                    ( ('content' in entry) ? 
-                      entry.content.$t.replace( removeScriptRegex, '' ) : ''
-                    ), summary;
+                  var fullSummary = entry[ _contentType ].$t.replace( removeScriptRegex, '' ),
 
                   // remove whitespace and strip html tags
                   summary = fullSummary.replace( stripHtmlRegex, '' )
@@ -2597,7 +2596,7 @@
           _header = _contenter.firstChild,
           _filter = _nextElement( _header ),
           _tabler = _nextElement( _filter ),
-          _footer = _nextElement( _tabler );
+          _footer = _nextElement( _tabler ),
           _copyright = _nextElement( _footer );
 
         _loader.innerHTML = '';
