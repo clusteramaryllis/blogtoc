@@ -34,8 +34,11 @@
   width: auto;
   display: block;
   margin: 0;
-  padding: 0;
   border: 0;
+}
+.gallery .blogtoc_table tr td[data-title="thumbnail"] {
+  padding: 0 !important;
+  border-top: 0 !important;
 }
 .gallery .blogtoc_table tr td .blogtoc_thumbnail {
   width: auto !important;
@@ -77,7 +80,7 @@
 }
 .gallery .blogtoc_pagination {
   margin-top: 10px !important;
-  float: none;
+  float: none !important;
   text-align: center;
 }
 @media only screen and (max-width: 800px) {

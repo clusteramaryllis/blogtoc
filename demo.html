@@ -1032,6 +1032,7 @@ callback( match ) {
             </script>
           </div>
           <div class="tab-pane" id="tab2">
+            <p>Before you use it, please read <a href="https://github.com/clusteramaryllis/blogtoc/blob/develop/LICENSE" target="_blank">LICENSE</a> file</p>
             <p>Place this code somewhere in the <code>&lt;head&gt;&lt;/head&gt;</code> section</p>
 <pre class="prettyprint linenums" id="result-00">
 </pre>              
@@ -1135,8 +1136,7 @@ callback( match ) {
       order: ["index","thumbnail","title","publishDate","updateDate","author","comment"]
     },
     theme: {
-      setup: 'bootstrap',
-      standalone: false
+      setup: 'bootstrap'
     },
     thumbnail: {
       blank: 'http://3.bp.blogspot.com/-trkoRRazZ7A/UdtEVufkxiI/AAAAAAAABxI/DOJ7jAUv1G4/s1600/blank.gif',
@@ -1389,12 +1389,12 @@ callback( match ) {
       _final = $scope.objModel; // assign to object model
 
       // provide language and theme
-      /*if ( $scope.preModel.language.setup !== 'en-US' ) {
-        $scope.addExternalLanguage = "BlogToc.addJS(\"lang/" + $scope.preModel.language.setup + ".js\");\n\n";
+      if ( $scope.preModel.language.setup !== 'en-US' ) {
+        $scope.addExternalLanguage = "<script type=\"text/javascript\" src=\"" + $scope.CDN + "lang/" + $scope.preModel.language.setup + ".js\"><\/script>;\n\n";
       } else {
         $scope.addExternalLanguage = '';
       }
-      if ( $scope.preModel.theme.setup !== 'bootstrap' && $scope.builtInMode ) {
+      /*if ( $scope.preModel.theme.setup !== 'bootstrap' && $scope.builtInMode ) {
         $scope.addExternalTheme = "BlogToc.addJS(\"theme/bt_" + $scope.preModel.theme.setup + ".js\");\n\n";
       } else {
         $scope.addExternalTheme = '';
@@ -1523,10 +1523,10 @@ callback( match ) {
   // Functions
   function parseTemplate( scope ) {
 
-    var str = "<div id=\"blogtoc\"></div>\n\n" + 
+    var str = scope.addExternalLanguage +
+      "<div id=\"blogtoc\"></div>\n\n" + 
       "<script type=\"text/javascript\">\n" +
       "var myDiv = document.getElementById('blogtoc');\n\n" +
-      // scope.addExternalLanguage +
       // scope.addExternalTheme +
       "BlogToc( myDiv ).build(" +
       scope.renderStr + 
@@ -1664,8 +1664,28 @@ callback( match ) {
     return result;
   }
 
+  // generate button timing
+  function btnTiming() {
+    $("#generate").attr("disabled",true);
+
+    var timing = function() {
+      setTimeout(function(){
+        if ( !myDiv.BTLoaded ) {
+          timing();
+        } else {
+          $("#generate").attr("disabled",false);
+        }
+      },100);
+    };
+
+    timing();
+  }
+
   // jQuery
   $(function(){
+
+    // btn timing
+    btnTiming();
 
     // get categories
     $("#bt-url").on('blur',function(){
@@ -1714,27 +1734,22 @@ callback( match ) {
     // click event on generate button
     $("#generate").on('click',function(e){
       e.preventDefault();
-      if ($("#bt-language-setup").val() !== 'en-US') {
-        BlogToc.addJS("lang/" + $("#bt-language-setup").val() + ".js");
+
+      if ($("#bt-language-setup").val() !== 'en-US' || $("#bt-theme-default").val() !== 'bootstrap'){
+        if ($("#bt-language-setup").val() !== 'en-US') {
+          $.getScript("lang/" + $("#bt-language-setup").val() + ".js", function(){
+            BlogToc.reset( myDiv, true, _final );
+            btnTiming();
+          });
+          // BlogToc.addJS("lang/" + $("#bt-language-setup").val() + ".js");
+        }
+        /*if ($("#bt-theme-default").val() !== 'bootstrap') {
+          BlogToc.addJS("theme/bt_" + $("#bt-theme-default").val() + ".js");
+        }*/
+      } else {
+        BlogToc.reset( myDiv, true, _final );  
+        btnTiming();
       }
-      if ($("#bt-theme-default").val() !== 'bootstrap') {
-        BlogToc.addJS("theme/bt_" + $("#bt-theme-default").val() + ".js");
-      }
-      BlogToc.reset( myDiv, true, _final );
-
-      $("#generate").attr("disabled",true);
-
-      var timing = function() {
-        setTimeout(function(){
-          if ( !myDiv.BTLoaded ) {
-            timing()
-          } else {
-            $("#generate").attr("disabled",false);
-          }
-        },100);
-      };
-
-      timing();
     });
 
   });

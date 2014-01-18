@@ -1,0 +1,39 @@
+---
+layout: default
+title: BlogToc
+slug: faq
+---
+<div class="row-fluid" ng-controller="ShowCtrl">
+  <div class="span12">
+  <h3>FAQ ( Frequently Asked Question(s) )</h3>
+  <hr>
+  <blockquote ng-repeat="faq in faqs">
+    <p>[[faq.question]]</p>
+    <small>[[faq.answer]]</small>
+  </blockquote>
+  </div>
+</div>
+<script>
+	// Angular App
+  var docApp = angular.module('docApp', [ 'ui.bootstrap' ], function($interpolateProvider) {
+      $interpolateProvider.startSymbol('[[');
+      $interpolateProvider.endSymbol(']]');
+  });
+
+  docApp.factory('FAQ', function(){
+  	return [
+  	  {
+  	  	question: "Your grammar sucks ?",
+        answer: "English is not my native language so, send me an email if you find any mistakes or contribute yourself on github to fix the mistakes."
+  	  },
+      {
+        question: "Your coding/design was bad ?",
+        answer: "My programming level are not expert and I'm not a designer guy. Mostly everything I know come from different resource and online tutorial. I'm just glad if this application works for you :). And this is open source project, so you may help me improve the code or design by contributing on github."
+      }
+  	];
+  });
+
+  docApp.controller('ShowCtrl', function ($scope, FAQ) {
+  	$scope.faqs = FAQ;
+  });
+</script>

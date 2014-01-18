@@ -19,14 +19,14 @@ BlogToc( myDiv ).build({
 });
 </script>
 ```
+### Compatibility ###
+The Javascript Files are being tested in the latest versions of Chrome, Firefox, 
+and IE6+ (Partial)
 
-## Compatibility ##
-The Javascript Files are being tested in the latest versions of Chrome, Firefox, and IE6+
+### License ###
+[LICENSE](https://github.com/clusteramaryllis/blogtoc/blob/develop/LICENSE)
 
-## License ##
-http://www.apache.org/licenses/LICENSE-2.0
-
-## External Resources ##
+### External Resources ###
 BlogToc using some external service to generate image on the fly
 
 * [boxresizer](http://boxresizer.com/)
@@ -34,18 +34,22 @@ BlogToc using some external service to generate image on the fly
 * [sencha](http://www.sencha.com/learn/how-to-use-src-sencha-io/)
 * [using google image resizer trick](http://carlo.zottmann.org/2013/04/14/google-image-resizer/)
 
-Some awesome projects for theming purpose
-
-* [Twitter Bootstrap](http://getbootstrap.com/)
-* [Bootmetro](http://aozora.github.io/bootmetro/)
-* [TODC Bootstrap](http://todc.github.io/todc-bootstrap/index.html)
+User interface using [Twitter Bootstrap](http://getbootstrap.com/)
 
 And iconic font from [Bootmetro](http://aozora.github.io/bootmetro)
 
-## FAQ ##
+### Changelog ###
 
-##### Your grammar sucks #####
-English is not my native language so, send me an email if you find any mistakes or contribute yourself on github to fix the mistakes.
+### 1.6.0
+* Added dataType option (using JSONP or JSON).
+* Added RTL Support (experimental).
+* Added number option for parsing the number in index column, pagination, page report.
+* Added alphabetMember and symbolicAlphabetFilter for determine the alphabet filter (experimental, still buggy).
+* Added appendQuery, chunkRequest, limit, requestCount in feed option
+* Added textToPlaceholder in search option for using placeholder instead text label
+* Remove theme standalone option (prefered using synchronous request).
+* Update bootstrap theme to v3.0.3
+* Other theme deprecated except bootstrap.
 
-##### Your coding/design was bad #####
-My programming level are not expert and I'm not a designer guy. Mostly everything I know come from different resource and online tutorial. I'm just happy if this application works for you :). And this is open source project, so you may help me improve the code or design by contributing on github.
+### 1.5.0
+* First Release

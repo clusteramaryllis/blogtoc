@@ -7,7 +7,7 @@ description: Using BlogToc as thumbnail gallery with the power of CSS and jQuery
 <div class="span12">
   <h1>{{ page.title }}</h1>
   <span class="help-block muted"><em>{{ page.description }}</em></span>
-  <span class="help-block muted"><em>blogspot-site: <a href="http://portraitsofpainters.blogspot.com">PORTRAITS OF PAINTERS</a></em></span>
+  <span class="help-block muted"><em>Blogspot Site Credit: <a href="http://portraitsofpainters.blogspot.com">PORTRAITS OF PAINTERS</a></em></span>
   <hr>
   <div id="content"></div>
   <script>
@@ -37,6 +37,9 @@ description: Using BlogToc as thumbnail gallery with the power of CSS and jQuery
     extendClass: {
       blogtoc_id: "gallery",
       blogtoc_table: "clearfix"
+    },
+    feed: {
+      limit: 50
     },
     progress: {
       render: function(elem, progress) {
@@ -117,6 +120,9 @@ BlogToc( document.getElementById('content') ).build({
     blogtoc_id: &quot;gallery&quot;,
     blogtoc_table: &quot;clearfix&quot;
   },
+  feed: {
+    limit: 50
+  },
   progress: {
     render: function(elem, progress) {
       if( elem.className.lastIndexOf('progress') === -1 ) { 
@@ -183,8 +189,11 @@ BlogToc( document.getElementById('content') ).build({
   width: auto;
   display: block;
   margin: 0;
-  padding: 0;
   border: 0;
+}
+.gallery .blogtoc_table tr td[data-title="thumbnail"] {
+  padding: 0 !important;
+  border-top: 0 !important;
 }
 .gallery .blogtoc_table tr td .blogtoc_thumbnail {
   width: auto !important;
@@ -226,7 +235,7 @@ BlogToc( document.getElementById('content') ).build({
 }
 .gallery .blogtoc_pagination {
   margin-top: 10px !important;
-  float: none;
+  float: none !important;
   text-align: center;
 }
 @media only screen and (max-width: 800px) {

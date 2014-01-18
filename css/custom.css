@@ -74,12 +74,14 @@
   font-size: 12px;
   font-weight: bold;
 }
-.custom .blogtoc_footer {
+.custom .blogtoc_footer,
+.custom .blogtoc_copyright {
   border-bottom: 1px solid #cdcdcd;
 }
 .custom .blogtoc_header,
 .custom .blogtoc_filter,
-.custom .blogtoc_footer {
+.custom .blogtoc_footer,
+.custom .blogtoc_copyright {
   background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMSAxIiBwcmVzZXJ2ZUFzcGVjdFJhdGlvPSJub25lIj48bGluZWFyR3JhZGllbnQgaWQ9ImdyYWQtdWNnZy1nZW5lcmF0ZWQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMCUiIHkxPSIwJSIgeDI9IjAlIiB5Mj0iMTAwJSI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI0Y1RjRGOSIgc3RvcC1vcGFjaXR5PSIxIi8+PHN0b3Agb2Zmc2V0PSIxMDAlIiBzdG9wLWNvbG9yPSIjRUNFQUYzIiBzdG9wLW9wYWNpdHk9IjEiLz48L2xpbmVhckdyYWRpZW50PjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxIiBoZWlnaHQ9IjEiIGZpbGw9InVybCgjZ3JhZC11Y2dnLWdlbmVyYXRlZCkiIC8+PC9zdmc+);
   background-image: -moz-linear-gradient(top, #F5F4F9 0%, #ECEAF3 100%);
   background-image: -webkit-linear-gradient(top, #F5F4F9 0%, #ECEAF3 100%);
@@ -101,11 +103,13 @@
   width: 100%;
 }
 .custom div.blogtoc_label,
-.custom div.blogtoc_alphabet {
+.custom div.blogtoc_alphabet,
+.custom div.blogtoc_copyright {
   text-align: center;
 }
 .custom div.blogtoc_label button,
-.custom div.blogtoc_alphabet button {
+.custom div.blogtoc_alphabet button,
+.custom div.blogtoc_copyright button {
   margin: 0 2px;
   position: relative;
   display: inline-block;
@@ -138,8 +142,10 @@
 }
 .custom div.blogtoc_label button:not([disabled]):hover,
 .custom div.blogtoc_alphabet button:not([disabled]):hover,
+.custom div.blogtoc_copyright button:not([disabled]):hover,
 .custom div.blogtoc_label button:not([disabled]):active,
-.custom div.blogtoc_alphabet button:not([disabled]):active {
+.custom div.blogtoc_alphabet button:not([disabled]):active,
+.custom div.blogtoc_copyright button:not([disabled]):active {
   background-image: -moz-linear-gradient(#eaeaea, #dadada);
   background-image: -webkit-linear-gradient(#eaeaea, #dadada);
   background-image: -o-linear-gradient(#eaeaea, #dadada);
@@ -147,7 +153,8 @@
   border-color: #ccc #ccc #b5b5b5;
 }
 .custom div.blogtoc_label button:not([disabled]):active,
-.custom div.blogtoc_alphabet button:not([disabled]):active {
+.custom div.blogtoc_alphabet button:not([disabled]):active,
+.custom div.blogtoc_copyright button:not([disabled]):active {
   background-color: #dadada;
   background-image: none;
   border-color: #b5b5b5;
@@ -156,14 +163,16 @@
   box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.15);
 }
 .custom div.blogtoc_label button:focus,
-.custom div.blogtoc_alphabet button:focus {
+.custom div.blogtoc_alphabet button:focus,
+.custom div.blogtoc_copyright button:focus {
   border-color: #51a7e8;
   -webkit-box-shadow: 0 0 5px rgba(81, 167, 232, 0.5);
   -moz-box-shadow: 0 0 5px rgba(81, 167, 232, 0.5);
   box-shadow: 0 0 5px rgba(81, 167, 232, 0.5);
 }
 .custom div.blogtoc_label button[disabled],
-.custom div.blogtoc_alphabet button[disabled] {
+.custom div.blogtoc_alphabet button[disabled],
+.custom div.blogtoc_copyright button[disabled] {
   cursor: not-allowed;
   -webkit-opacity: 0.3;
   -moz-opacity: 0.3;
