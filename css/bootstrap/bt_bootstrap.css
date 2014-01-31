@@ -5023,7 +5023,7 @@ textarea.bootstrap .blogtoc_filter select {
   font-weight: normal;
   margin-right: 5px;
 }
-.bootstrap .blogtoc_filter .blogtoc_search .blogtoc_query {
+.bootstrap .blogtoc_filter .blogtoc_search .bt-no-placeholder {
   width: auto;
 }
 .bootstrap .blogtoc_filter .bt-form-inline input,

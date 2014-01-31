@@ -104,10 +104,12 @@
                 showLabel: true,
                 includeLabelAll: true,
                 setup: 'All',
+                allText: 'All',
                 cloudLabel: false,
                 showAlphabetLabel: false,
                 includeAlphabetLabelAll: true,
                 setupAlphabet: 'All',
+                alphabetAllText: 'All',
                 cloudAlphabetLabel: false,
                 symbolicAlphabetFilter: '[^A-Z]', // /^[0-9\-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/i, experimental
                 alphabetMember: alphabet
@@ -300,7 +302,8 @@
               '/feeds/posts/summary/?' + 
               'max-results=0&' + 
               'alt=json-in-script&' + 
-              'callback=BTJSONCallback_' + root.id;
+              'callback=BTJSONCallback_' + root.id +
+              opts.feed.appendQuery;
 
             // setup the script id
             config.cache.req[0] = scriptID;
@@ -373,14 +376,14 @@
             
             // add label all
             if ( opts.label.includeLabelAll ) { 
-              feed.label.unshift( opts.label.setup ); 
+              feed.label.unshift( opts.label.allText ); 
             }
             // add alphabet label all & '#' on beginning
             _alpha = opts.label.alphabetMember.slice(0);
 
             if ( opts.label.includeAlphabetLabelAll ) {
               _alpha.unshift('#');
-              _alpha.unshift( opts.label.setupAlphabet );
+              _alpha.unshift( opts.label.alphabetAllText );
             }
 
             // init display records after get the total blog post
@@ -530,7 +533,11 @@
                   if ( 'media$thumbnail' in entry ) { 
                     obj.thumbnail = entry.media$thumbnail.url;
                     obj.actualImage = obj.thumbnail.replace( thumbRegex, 's0' );
-                    obj.thumbnail = obj.thumbnail.replace( '/s72-c/', '/s' + size + '-c/');
+                    if ( !!~obj.thumbnail.indexOf('s72-c') ) {
+                      obj.thumbnail = obj.thumbnail.replace( '/s72-c/', '/s' + size + '-c/');  
+                    } else {
+                      obj.thumbnail = _BTMakeThumbnail( obj.actualImage, size, server );
+                    }
                   } else if ( ( imgSrc = /<img [^>]*src=["|\']([^"|\']+)/gi.exec( fullSummary ) ) ) {
                     obj.actualImage = imgSrc[1];
                     obj.thumbnail = _BTMakeThumbnail( obj.actualImage, size, server );
@@ -765,8 +772,8 @@
             if ( !opts.label.showLabel && !opts.label.showAlphabetLabel ) {
               _self.compile();
             } else {
-              config.currentLabel = opts.label.showLabel ? opts.label.setup : null;
-              config.currentAlphabet = opts.label.showAlphabetLabel ? opts.label.setupAlphabet : null;
+              config.currentLabel = opts.label.showLabel ? feed.label[0] : null;
+              config.currentAlphabet = opts.label.showAlphabetLabel ? _alpha[0] : null;
 
               if ( opts.label.showLabel ) {
                 _self.displayLabel( config.currentLabel, null, null, true );
@@ -794,6 +801,8 @@
                   }
                 };
               }
+            } else {
+              _extendClass( input, 'bt-no-placeholder' );
             }
 
             // Tells that apps already loaded
@@ -1004,12 +1013,6 @@
 
                   labelNode.appendChild( contentNode );
                 }
-
-                // No default selection, force to using the first one
-                if ( !selection ) {
-                  opts.label[ optName ] = labelNode.firstChild.getAttribute('value');
-                  labelNode.firstChild.disabled = true;
-                }
                 
               } else {
                 labelNode = _createElement( 'select', { onchange: fn }, null, className );
@@ -1094,7 +1097,7 @@
             // change current label from value
             config.currentLabel = val;
             
-            if ( val !== opts.label.setup ) {
+            if ( val !== opts.label.allText ) {
               var temp = [];
               // filter data that only match with certain category
               for ( var j = 0, len = feed.data.length; j < len; j++ ) {
@@ -1173,7 +1176,7 @@
             config.currentAlphabet = val;
             
             // don't filter the data if value is All
-            if ( val !== opts.label.setupAlphabet ) {
+            if ( val !== opts.label.alphabetAllText ) {
               var temp = [],
                 alphaRegex;
                 
