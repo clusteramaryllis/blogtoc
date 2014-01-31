@@ -132,7 +132,8 @@
                 showNextPage: true,
                 showPrevPage: true,
                 showFirstPage: true,
-                showLastPage: true
+                showLastPage: true,
+                showNumber: true,
               },
               postLabel: {
                 separator: '',
@@ -863,84 +864,86 @@
                 }
               }
               
-              // the pages are not that big
-              if ( limit < 7 + adjJump ) {
-                for ( i = 1; i <= limit; i++ ) {
-                  if ( i === page ) {
-                    li = _BTMakePageList( null, num( i ), 'span', rID, cClass );
-                  } else {
+              if ( opts.pagination.showNumber ){
+                // the pages are not that big
+                if ( limit < 7 + adjJump ) {
+                  for ( i = 1; i <= limit; i++ ) {
+                    if ( i === page ) {
+                      li = _BTMakePageList( null, num( i ), 'span', rID, cClass );
+                    } else {
+                      li = _BTMakePageList( i, num( i ), 'a', rID, hClass );
+                    }
+                    rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
+                  }
+                } else if ( limit > 5 + adjJump ) {
+                  // left pages lapping
+                  if ( lppl - adjJump > 1 ) {
+                    i = lppl - adjJump;
                     li = _BTMakePageList( i, num( i ), 'a', rID, hClass );
-                  }
-                  rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
-                }
-              } else if ( limit > 5 + adjJump ) {
-                // left pages lapping
-                if ( lppl - adjJump > 1 ) {
-                  i = lppl - adjJump;
-                  li = _BTMakePageList( i, num( i ), 'a', rID, hClass );
-                  rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
-                }
-                if ( sppl - adjJump > 1 ) {
-                  i = sppl - adjJump; 
-                  li = _BTMakePageList( i, num( i ), 'a', rID, hClass );
-                  rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
-                }
-                
-                // beginning, middle, ending
-                if (page < 2 + adjJump) {
-                  for ( i = 1; i < 4 + adjJump; i++ ) {
-                    if ( i === page ) {
-                      li = _BTMakePageList( null, num( i ), 'span', rID, cClass );
-                    } else {
-                      li = _BTMakePageList( i, num( i ), 'a', rID, hClass );
-                    }               
                     rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
                   }
-
-                  li = _BTMakePageList( null, '...', 'span' , rID, hClass );
-                  rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
-
-                } else if ( limit - adjJump > page && page > 1 + adjJump ) { 
-                  li = _BTMakePageList( null, '...', 'span', rID, hClass );
-                  rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
-
-                  for ( i = page - adj; i <= page + adj; i++ ) {
-                    if ( i === page ) {
-                      li = _BTMakePageList( null, num( i ), 'span', rID, cClass );
-                    } else {
-                      li = _BTMakePageList( i, num( i ), 'a', rID, hClass );
-                    }               
+                  if ( sppl - adjJump > 1 ) {
+                    i = sppl - adjJump; 
+                    li = _BTMakePageList( i, num( i ), 'a', rID, hClass );
                     rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
                   }
+                  
+                  // beginning, middle, ending
+                  if (page < 2 + adjJump) {
+                    for ( i = 1; i < 4 + adjJump; i++ ) {
+                      if ( i === page ) {
+                        li = _BTMakePageList( null, num( i ), 'span', rID, cClass );
+                      } else {
+                        li = _BTMakePageList( i, num( i ), 'a', rID, hClass );
+                      }               
+                      rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
+                    }
 
-                  li = _BTMakePageList( null, '...', 'span', rID, hClass );
-                  rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
+                    li = _BTMakePageList( null, '...', 'span' , rID, hClass );
+                    rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
 
-                } else { 
+                  } else if ( limit - adjJump > page && page > 1 + adjJump ) { 
+                    li = _BTMakePageList( null, '...', 'span', rID, hClass );
+                    rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
 
-                  li = _BTMakePageList( null, '...', 'span', rID, hClass );
-                  rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
+                    for ( i = page - adj; i <= page + adj; i++ ) {
+                      if ( i === page ) {
+                        li = _BTMakePageList( null, num( i ), 'span', rID, cClass );
+                      } else {
+                        li = _BTMakePageList( i, num( i ), 'a', rID, hClass );
+                      }               
+                      rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
+                    }
 
-                  for ( i=limit - (2 + adjJump); i <= limit; i++ ) {
-                    if ( i === page ) {
-                      li = _BTMakePageList( null, num( i ), 'span', rID, cClass );
-                    } else {
-                      li = _BTMakePageList( i, num( i ), 'a', rID, hClass );
-                    }               
+                    li = _BTMakePageList( null, '...', 'span', rID, hClass );
+                    rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
+
+                  } else { 
+
+                    li = _BTMakePageList( null, '...', 'span', rID, hClass );
+                    rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
+
+                    for ( i=limit - (2 + adjJump); i <= limit; i++ ) {
+                      if ( i === page ) {
+                        li = _BTMakePageList( null, num( i ), 'span', rID, cClass );
+                      } else {
+                        li = _BTMakePageList( i, num( i ), 'a', rID, hClass );
+                      }               
+                      rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
+                    }
+                  }
+                  
+                  // right pages lapping
+                  if ( snpl + adjJump < limit ) {
+                    i = snpl + adjJump;
+                    li = _BTMakePageList( i, num( i ), 'a', rID, hClass );
                     rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
                   }
-                }
-                
-                // right pages lapping
-                if ( snpl + adjJump < limit ) {
-                  i = snpl + adjJump;
-                  li = _BTMakePageList( i, num( i ), 'a', rID, hClass );
-                  rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
-                }
-                if ( lnpl + adjJump < limit ) {
-                  i = lnpl + adjJump;
-                  li = _BTMakePageList( i, num( i ), 'a', rID, hClass );
-                  rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
+                  if ( lnpl + adjJump < limit ) {
+                    i = lnpl + adjJump;
+                    li = _BTMakePageList( i, num( i ), 'a', rID, hClass );
+                    rtl ? ul.insertBefore( li, ul.firstChild ) : ul.appendChild( li );
+                  }
                 }
               }
               
