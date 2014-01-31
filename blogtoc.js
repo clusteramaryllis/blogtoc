@@ -111,7 +111,7 @@
                 setupAlphabet: 'All',
                 alphabetAllText: 'All',
                 cloudAlphabetLabel: false,
-                symbolicAlphabetFilter: '[^A-Z]', // /^[0-9\-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/i, experimental
+                symbolicAlphabetFilter: '^[^A-Z]', // /^[0-9\-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/i, experimental
                 alphabetMember: alphabet
               },
               language: {
@@ -636,9 +636,9 @@
               sortingKey = opts.sorting.key,
               placeHolder = opts.search.textAsPlaceholder;
             
-            var labelFn = "BlogToc.label(this, this.value, document.getElementById('"+ root.id +"')); return false;",
-              alphaFn = "BlogToc.alphabet(this, this.value, document.getElementById('"+ root.id +"')); return false;",
-              displayFn = "BlogToc.display(this.value, document.getElementById('"+ root.id +"')); return false;",
+            var labelFn = "BlogToc.label(this, this.value, document.getElementById('"+ root.id +"')); this.blur(); return false;",
+              alphaFn = "BlogToc.alphabet(this, this.value, document.getElementById('"+ root.id +"')); this.blur(); return false;",
+              displayFn = "BlogToc.display(this.value, document.getElementById('"+ root.id +"')); this.blur(); return false;",
               searchFn = "BlogToc.search(this.value, document.getElementById('"+ root.id +"')); return false;",
               sortFn;
 
@@ -772,8 +772,14 @@
             if ( !opts.label.showLabel && !opts.label.showAlphabetLabel ) {
               _self.compile();
             } else {
-              config.currentLabel = opts.label.showLabel ? feed.label[0] : null;
-              config.currentAlphabet = opts.label.showAlphabetLabel ? _alpha[0] : null;
+
+              // check the setup member
+              config.currentLabel = opts.label.showLabel ? 
+                ( _inArray( opts.label.setup, feed.label ) ? opts.label.setup : feed.label[0] ) :
+                null;
+              config.currentAlphabet = opts.label.showAlphabetLabel ?
+                ( _inArray( opts.label.setupAlphabet, _alpha ) ? opts.label.setupAlphabet : _alpha[0] ) :
+                null;
 
               if ( opts.label.showLabel ) {
                 _self.displayLabel( config.currentLabel, null, null, true );
@@ -1129,9 +1135,10 @@
               // reset page state also
               config.pageState = 1;
               
-              var value;
+              var value = filter.getElementsByTagName('input')[0].value;
 
-              if ( ( value = filter.getElementsByTagName('input')[0].value ) ) { 
+              // check if there's text in search query & the text doesn't same with placeholder
+              if ( value && value !== opts.language.custom.search ) { 
                 _self.query( value );
               } else { 
                 _self.compile();
@@ -1181,7 +1188,7 @@
                 alphaRegex;
                 
               if ( val === '#' ) { // symbolic
-                alphaRegex = new RegExp( '^' + opts.label.symbolicAlphabetFilter, 'i' );
+                alphaRegex = new RegExp( opts.label.symbolicAlphabetFilter, 'i' );
               } else { // alphabetic
                 alphaRegex = new RegExp( '^' + val, 'i' );
               }
@@ -1217,9 +1224,10 @@
               // reset page state also
               config.pageState = 1;
               
-              var value;
-              
-              if ( ( value = filter.getElementsByTagName('input')[0].value ) ) {
+              var value = filter.getElementsByTagName('input')[0].value;
+
+              // check if there's text in search query & the text doesn't same with placeholder
+              if ( value && value !== opts.language.custom.search ) { 
                 _self.query( value );
               } else {
                 _self.compile();
