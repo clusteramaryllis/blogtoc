@@ -76,7 +76,7 @@ extendclass: [
               <label for="bt-url">
                 <span class="label label-important">Important!</span>
               </label>
-              <input type="text" id="bt-url" name="bt-url" class="span12" ng-model="preModel.url">
+              <input type="text" id="bt-url" name="bt-url" class="span12" ng-model="preModel.url" ng-blur="initBlogUrl()">
               <p class="help-block">
                 Your blogspot URL, <b>without</b> <code>http://</code> or <code>trailing slash</code> <i>e.g.</i> <br>
                 <span class="badge badge-info">googleblog.blogspot.com</span>
@@ -294,7 +294,7 @@ callback( date, option ) {
               <label for="bt-feed-chunk-request">
                 <span class="label label-inverse">Chunk Request</span>
               </label>
-              <input type="number" id="bt-feed-chunk-request" name="bt-feed-chunk-request" class="span3" ng-model="preModel.feed.chunkRequest" min="1">
+              <input type="number" id="bt-feed-chunk-request" name="bt-feed-chunk-request" class="span6" ng-model="preModel.feed.chunkRequest" min="1">
               <p class="help-block">
                 Split how many request can be made to fetch blogspot feed at one time.
               </p>
@@ -302,7 +302,7 @@ callback( date, option ) {
               <label for="bt-feed-limit">
                 <span class="label label-inverse">Limit</span>
               </label>
-              <input type="number" id="bt-feed-limit" name="bt-feed-limit" class="span3" ng-model="preModel.feed.limit" min="0">
+              <input type="number" id="bt-feed-limit" name="bt-feed-limit" class="span6" ng-model="preModel.feed.limit" min="0">
               <p class="help-block">
                 Limit How many post will be fetched. Set to <code>0</code> or <code>null</code> to fetch all posts.
               </p>
@@ -310,7 +310,7 @@ callback( date, option ) {
               <label for="bt-feed-request-count">
                 <span class="label label-inverse">Request Count</span>
               </label>
-              <input type="number" id="bt-feed-request-count" name="bt-feed-request-count" class="span3" ng-model="preModel.feed.requestCount" min="1" max="500">
+              <input type="number" id="bt-feed-request-count" name="bt-feed-request-count" class="span6" ng-model="preModel.feed.requestCount" min="1" max="500">
               <p class="help-block">
                 Set the max-results value. Max value is <b>500</b> and Min value is <b>1</b>.
               </p>
@@ -379,9 +379,17 @@ callback( date, option ) {
               </p>
               <!-- label setup -->
               <label for="bt-label-setup">
+                <span class="label label-inverse">Label Setup</span>
+              </label>
+              <input type="text" id="bt-label-setup" name="bt-label-setup" class="span3" ng-model="preModel.label.setup" ng-disabled="!showLabelState || !preModel.label.includeLabelAll" typeahead="lbl for lbl in labelState | filter:$viewValue">
+              <p class="help-block">
+                The default state where the label will be pointing to when application start.
+              </p>
+              <!-- label all text -->
+              <label for="bt-label-all-text">
                 <span class="label label-inverse">Label "All Categories" text</span>
               </label>
-              <input type="text" id="bt-label-setup" name="bt-label-setup" class="span3" ng-model="preModel.label.setup" ng-disabled="!showLabelState || !preModel.label.includeLabelAll">
+              <input type="text" id="bt-label-all-text" name="bt-label-all-text" class="span3" ng-model="preModel.label.allText" ng-disabled="!showLabelState || !preModel.label.includeLabelAll" ng-init="fillLabelState()" ng-change="fillLabelState()">
               <p class="help-block">
                 The label text for displaying all categories.
               </p>
@@ -417,9 +425,17 @@ callback( date, option ) {
               </p>
               <!-- label setup alphabet -->
               <label for="bt-label-setup-alphabet">
+                <span class="label label-inverse">Alphabet Label Setup</span>
+              </label>
+              <input type="text" id="bt-label-setup-alphabet" name="bt-label-setup-alphabet" class="span3" ng-model="preModel.label.setupAlphabet" ng-disabled="!showAlphabetLabelState || !preModel.label.includeAlphabetLabelAll" typeahead="albl for albl in alphabetLabelState | filter:$viewValue">
+              <p class="help-block">
+                The default state where the label will be pointing to when application start.
+              </p>
+              <!-- label all alphabet text -->
+              <label for="bt-label-all-alphabet-text">
                 <span class="label label-inverse">Alphabet Label "All Data" text</span>
               </label>
-              <input type="text" id="bt-label-setup-alphabet" name="bt-label-setup-alphabet" class="span3" ng-model="preModel.label.setupAlphabet" ng-disabled="!showAlphabetLabelState || !preModel.label.includeAlphabetLabelAll">
+              <input type="text" id="bt-label-all-alphabet-text" name="bt-label-all-alphabet-text" class="span3" ng-model="preModel.label.allAlphabetText" disabled="!showAlphabetLabelState || !preModel.label.includeAlphabetLabelAll" ng-init="fillAlphabetLabelState()" ng-change="fillAlphabetLabelState()">
               <p class="help-block">
                 The alphabet label text for displaying all data without filtered by alphabet.
               </p>
@@ -435,9 +451,9 @@ callback( date, option ) {
               </p>
               <!-- label symbolic alpha filter-->
               <label for="bt-symbolic-alpha-filter">
-                <span class="label label-inverse">Symbolif Alphabet Filter</span>
+                <span class="label label-inverse">Symbolic Alphabet Filter</span>
               </label>
-              <input type="text" id="bt-symbolic-alpha-filter" name="bt-symbolic-alpha-filter" class="span12" ng-model="preModel.symbolicAlphabetFilter">
+              <input type="text" id="bt-symbolic-alpha-filter" name="bt-symbolic-alpha-filter" class="span12" ng-model="preModel.label.symbolicAlphabetFilter">
               <p class="help-block">
                 Regular Expression to filter symbolic character. Symbolic Character will be stored in <b>"#"</b> hashtag alphabet label.
                 <br>
@@ -591,7 +607,7 @@ callback( date, option ) {
               <label for="bt-feed-chunk-request">
                 <span class="label label-inverse">Setup</span>
               </label>
-              <input type="number" id="bt-feed-chunk-request" name="bt-feed-chunk-request" class="span3" ng-model="preModel.newBadge.setup">
+              <input type="number" id="bt-feed-chunk-request" name="bt-feed-chunk-request" class="span6" ng-model="preModel.newBadge.setup">
               <p class="help-block">
                 The initial setup how many <span class="badge badge-info">New</span> label will be glued to the newest published post (Must be a number).
               </p>
@@ -653,7 +669,7 @@ callback( idx ) {
               <label for="bt-pagination-adjacents">
                 <span class="label label-inverse">Adjacents</span>
               </label>
-              <input type="number" id="bt-pagination-adjacents" name="bt-pagination-adjacents" class="span3" ng-model="preModel.pagination.adjacents">
+              <input type="number" id="bt-pagination-adjacents" name="bt-pagination-adjacents" class="span6" ng-model="preModel.pagination.adjacents">
               <p class="help-block">
                 The pagination adjacents (Must be a number).
               </p>
@@ -840,7 +856,7 @@ callback( match ) {
               <label for="bt-summary">
                 <span class="label label-inverse">Word Limit</span>
               </label>
-              <input type="number" id="bt-summary" name="bt-summary" class="span3" ng-model="preModel.summary.wordLimit">
+              <input type="number" id="bt-summary" name="bt-summary" class="span6" ng-model="preModel.summary.wordLimit">
               <p class="help-block">
                 Limit the summary text of your blog post (Must be a number).
               </p>
@@ -871,7 +887,7 @@ callback( match ) {
                 <label for="bt-table-[[ cc ]]">
                   <span class="label label-inverse">[[ cc ]] width point</span>
                 </label>
-                <input type="number" class="span3 bt-point" name="bt-table-[[ cc ]]" id="bt-table-[[ cc ]]" ng-model="preModel.table[cc+'WidthPoint']" step="0.1">
+                <input type="number" class="span6 bt-point" name="bt-table-[[ cc ]]" id="bt-table-[[ cc ]]" ng-model="preModel.table[cc+'WidthPoint']" step="0.1">
                 <p class="help-block">
                   Calculate the width of <code>[[ cc ]] &lt;thead&gt;</code> by point.
                 </p>
@@ -976,7 +992,7 @@ callback( match ) {
               <label for="bt-thumbnail-size">
                 <span class="label label-inverse">Blogpost Thumbnail Size</span>
               </label>
-              <input type="number" id="bt-thumbnail-size" name="bt-thumbnail-size" class="span3" ng-model="preModel.thumbnail.size">
+              <input type="number" id="bt-thumbnail-size" name="bt-thumbnail-size" class="span6" ng-model="preModel.thumbnail.size">
               <p class="help-block">
                 The thumbnail dimension size found in the blog post.
               </p>
@@ -984,7 +1000,7 @@ callback( match ) {
               <label for="bt-thumbnail-author-size">
                 <span class="label label-inverse">Author Thumbnail Size</span>
               </label>
-              <input type="number" id="bt-thumbnail-author-size" name="bt-thumbnail-author-size" class="span3" ng-model="preModel.thumbnail.authorSize">
+              <input type="number" id="bt-thumbnail-author-size" name="bt-thumbnail-author-size" class="span6" ng-model="preModel.thumbnail.authorSize">
               <p class="help-block">
                 The thumbnail dimension size for the author who publish the post.
               </p>
@@ -1083,12 +1099,14 @@ callback( match ) {
       showLabel: true,
       includeLabelAll: true,
       setup: "All",
+      allText: "All",
       cloudLabel: false,
       showAlphabetLabel: false,
       includeAlphabetLabelAll: true,
       setupAlphabet: "All",
+      allAlphabetText: "All",
       cloudAlphabetLabel: false,
-      symbolicAlphabetFilter: '[^A-Z]',
+      symbolicAlphabetFilter: '^[^A-Z]',
       alphabetMember: ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
     },
     language: {
@@ -1169,10 +1187,12 @@ callback( match ) {
     ['showNextPage', 'next page'],
     ['showPrevPage', 'prev page'],
     ['showFirstPage', 'first page'],
-    ['showLastPage', 'last page']
+    ['showLastPage', 'last page'],
+    ['showNumber', 'number']
   ];
   _junk.bindingTest = [];
   _junk.label.define = [];
+  _junk.label.allAlphabetText = ['#','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'];
   _junk.other.boot = "if( elem.className.lastIndexOf('progress') === -1 ) { elem.className += ' progress'; } if( ( div = elem.firstChild ) ) { div.style.width = progress + '%'; } else { div = document.createElement('div'); div.className = 'bar'; div.style.width = progress + '%'; elem.appendChild(div); }";
   _junk.other.img = "var img; if ( !( img = elem.getElementsByTagName('img')[0] ) ) { elem.innerHTML = '<div style=\"text-align: center\"><img src=\"//metroui.org.ua/images/preloader-w8-cycle-black.gif\" /><div>'; }"
   _junk.table.order = _def.table.order.slice(0);
@@ -1228,10 +1248,12 @@ callback( match ) {
         showLabel: _def.label.showLabel,
         includeLabelAll: _def.label.includeLabelAll,
         setup: _def.label.setup,
+        allText: _def.label.allText,
         cloudLabel: _def.label.cloudLabel,
         showAlphabetLabel: _def.label.showAlphabetLabel,
         includeAlphabetLabelAll: _def.label.includeAlphabetLabelAll,
         setupAlphabet: _def.label.setupAlphabet,
+        allAlphabetText: _def.label.allAlphabetText,
         cloudAlphabetLabel: _def.label.cloudAlphabetLabel,
         symbolicAlphabetFilter: _def.label.symbolicAlphabetFilter,
         alphabetMember: _def.label.alphabetMember
@@ -1302,6 +1324,8 @@ callback( match ) {
 
     $scope.renderStr = '';
     $scope.displayTemp = $scope.preModel.display.template;
+    $scope.labelState = [];
+    $scope.alphabetLabelState = [];
     $scope.sortingKey = removeArray( $scope.preModel.table.order.slice(0), "index", "thumbnail" );
     $scope.targetLinks = ["_self", "_blank", "_top", "_parent","_new"];
     $scope.exceptionState = false;
@@ -1518,6 +1542,23 @@ callback( match ) {
         $scope.showAlphabetLabelState = true;
       }
     };
+
+    $scope.fillLabelState = function() {
+      $scope.labelState = _junk.label.define.slice(0);
+      $scope.labelState.unshift( $scope.preModel.label.allText );
+    };
+
+    $scope.fillAlphabetLabelState = function() {
+      $scope.alphabetLabelState = _junk.label.allAlphabetText.slice(0);
+      $scope.alphabetLabelState.unshift( $scope.preModel.label.allAlphabetText );
+    };
+
+    $scope.initBlogUrl = function()
+    {
+      var tt = setTimeout(function(){
+        $scope.fillLabelState(); 
+      }, 3000);
+    }
   });
 
   // Functions
