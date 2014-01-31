@@ -104,12 +104,14 @@
                 showLabel: true,
                 includeLabelAll: true,
                 setup: 'All',
+                allText: 'All',
                 cloudLabel: false,
                 showAlphabetLabel: false,
                 includeAlphabetLabelAll: true,
                 setupAlphabet: 'All',
+                alphabetAllText: 'All',
                 cloudAlphabetLabel: false,
-                symbolicAlphabetFilter: '[^A-Z]', // /^[0-9\-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/i, experimental
+                symbolicAlphabetFilter: '^[^A-Z]', // /^[0-9\-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/i, experimental
                 alphabetMember: alphabet
               },
               language: {
@@ -300,7 +302,8 @@
               '/feeds/posts/summary/?' + 
               'max-results=0&' + 
               'alt=json-in-script&' + 
-              'callback=BTJSONCallback_' + root.id;
+              'callback=BTJSONCallback_' + root.id +
+              opts.feed.appendQuery;
 
             // setup the script id
             config.cache.req[0] = scriptID;
@@ -373,14 +376,14 @@
             
             // add label all
             if ( opts.label.includeLabelAll ) { 
-              feed.label.unshift( opts.label.setup ); 
+              feed.label.unshift( opts.label.allText ); 
             }
             // add alphabet label all & '#' on beginning
             _alpha = opts.label.alphabetMember.slice(0);
 
             if ( opts.label.includeAlphabetLabelAll ) {
               _alpha.unshift('#');
-              _alpha.unshift( opts.label.setupAlphabet );
+              _alpha.unshift( opts.label.alphabetAllText );
             }
 
             // init display records after get the total blog post
@@ -530,7 +533,11 @@
                   if ( 'media$thumbnail' in entry ) { 
                     obj.thumbnail = entry.media$thumbnail.url;
                     obj.actualImage = obj.thumbnail.replace( thumbRegex, 's0' );
-                    obj.thumbnail = obj.thumbnail.replace( '/s72-c/', '/s' + size + '-c/');
+                    if ( !!~obj.thumbnail.indexOf('s72-c') ) {
+                      obj.thumbnail = obj.thumbnail.replace( '/s72-c/', '/s' + size + '-c/');  
+                    } else {
+                      obj.thumbnail = _BTMakeThumbnail( obj.actualImage, size, server );
+                    }
                   } else if ( ( imgSrc = /<img [^>]*src=["|\']([^"|\']+)/gi.exec( fullSummary ) ) ) {
                     obj.actualImage = imgSrc[1];
                     obj.thumbnail = _BTMakeThumbnail( obj.actualImage, size, server );
@@ -629,9 +636,9 @@
               sortingKey = opts.sorting.key,
               placeHolder = opts.search.textAsPlaceholder;
             
-            var labelFn = "BlogToc.label(this, this.value, document.getElementById('"+ root.id +"')); return false;",
-              alphaFn = "BlogToc.alphabet(this, this.value, document.getElementById('"+ root.id +"')); return false;",
-              displayFn = "BlogToc.display(this.value, document.getElementById('"+ root.id +"')); return false;",
+            var labelFn = "BlogToc.label(this, this.value, document.getElementById('"+ root.id +"')); this.blur(); return false;",
+              alphaFn = "BlogToc.alphabet(this, this.value, document.getElementById('"+ root.id +"')); this.blur(); return false;",
+              displayFn = "BlogToc.display(this.value, document.getElementById('"+ root.id +"')); this.blur(); return false;",
               searchFn = "BlogToc.search(this.value, document.getElementById('"+ root.id +"')); return false;",
               sortFn;
 
@@ -765,8 +772,14 @@
             if ( !opts.label.showLabel && !opts.label.showAlphabetLabel ) {
               _self.compile();
             } else {
-              config.currentLabel = opts.label.showLabel ? opts.label.setup : null;
-              config.currentAlphabet = opts.label.showAlphabetLabel ? opts.label.setupAlphabet : null;
+
+              // check the setup member
+              config.currentLabel = opts.label.showLabel ? 
+                ( _inArray( opts.label.setup, feed.label ) ? opts.label.setup : feed.label[0] ) :
+                null;
+              config.currentAlphabet = opts.label.showAlphabetLabel ?
+                ( _inArray( opts.label.setupAlphabet, _alpha ) ? opts.label.setupAlphabet : _alpha[0] ) :
+                null;
 
               if ( opts.label.showLabel ) {
                 _self.displayLabel( config.currentLabel, null, null, true );
@@ -794,6 +807,8 @@
                   }
                 };
               }
+            } else {
+              _extendClass( input, 'bt-no-placeholder' );
             }
 
             // Tells that apps already loaded
@@ -1004,12 +1019,6 @@
 
                   labelNode.appendChild( contentNode );
                 }
-
-                // No default selection, force to using the first one
-                if ( !selection ) {
-                  opts.label[ optName ] = labelNode.firstChild.getAttribute('value');
-                  labelNode.firstChild.disabled = true;
-                }
                 
               } else {
                 labelNode = _createElement( 'select', { onchange: fn }, null, className );
@@ -1094,7 +1103,7 @@
             // change current label from value
             config.currentLabel = val;
             
-            if ( val !== opts.label.setup ) {
+            if ( val !== opts.label.allText ) {
               var temp = [];
               // filter data that only match with certain category
               for ( var j = 0, len = feed.data.length; j < len; j++ ) {
@@ -1126,9 +1135,10 @@
               // reset page state also
               config.pageState = 1;
               
-              var value;
+              var value = filter.getElementsByTagName('input')[0].value;
 
-              if ( ( value = filter.getElementsByTagName('input')[0].value ) ) { 
+              // check if there's text in search query & the text doesn't same with placeholder
+              if ( value && value !== opts.language.custom.search ) { 
                 _self.query( value );
               } else { 
                 _self.compile();
@@ -1173,12 +1183,12 @@
             config.currentAlphabet = val;
             
             // don't filter the data if value is All
-            if ( val !== opts.label.setupAlphabet ) {
+            if ( val !== opts.label.alphabetAllText ) {
               var temp = [],
                 alphaRegex;
                 
               if ( val === '#' ) { // symbolic
-                alphaRegex = new RegExp( '^' + opts.label.symbolicAlphabetFilter, 'i' );
+                alphaRegex = new RegExp( opts.label.symbolicAlphabetFilter, 'i' );
               } else { // alphabetic
                 alphaRegex = new RegExp( '^' + val, 'i' );
               }
@@ -1214,9 +1224,10 @@
               // reset page state also
               config.pageState = 1;
               
-              var value;
-              
-              if ( ( value = filter.getElementsByTagName('input')[0].value ) ) {
+              var value = filter.getElementsByTagName('input')[0].value;
+
+              // check if there's text in search query & the text doesn't same with placeholder
+              if ( value && value !== opts.language.custom.search ) { 
                 _self.query( value );
               } else {
                 _self.compile();
