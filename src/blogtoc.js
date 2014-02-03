@@ -1438,6 +1438,7 @@
             config.cache.img = new Array();
             config.cache.aimg = new Array();
             config.cache.feedLeft = 0;
+            config.cache.dataStart = null;
 
             if ( !config.searchRegex ) { 
               config.searchState = false; 
