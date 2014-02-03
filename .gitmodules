@@ -9,3 +9,6 @@
 [submodule "setImmediate"]
 	path = setImmediate
 	url = git@github.com:NobleJS/setImmediate.git
+[submodule "vendor/setImmediate"]
+	path = vendor/setImmediate
+	url = git@github.com:NobleJS/setImmediate.git
