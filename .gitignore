@@ -43,6 +43,7 @@ example.html
 example2.html
 src/blogtoc.temp.js
 src/blogtoc.obfuscate.js
+setImmediate.js
 
 # Komodo
 *.komodoproject

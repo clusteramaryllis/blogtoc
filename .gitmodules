@@ -6,3 +6,6 @@
 	path = vendor/JSON-js
 	
 	url = git@github.com:douglascrockford/JSON-js.git
+[submodule "setImmediate"]
+	path = setImmediate
+	url = git@github.com:NobleJS/setImmediate.git
