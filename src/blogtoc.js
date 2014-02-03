@@ -6,7 +6,7 @@
     
     (function() {
 
-      var VERSION = '1.6.0';
+      var VERSION = '1.6.1-beta';
 
       var BASE_URL = '//blogtoc2.googlecode.com/svn/trunk/' + VERSION + '/';
 
@@ -133,7 +133,7 @@
                 showPrevPage: true,
                 showFirstPage: true,
                 showLastPage: true,
-                showNumber: true,
+                showNumber: true
               },
               postLabel: {
                 separator: '',
@@ -482,7 +482,8 @@
               
               var saveFeed = function() {
               
-                setTimeout( function() {
+                // setTimeout( function() {
+                _setImmediate( function() {
 
                   var entry = jfeed.entry[i];
 
@@ -608,7 +609,8 @@
                       _self.buildUI();
                     }, 1000 );
                   }
-                }, 1 );
+                // }, 0 );
+                }, 0 );
               }; 
               
               saveFeed();
@@ -1464,6 +1466,13 @@
                 j = start, idx = start, len = bConfig.mapper.length,
                 dataType, data, blob,
                 tr, td;
+
+              // prevent from running twice
+              if ( j === config.cache.dataStart ) {
+                return;
+              } else {
+                config.cache.dataStart = j;
+              }
               
               // if no data found, show empty result message
               if ( !count ) {               
@@ -2011,7 +2020,9 @@
         var method = postData ? "POST" : "GET";
 
         req.open( method, _sanitizeURL( url ), true );
-        req.setRequestHeader( 'User-Agent', 'XMLHTTP/1.0' );
+        try {
+          req.setRequestHeader( 'User-Agent', 'XMLHTTP/1.0' );  
+        } catch(e) {}
         if ( postData ) {
           req.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
         }
@@ -2050,6 +2061,30 @@
         }
 
         return xmlhttp;
+      };
+
+      /* Check Set Immediate Support
+       * @param  : <function>callback
+       ********************************************************************/
+      var _setImmediate = function( callback ) {
+        var setImmediateFactories = [
+          { name: 'setImmediate', fn: function( callback ) { return window.setImmediate( callback ); } },
+          { name: 'msSetImmediate', fn: function( callback ) { return window.msSetImmediate( callback ); } },
+          { name: 'MozSetImmediate', fn: function( callback ) { return window.MozSetImmediate( callback ); } },
+          { name: 'WebkitSetImmediate', fn: function( callback ) { return window.WebkitSetImmediate( callback ); } },
+          { name: 'OSetImmediate', fn: function( callback ) { return window.OSetImmediate( callback ); } },
+          { name: 'setTimeout', fn: function( callback ) { return window.setTimeout( callback, 0 ); } }
+        ];
+
+        for ( var i = 0; i < setImmediateFactories.length; i++ ) {
+          if ( window[ setImmediateFactories[i].name ] ) {
+            // faster
+            _setImmediate = function( callback ) {
+              return setImmediateFactories[i].fn( callback );
+            };
+            return setImmediateFactories[i].fn( callback );
+          }
+        }
       };
 
       /* JSON.parse
