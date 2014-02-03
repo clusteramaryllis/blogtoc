@@ -607,7 +607,7 @@
                     setTimeout( function() {
                       loader.style.display = 'none';
                       _self.buildUI();
-                    }, 1000 );
+                    }, 500 );
                   }
                 // }, 0 );
                 }, 0 );
@@ -1439,6 +1439,7 @@
             config.cache.aimg = new Array();
             config.cache.feedLeft = 0;
             config.cache.dataStart = null;
+            config.cache.dontScrollFirstTime = true;
 
             if ( !config.searchRegex ) { 
               config.searchState = false; 
@@ -1539,7 +1540,13 @@
                 id = bID.getElementsByTagName('tbody')[0];
               
               if ( rootHeight - pageHeight - scrollPosition < 100 ) { 
-                appendData( bID, id ); 
+                // fix anomaly data when page is refreshed
+                if ( config.cache.dontScrollFirstTime ) {
+                  config.cache.dontScrollFirstTime = false;
+                } else {
+                  appendData( bID, id ); 
+                }
+                
               }
             };
             
