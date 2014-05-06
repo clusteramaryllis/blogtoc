@@ -12,3 +12,6 @@
 [submodule "vendor/setImmediate"]
 	path = vendor/setImmediate
 	url = git@github.com:NobleJS/setImmediate.git
+[submodule "vendor/pouchdb"]
+	path = vendor/pouchdb
+	url = git@github.com:daleharvey/pouchdb.git

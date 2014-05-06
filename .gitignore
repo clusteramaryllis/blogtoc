@@ -41,6 +41,9 @@ data.json
 data2.json
 example.html
 example2.html
+deferred.js
+pouchdb-1.1.0.min.js
+pouchdb-nightly.js
 src/blogtoc.temp.js
 src/blogtoc.obfuscate.js
 setImmediate.js
