@@ -1,4 +1,4 @@
-!(function() {
+!(function( window, undefined ) {
 
   'use strict';
 
@@ -44,9 +44,11 @@
       
         var _parent = element,
           opts, config, feed,
-          root, loader, contenter, header, filter, tabler, footer, resulter, paging, copyright;
+          root, notifier, loader, contenter, header, filter, tabler, footer, resulter, paging, copyright;
 
         var _alpha, _contentType;
+
+        var _feedDB, _settingDB;
         
         _parent.BTAPP = {
       
@@ -85,6 +87,7 @@
               extendClass: {},
               feed: {
                 appendQuery: '',
+                cache: true,
                 chunkRequest: 1,
                 limit: null,
                 requestCount: 500,
@@ -126,6 +129,10 @@
                 render: function( idx ) {
                   return idx;
                 }
+              },
+              notification: {
+                enabled: true,
+                interval: 60 * 1 * 1000
               },
               pagination: {
                 adjacents: 2,
@@ -207,6 +214,7 @@
             };
             // setting up config
             config = _parent.BTConfig = {
+              db: {},
               cache: {},
               iotf: {},
               iterate: 0,
@@ -230,17 +238,19 @@
             _BTBuildTheme( opts.theme.setup, themes, opts.extendClass );
             
             // save necessary element
-            root = _parent.BTID;
-            loader = root.firstChild;
+            root      = _parent.BTID;
+            notifier  = root.firstChild;
+            loader    = _nextElement( notifier );
             contenter = _nextElement( loader );
-            header = contenter.firstChild;
-            filter = _nextElement( header );
-            tabler = _nextElement( filter );
-            footer = _nextElement( tabler );
+            header    = contenter.firstChild;
+            filter    = _nextElement( header );
+            tabler    = _nextElement( filter );
+            footer    = _nextElement( tabler );
             copyright = _nextElement( footer );
             
             // apply classes
             _extendClass( root, opts.extendClass.blogtoc_id );
+            _extendClass( notifier, opts.extendClass.blogtoc_notification );
             _extendClass( loader, opts.extendClass.blogtoc_loader );
             _extendClass( contenter, opts.extendClass.blogtoc_content );
             _extendClass( header, opts.extendClass.blogtoc_header );
@@ -260,15 +270,19 @@
             // content type base on feed type
             _contentType = opts.feed.type === "default" ? "content" : "summary";
 
+            // config feed database
+            config.db.feed = opts.url;
+            // config setting database
+            config.db.setting = config.db.feed + '_settings';
             // cache the request
             config.cache.req = new Array();
             // prepare cache for table header
             config.cache.thead = {};
+            // prepare cache for table header
+            config.cache.sourceData = [];
 
             //set not available thumbnail for author
             config.nat = authorThumb.replace( thumbRegex, 's' + opts.thumbnail.authorSize + '-c' );
-            // get resize image on the fly server, take a sample
-            config.iotf = _testCDN( opts.thumbnail.sample );
             // map the table header data
             // config.mapper = opts.table.order.split(';');
             config.mapper = opts.table.order;
@@ -301,22 +315,42 @@
             // setup the script id
             config.cache.req[0] = scriptID;
             
-            // requesting which image on the fly service will be using
-            // do recurren with 1s delay until its found one
-            var _waiting = function() { 
-              setTimeout( function() {
-                config.iotf.server ?
-                  _addJS( url, scriptID, null, function() {
-                    // trouble loading feed, show error message
-                    alert( opts.language.custom.errorMessage );
-                    // remove blogtoc
-                    _removeElement( root );
-                  }) :
-                  _waiting();
-              }, 100 );
-            }; 
+            // init feed when the image cdn loaded
+            Deferred.when( _testCDN( opts.thumbnail.sample ) ).then(
+              function( status ) {
+                config.iotf.server = status;
 
-            _waiting();
+                Deferred.when( _checkIfDBExists( config.db.setting ) ).then(
+                  function( dbname ) {
+                    
+                    _settingDB = new PouchDB( dbname );
+
+                    _settingDB.query({
+                      map: function( doc ) {
+                        emit( doc );
+                      }
+                    }, {}, function( err, response ) {
+                      _self.initFeedDB( response );
+                    });
+                    
+                  },
+                  function( status ) {
+                    // tells that there's error on db
+                    config.db.errorState = true;
+
+                    _addJS( url, scriptID, null, function() {
+                      // trouble loading feed, show error message
+                      alert( opts.language.custom.errorMessage );
+                      // remove blogtoc
+                      _removeElement( root );
+                    });
+                  }
+                );
+              },
+              function( status ) {
+                alert( status );
+              }
+            );
 
             // add callback on init
             if ( typeof opts.binding.onInit === 'function' ) {
@@ -333,10 +367,21 @@
             
             // object and array => value by reference
             var jfeed = json.feed;
+
+            var temp = {
+              label: []
+            };
+
+            if ( window.PouchDB && opts.feed.cache && !config.errorState ) {
+              _settingDB = new PouchDB( config.db.setting );
+            }
+
+            temp._id = jfeed.id.$t;
             
             // get total blog posts
             if ( 'openSearch$totalResults' in jfeed ) {
               feed.count = jfeed.openSearch$totalResults.$t;
+              temp.count = feed.count;
             }
 
             // get total label
@@ -350,6 +395,8 @@
                 
                 var category = jfeed.category[ j ].term;
 
+                temp.label.push( category );
+
                 // check if options has specific label
                 if ( dLen ) {
                   if ( ( exception && _inArray( category, define ) ) || 
@@ -358,7 +405,7 @@
                   }
                 }
 
-                feed.label.push( jfeed.category[ j ].term );
+                feed.label.push( category );
               }
             }
 
@@ -383,13 +430,114 @@
             config.display = _initRecords( opts.display.template, opts.display.setup, feed.count );
             config.records = opts.display.setup || opts.display.template[0];
 
+            // check if using cache
+            if ( _settingDB ) {
+              _settingDB.put( temp, function( err, response ) {
+                _self.prepareLoadFeedRequest();    
+              });
+            } else {
+              _self.prepareLoadFeedRequest();
+            }
+          },
+          
+          /* Load the main feed from JSON callback
+           * @param : <json>json
+           ****************************************************************/
+          loadFeed: function( json ) {
+            
+            var _self = this;
+              
+            var data = feed.data,
+              count = +opts.feed.limit && ( ( +opts.feed.limit ) < feed.count ) ? opts.feed.limit : feed.count,
+              progress = opts.progress.render;
+
+            var jfeed = json.feed;
+
+            // check cached db
+            if ( window.PouchDB && opts.feed.cache ) {
+              _feedDB = new PouchDB( config.db.feed );
+            }
+            
+            // check entry feed
+            if ( 'entry' in jfeed ) {
+            
+              var i = 0, len = jfeed.entry.length;
+              
+              var saveFeed = function() {
+              
+                // setTimeout( function() {
+                _setImmediate( function() {
+
+                  var entry = jfeed.entry[i];
+
+                  // populate data
+                  data.push( _self.storeEntryData( entry ) ); 
+
+                  // increment
+                  config.iterate++;
+                  i++;
+                  
+                  // increase progress
+                  var percentage = Math.round( config.iterate * 100 / count );
+
+                  progress( loader, percentage );
+                  
+                  // recurren if still not reach the limit
+                  if ( i < len ) {
+                    saveFeed();
+                  }
+
+                  // the end of total blog post, 
+                  // build user interface & hide loader
+                  if ( config.iterate >= count ) {
+
+                    // store original data
+                    config.cache.sourceData = data.slice(0);
+
+                    if ( _feedDB ) {
+                      _feedDB.bulkDocs({
+                        docs: data
+                      }, function( err, response ) {
+                        _self.prepareUI();
+                      });
+                    } else {
+                      setTimeout( function() {
+                        _self.prepareUI();
+                      }, 500 );
+                    }
+                  }
+                // }, 0 );
+                }, 0 );
+              }; 
+              
+              saveFeed();
+            }
+
+          },
+
+          /* Preparation before show data to table
+           ****************************************************************/
+          prepareUI: function() {
+            
+            var _self = this;
+
+            loader.style.display = 'none';
+            _self.buildUI();
+          },
+
+          /* Preparation before the load feed request being made
+           ****************************************************************/
+          prepareLoadFeedRequest: function() {
+
+            var _self = this;
+
             // json callback
             window[ 'BTLDJSONCallback_' + root.id ] = function ( json ) {
               _self.loadFeed( json );
             };
 
             // jsonp ?
-            var jsonp = !!~opts.dataType.toLowerCase().indexOf('jsonp'),
+            var jsonp = opts.dataType.toLowerCase() === 'jsonp',
               dataType, req, count;
 
             dataType = jsonp ? 'json-in-script' : 'json';
@@ -451,172 +599,290 @@
               i++;
             }
           },
-          
-          /* Load the main feed from JSON callback
-           * @param : <json>json
+
+          /* Store the Entry Data
+           * @param : <json>entry
            ****************************************************************/
-          loadFeed: function( json ) {
+          storeEntryData: function( entry ) {
             
-            var _self = this;
-            
-            var jfeed = json.feed,
-              temp = [], temp2 = [],
-              obj = {};
-              
-            var data = feed.data,
-              count = opts.feed.limit || feed.count,
-              size = opts.thumbnail.size,
+            var size = opts.thumbnail.size,
               asize = opts.thumbnail.authorSize,
               notfound = opts.thumbnail.notFound,
               description = opts.summary.wordLimit,
               render = opts.date.render,
               server = config.iotf.server,
-              progress = opts.progress.render,
               postlabel = opts.postLabel.render,
               separator = opts.postLabel.separator;
 
-            // check entry feed
-            if ( 'entry' in jfeed ) {
+            var obj = {}, temp = [], temp2 = [];
+
+            // id of the post
+            obj._id = entry.id.$t;
+
+            // post title section, removing white space
+            obj.title = entry.title.$t.replace( whitespaceRegex, '' );
+
+            // published and updated date section
+            var pbDate = entry.published.$t.substring( 0, 10 ).split('-'),
+              pbTime = entry.published.$t.substring( 11, 19 ).split(':'),
+              upDate = entry.updated.$t.substring( 0, 10 ).split('-'),
+              upTime = entry.updated.$t.substring( 11, 19 ).split(':');
+
+            obj.publishDateFormat = _makeDate( pbDate, pbTime );
+            obj.updateDateFormat  = _makeDate( upDate, upTime );
+            obj.publishDate = render( obj.publishDateFormat, opts );
+            obj.updateDate  = render( obj.updateDateFormat, opts );
+
+            // summary section
+            var fullSummary = entry[ _contentType ].$t.replace( removeScriptRegex, '' ),
+
+            // remove whitespace and strip html tags
+            summary = fullSummary.replace( stripHtmlRegex, '' )
+                                 .replace( whitespaceRegex, '' );
             
-              var i = 0, len = jfeed.entry.length;
-              
-              var saveFeed = function() {
-              
-                // setTimeout( function() {
-                _setImmediate( function() {
-
-                  var entry = jfeed.entry[i];
-
-                  // post title section, removing white space
-                  obj.title = entry.title.$t.replace( whitespaceRegex, '' );
-
-                  // published and updated date section
-                  var pbDate = entry.published.$t.substring( 0, 10 ).split('-'),
-                    pbTime = entry.published.$t.substring( 11, 19 ).split(':'),
-                    upDate = entry.updated.$t.substring( 0, 10 ).split('-'),
-                    upTime = entry.updated.$t.substring( 11, 19 ).split(':');
-
-                  obj.publishDateFormat = _makeDate( pbDate,pbTime );
-                  obj.updateDateFormat  = _makeDate( upDate,upTime );
-                  obj.publishDate = render( obj.publishDateFormat, opts );
-                  obj.updateDate  = render( obj.updateDateFormat, opts );
-
-                  // summary section
-                  var fullSummary = entry[ _contentType ].$t.replace( removeScriptRegex, '' ),
-
-                  // remove whitespace and strip html tags
-                  summary = fullSummary.replace( stripHtmlRegex, '' )
-                                       .replace( whitespaceRegex, '' );
-                  
-                  // add word limiter
-                  if ( summary.length > description ) {
-                    summary = summary.substring( 0, description );
-                    summary = summary.substring( 0, summary.lastIndexOf(' ') ) + '....';
-                  }
-
-                  obj.fullSummary = fullSummary;
-                  obj.summary = summary;
-                  
-                  // thumbnails section
-                  var imgSrc;
-                  
-                  obj.thumbConfig = {};
-
-                  // check for default blog thumbnail entry
-                  // if it's not found find <img> tag in summary
-                  if ( 'media$thumbnail' in entry ) { 
-                    obj.thumbnail = entry.media$thumbnail.url;
-                    obj.actualImage = obj.thumbnail.replace( thumbRegex, 's0' );
-                    if ( !!~obj.thumbnail.indexOf('s72-c') ) {
-                      obj.thumbnail = obj.thumbnail.replace( '/s72-c/', '/s' + size + '-c/');  
-                    } else {
-                      obj.thumbnail = _BTMakeThumbnail( obj.actualImage, size, server );
-                    }
-                  } else if ( ( imgSrc = /<img [^>]*src=["|\']([^"|\']+)/gi.exec( fullSummary ) ) ) {
-                    obj.actualImage = imgSrc[1];
-                    obj.thumbnail = _BTMakeThumbnail( obj.actualImage, size, server );
-                  } else { 
-                    obj.actualImage = notfound;
-
-                    // google service?
-                    if ( thumbRegex.test( obj.actualImage ) ) { 
-                      obj.thumbnail = obj.actualImage.replace( thumbRegex, 's' + size + '-c' );
-                    } else {
-                      obj.thumbnail = _BTMakeThumbnail( obj.actualImage, size, server );
-                    }
-                  }
-                  
-                  // title & replies URL section
-                  for ( var k = 0; k < entry.link.length; k++ ) {
-                    if ( entry.link[ k ].rel === 'replies' ) {
-                      obj.commentURL = entry.link[ k ].href;
-                    } else if (entry.link[ k ].rel === 'alternate' ) {
-                      obj.titleURL = entry.link[ k ].href;
-                    }
-                  }
-
-                  // set hashtag, if there is no comment
-                  if ( !obj.commentURL ) {
-                    obj.commentURL = "#";
-                  }
-
-                  // comments count section
-                  obj.comment = ( 'thr$total' in entry ) ? +entry.thr$total.$t : 0;
-                  
-                  // author information section
-                  obj.author = entry.author[0].name.$t;
-                  obj.authorUrl = entry.author[0].uri ? entry.author[0].uri.$t : '#';
-                  obj.authorThumbnail = entry.author[0].gd$image.src.replace( thumbRegex, 's' + asize + '-c' );
-
-                  // posts categories section
-                  if ( 'category' in entry ) {
-                    for ( k = 0; k < entry.category.length; k++ ) {
-                      temp.push( entry.category[ k ].term );
-                      temp2.push( postlabel( entry.category[ k ].term ) );
-                    }
-                  }
-
-                  obj.category = temp.slice(0);
-                  obj.label = temp2.slice(0).join( separator );
-
-                  // populate data
-                  data.push( obj ); 
-                  
-                  // reset
-                  obj = {};
-                  temp.length = 0;
-                  temp2.length = 0;
-
-                  // increment
-                  config.iterate++;
-                  i++;
-                  
-                  // increase progress
-                  var percentage = Math.round( config.iterate * 100 / count );
-
-                  progress( loader, percentage );
-                  
-                  // recurren if still not reach the limit
-                  if ( i < len ) {
-                    saveFeed();
-                  }
-
-                  // the end of total blog post, 
-                  // build user interface & hide loader
-                  if ( config.iterate >=  count ) {
-                    setTimeout( function() {
-                      loader.style.display = 'none';
-                      _self.buildUI();
-                    }, 500 );
-                  }
-                // }, 0 );
-                }, 0 );
-              }; 
-              
-              saveFeed();
+            // add word limiter
+            if ( summary.length > description ) {
+              summary = summary.substring( 0, description );
+              summary = summary.substring( 0, summary.lastIndexOf(' ') ) + '....';
             }
 
-          }, 
+            obj.fullSummary = fullSummary;
+            obj.summary = summary;
+            
+            // thumbnails section
+            var imgSrc;
+            
+            obj.thumbConfig = {};
+
+            // check for default blog thumbnail entry
+            // if it's not found find <img> tag in summary
+            if ( 'media$thumbnail' in entry ) { 
+              obj.thumbnail = entry.media$thumbnail.url;
+              obj.actualImage = obj.thumbnail.replace( thumbRegex, 's0' );
+              if ( !!~obj.thumbnail.indexOf('s72-c') ) {
+                obj.thumbnail = obj.thumbnail.replace( '/s72-c/', '/s' + size + '-c/');  
+              } else {
+                obj.thumbnail = _BTMakeThumbnail( obj.actualImage, size, server );
+              }
+            } else if ( ( imgSrc = /<img [^>]*src=["|\']([^"|\']+)/gi.exec( fullSummary ) ) ) {
+              obj.actualImage = imgSrc[1];
+              obj.thumbnail = _BTMakeThumbnail( obj.actualImage, size, server );
+            } else { 
+              obj.actualImage = notfound;
+
+              // google service?
+              if ( thumbRegex.test( obj.actualImage ) ) { 
+                obj.thumbnail = obj.actualImage.replace( thumbRegex, 's' + size + '-c' );
+              } else {
+                obj.thumbnail = _BTMakeThumbnail( obj.actualImage, size, server );
+              }
+            }
+            
+            // title & replies URL section
+            for ( var k = 0; k < entry.link.length; k++ ) {
+              if ( entry.link[ k ].rel === 'replies' ) {
+                obj.commentURL = entry.link[ k ].href;
+              } else if (entry.link[ k ].rel === 'alternate' ) {
+                obj.titleURL = entry.link[ k ].href;
+              }
+            }
+
+            // set hashtag, if there is no comment
+            if ( !obj.commentURL ) {
+              obj.commentURL = "#";
+            }
+
+            // comments count section
+            obj.comment = ( 'thr$total' in entry ) ? +entry.thr$total.$t : 0;
+            
+            // author information section
+            obj.author = entry.author[0].name.$t;
+            obj.authorUrl = entry.author[0].uri ? entry.author[0].uri.$t : '#';
+            obj.authorThumbnail = entry.author[0].gd$image.src.replace( thumbRegex, 's' + asize + '-c' );
+
+            // posts categories section
+            if ( 'category' in entry ) {
+              for ( k = 0; k < entry.category.length; k++ ) {
+                temp.push( entry.category[ k ].term );
+                temp2.push( postlabel( entry.category[ k ].term ) );
+              }
+            }
+
+            obj.category = temp.slice(0);
+            obj.label = temp2.slice(0).join( separator );
+
+            return obj;
+          },
+
+          /* Initialization feed from cached database
+           * @param  : <json>response
+           ****************************************************************/
+          initFeedDB: function( response ) {
+
+            var _self = this;
+
+            var row = response.rows[0].key,
+                define = opts.label.define, dLen = define.length,
+                exception = opts.label.exception;
+
+            feed.count = row.count;
+
+            for ( var i = 0, len = row.label.length; i < len; i++) {
+              var category = row.label[ i ];
+
+              // check if options has specific label
+              if ( dLen ) {
+                if ( ( exception && _inArray( category, define ) ) || 
+                     ( !exception && !_inArray( category, define ) ) ) {
+                  continue;
+                }
+              }
+
+              feed.label.push( category );
+            }
+
+            // sorting the label by ascending
+            feed.label.sort(function ( a, b ) {
+              return a.toLowerCase() > b.toLowerCase() ? 1 : -1;
+            });
+            
+            // add label all
+            if ( opts.label.includeLabelAll ) { 
+              feed.label.unshift( opts.label.allText ); 
+            }
+            // add alphabet label all & '#' on beginning
+            _alpha = opts.label.alphabetMember.slice(0);
+
+            if ( opts.label.includeAlphabetLabelAll ) {
+              _alpha.unshift('#');
+              _alpha.unshift( opts.label.alphabetAllText );
+            }
+
+            // init display records after get the total blog post
+            config.display = _initRecords( opts.display.template, opts.display.setup, feed.count );
+            config.records = opts.display.setup || opts.display.template[0];
+
+            Deferred.when( _checkIfDBExists( config.db.feed ) ).then(
+              function( dbname ) {
+                _feedDB = new PouchDB( dbname );
+
+                _feedDB.query({
+                  map: function( doc ) {
+                    emit( doc.publishDateFormat, doc );
+                  }
+                }, {}, function( err, response ) {
+                  _self.loadFeedDB( response );
+                });
+              },
+              function() {
+                _self.prepareLoadFeedRequest();
+              }
+            );
+          },
+
+          /* Load the main feed from cached database
+           * @param : <json>response
+           ****************************************************************/
+          loadFeedDB: function( response ) {
+
+            var _self = this;
+
+            var data = feed.data,
+              count = +opts.feed.limit && ( ( +opts.feed.limit ) < feed.count ) ? opts.feed.limit : feed.count,
+              progress = opts.progress.render,
+              i = 0;
+
+            for( ; i < count; i++ ) {
+              data.push( response.rows[ i ].value );
+            }
+
+            // store original data
+            config.cache.sourceData = data.slice(0);
+
+            progress( loader, 100 );
+
+            setTimeout( function() {
+              _self.prepareUI();
+            }, 500 );
+          },
+
+          checkFeed: function( json ) {
+
+            var _self = this;
+            
+            // object and array => value by reference
+            var jfeed = json.feed, temp = {};
+
+            if ( 'openSearch$totalResults' in jfeed ) {
+              temp.count = jfeed.openSearch$totalResults.$t;
+            }
+
+            if ( jfeed.entry[0] ) {
+              var entry = jfeed.entry[0],
+                pbDate = entry.published.$t.substring( 0, 10 ).split('-'),
+                pbTime = entry.published.$t.substring( 11, 19 ).split(':');
+
+              temp.publishDateFormat = _makeDate( pbDate, pbTime );
+            }
+
+            // check if there is first post
+            config.isUpdated = config.cache.sourceData[0] &&
+              ( temp.count !== feed.count || 
+                +temp.publishDateFormat !== +config.cache.sourceData[0].publishDateFormat );
+            
+          },
+
+          checkUpdate: function() {
+
+            var _self = this;
+
+            // json callback
+            window[ 'BTCUJSONCallback_' + root.id ] = function ( json ) {
+              _self.checkFeed( json );
+            };
+
+            // jsonp ?
+            var jsonp = opts.dataType.toLowerCase() === 'jsonp',
+              dataType, url = opts.url.replace( httpRegex, '' ),
+              newUrl, doFn, scriptID;
+
+            dataType = jsonp ? 'json-in-script' : 'json';
+            newUrl = 'http://' + url + 
+              '/feeds/posts/'+ opts.feed.type +
+              '/?' +
+              'max-results=1&' +
+              'alt=' + dataType + '&';
+
+            doFn = function() {
+              if ( config.isUpdated ) {
+
+                // if using _createElement, the event handler gone
+                var anchor = '<a href="javascript:void(0)" ' +
+                  'onclick="BlogToc.update(this, document.getElementById(\''+ root.id +'\')); return false;">' +
+                  '<span class="icon-spin"></span> ' + opts.language.custom.updateMessage +
+                  '</a>';
+
+                notifier.innerHTML = anchor;
+              }
+            };
+
+            if ( jsonp ) {
+              newUrl += 'callback=BTCUJSONCallback_' + root.id;
+              scriptID = url + '_' + _uniqueNumber();
+
+              _addJS( newUrl, scriptID, function() {
+                _removeElement( _getId( scriptID ) );
+                doFn();
+              });
+            } else {
+              _ajaxRequest( newUrl, function( req ) {
+                json = _parseJSON( req.responseText );
+                _self.checkFeed( json );
+
+                doFn();
+              });
+            }
+          },
           
           /* Build the starter user interface
            ****************************************************************/
@@ -784,7 +1050,7 @@
             }
 
             // set the placeholder support after the data compile called
-            // in IE, have strange behaviour when data show blank if this set before data compile
+            // in IE, have strange behaviour when data show blank if called before data compile
             if ( placeHolder ) {
               // check html5 placeholder support
               if ( 'placeholder' in input ) {
@@ -821,6 +1087,13 @@
             for ( var k = 0, elm, rLen = config.cache.req.length; k < rLen; k++ ) {
               elm = _getId( config.cache.req[ k ] );
               if ( elm ) { _removeElement( elm ); }
+            }
+
+            // Set update notification
+            if ( opts.notification.enabled ) {
+              setInterval(function() {
+                _self.checkUpdate();
+              }, opts.notification.interval );
             }
           },
           
@@ -2304,10 +2577,44 @@
       var _uniqueNumber = function() {
         return new Date().getTime() + _randomBetween( 1, 1000 );
       };
+
+      /********************************************************************
+       * POUCHDB HELPER FUNCTIONS                                       *
+       ********************************************************************/
+       var _checkIfDBExists = function ( dbname ) {
+        var dfd = new Deferred();
+        
+        if ( window.PouchDB ) {
+
+          try {
+            PouchDB.enableAllDbs = true;
+          } catch( e ) {
+            dfd.reject('PouchDB return unknown error');
+
+            return dfd.promise();
+          }
+
+          PouchDB.allDbs(function( err, response ){
+            if ( err ) {
+              dfd.reject('Error to get list of databases');    
+            } else {
+              if ( _inArray( dbname, response ) ) {
+                dfd.resolve( dbname );
+              } else {
+                dfd.reject('Database ' + name + ' don\'t exists');
+              }
+            }
+          });
+        } else {
+          dfd.reject('PouchDB not supported');
+        }
+
+        return dfd.promise();
+       };
       
       /********************************************************************
        * APP-BASED HELPER FUNCTIONS                                       *
-       *********************************************************************/
+       ********************************************************************/
       /* Make Thumbnail based on image on the fly service
        * @param  : <string>img
        * @param  : <number>size
@@ -2614,6 +2921,7 @@
         // @link http://stackoverflow.com/a/15092773
         var text = [
             '<div id="' + blogTocId + '" style="zoom: 1; display: none;">',
+            '<div class="blogtoc_notification"></div>',
             '<div class="blogtoc_loader"></div>',
             '<div class="blogtoc_content" style="display: none;">',
             '<div class="blogtoc_header"></div>',
@@ -2640,7 +2948,8 @@
        ********************************************************************/    
       var _resetState = function( el ) {
         var _root = el.BTID,
-          _loader = _root.firstChild,
+          _notifier = _root.firstChild,
+          _loader = _nextElement( _notifier ),
           _contenter = _nextElement( _loader ),
           _header = _contenter.firstChild,
           _filter = _nextElement( _header ),
@@ -2648,6 +2957,7 @@
           _footer = _nextElement( _tabler ),
           _copyright = _nextElement( _footer );
 
+        _notifier.innerHTML = '';
         _loader.innerHTML = '';
         _header.innerHTML = '';
         _filter.innerHTML = '';
@@ -2658,6 +2968,7 @@
         // reset class
         _root.className = '';
         _contenter.className = 'blogtoc_content';
+        _notifier.className = 'blogtoc_notification';
         _loader.className = 'blogtoc_loader';
         _header.className = 'blogtoc_header';
         _filter.className = 'blogtoc_filter';
@@ -2676,7 +2987,8 @@
       var _testCDN = function( imgTest ) {
         var result = {}, 
           i = 0, len, 
-          img = new Image();
+          img = new Image(),
+          dfd = new Deferred();
         
         var cdn = [
           [ "boxresizer", "http://proxy.boxresizer.com/convert?resize=1x1&source=" + imgTest ],
@@ -2691,17 +3003,22 @@
         var getCDN = function() {
           img.src = cdn[ i ][1];
           img.onload = function() {
-            result.server = cdn[ i ][0];
+            dfd.resolve( cdn[ i ][0] );
           };
           img.onerror = function() {
             i++;
-            getCDN();
+
+            if ( i < len ) {
+              getCDN();
+            } else {
+              dfd.reject('There\'s no server image on the fly working');
+            }
           };
         };
 
         getCDN();
         
-        return result;
+        return dfd.promise();
       };
       
       /********************************************************************
@@ -2864,6 +3181,23 @@
         return this;
       };
 
+      /* Update
+       ********************************************************************/
+      BlogToc.update = function( el, element ) {
+        if ( window.PouchDB ) {
+          // asynchronous
+          PouchDB.destroy( element.parentNode.BTOptions.url + '_settings', function( err, info ) {
+            PouchDB.destroy( element.parentNode.BTOptions.url, function( err, info ) {
+              BlogToc.reset( element.parentNode );
+            });
+          });
+        } else {
+          BlogToc.reset( element.parentNode );
+        }
+
+        return this;
+      };       
+
       /* Language
        ********************************************************************/    
       BlogToc.language = function( name, options ) {
@@ -2921,4 +3255,4 @@
     BlogToc.addCSS('//cdn.jsdelivr.net/bootmetro/1.0.0a1/css/bootmetro-icons.min.css');
   }
 
-})();
+})( window );

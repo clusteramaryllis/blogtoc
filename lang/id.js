@@ -2,7 +2,7 @@
 // language : Bahasa Indonesia
 // author : Cluster Amaryllis
 
-(function(){
+(function( window, undefined ){
   
   var loadLang = function( BlogToc ) {
     (function(){
@@ -48,4 +48,4 @@
     loadLang( window.BlogToc );
   }
 
-})();
+})( window );
