@@ -1,4 +1,4 @@
-!(function() {
+!(function( window, undefined ) {
 
   'use strict';
 
@@ -6,7 +6,7 @@
     
     (function() {
 
-      var VERSION = '1.6.1-beta';
+      var VERSION = '1.6.1';
 
       var BASE_URL = '//blogtoc2.googlecode.com/svn/trunk/' + VERSION + '/';
 
@@ -44,7 +44,7 @@
       
         var _parent = element,
           opts, config, feed,
-          root, loader, contenter, header, filter, tabler, footer, resulter, paging, copyright;
+          root, notifier, loader, contenter, header, filter, tabler, footer, resulter, paging, copyright;
 
         var _alpha, _contentType;
         
@@ -121,6 +121,10 @@
                 render: function( language ) {
                   return '<span class="label">' + language + '</span>';
                 }
+              },
+              notification: {
+                enabled: false,
+                interval: 60 * 1 * 1000
               },
               number: {
                 render: function( idx ) {
@@ -210,6 +214,7 @@
               cache: {},
               iotf: {},
               iterate: 0,
+              liveUpdate: false,
               order: {},
               registeredEvent: {},
               searchRegex: null,
@@ -231,7 +236,8 @@
             
             // save necessary element
             root = _parent.BTID;
-            loader = root.firstChild;
+            notifier = root.firstChild;
+            loader = _nextElement( notifier );
             contenter = _nextElement( loader );
             header = contenter.firstChild;
             filter = _nextElement( header );
@@ -242,6 +248,7 @@
             // apply classes
             _extendClass( root, opts.extendClass.blogtoc_id );
             _extendClass( loader, opts.extendClass.blogtoc_loader );
+            _extendClass( notifier, opts.extendClass.blogtoc_notification );
             _extendClass( contenter, opts.extendClass.blogtoc_content );
             _extendClass( header, opts.extendClass.blogtoc_header );
             _extendClass( filter, opts.extendClass.blogtoc_filter );
@@ -255,10 +262,12 @@
             if ( opts.rightToLeft ) {
               root.setAttribute( 'dir', 'rtl' );
               _extendClass( root, 'bt-rtl' );
+            } else {
+              root.setAttribute( 'dir', 'ltr' );
             }
 
             // content type base on feed type
-            _contentType = opts.feed.type === "default" ? "content" : "summary";
+            _contentType = opts.feed.type === 'default' ? 'content' : 'summary';
 
             // cache the request
             config.cache.req = new Array();
@@ -389,7 +398,7 @@
             };
 
             // jsonp ?
-            var jsonp = !!~opts.dataType.toLowerCase().indexOf('jsonp'),
+            var jsonp = opts.dataType.toLowerCase() === 'jsonp',
               dataType, req, count;
 
             dataType = jsonp ? 'json-in-script' : 'json';
@@ -604,6 +613,10 @@
                   // the end of total blog post, 
                   // build user interface & hide loader
                   if ( config.iterate >=  count ) {
+
+                    // store original data
+                    config.cache.originData = _BTSort( data, 'publishDate' ).slice(0).reverse();
+
                     setTimeout( function() {
                       loader.style.display = 'none';
                       _self.buildUI();
@@ -617,6 +630,87 @@
             }
 
           }, 
+
+          /* Check if there's new feed
+           ****************************************************************/
+          checkFeed: function( json ) {
+
+            var _self = this;
+            
+            // object and array => value by reference
+            var jfeed = json.feed, temp = {};
+
+            if ( 'openSearch$totalResults' in jfeed ) {
+              temp.count = jfeed.openSearch$totalResults.$t;
+            }
+
+            if ( jfeed.entry[0] ) {
+              var entry = jfeed.entry[0],
+                pbDate = entry.published.$t.substring( 0, 10 ).split('-'),
+                pbTime = entry.published.$t.substring( 11, 19 ).split(':');
+
+              temp.publishDateFormat = _makeDate( pbDate, pbTime );
+            }
+
+            // check if there is first post
+            config.isUpdated = config.cache.originData[0] &&
+              ( temp.count !== feed.count || 
+                +temp.publishDateFormat !== +config.cache.originData[0].publishDateFormat );
+          },
+
+          /* Check if there's new feed
+           ****************************************************************/
+          checkUpdate: function() {
+
+            var _self = this;
+
+            // json callback
+            window[ 'BTCUJSONCallback_' + root.id ] = function ( json ) {
+              _self.checkFeed( json );
+            };
+
+            // jsonp ?
+            var jsonp = opts.dataType.toLowerCase() === 'jsonp',
+              dataType, url = opts.url.replace( httpRegex, '' ),
+              newUrl, doFn, scriptID;
+
+            dataType = jsonp ? 'json-in-script' : 'json';
+            newUrl = 'http://' + url + 
+              '/feeds/posts/'+ opts.feed.type +
+              '/?' +
+              'max-results=1&' +
+              'alt=' + dataType + '&';
+
+            doFn = function() {
+              if ( config.isUpdated ) {
+
+                // if using _createElement, the event handler gone
+                var anchor = '<a href="javascript:void(0)" ' +
+                  'onclick="BlogToc.reset(document.getElementById(\''+ root.id +'\').parentNode); return false;">' +
+                  '<span class="icon-spin"></span> ' + opts.language.custom.updateMessage +
+                  '</a>';
+
+                notifier.innerHTML = anchor;
+              }
+            };
+
+            if ( jsonp ) {
+              newUrl += 'callback=BTCUJSONCallback_' + root.id;
+              scriptID = url + '_' + _uniqueNumber();
+
+              _addJS( newUrl, scriptID, function() {
+                _removeElement( _getId( scriptID ) );
+                doFn();
+              });
+            } else {
+              _ajaxRequest( newUrl, function( req ) {
+                json = _parseJSON( req.responseText );
+                _self.checkFeed( json );
+
+                doFn();
+              });
+            }
+          },          
           
           /* Build the starter user interface
            ****************************************************************/
@@ -821,6 +915,13 @@
             for ( var k = 0, elm, rLen = config.cache.req.length; k < rLen; k++ ) {
               elm = _getId( config.cache.req[ k ] );
               if ( elm ) { _removeElement( elm ); }
+            }
+
+            // Set update notification
+            if ( opts.notification.enabled ) {
+              config.liveUpdate = setInterval(function() {
+                _self.checkUpdate();
+              }, opts.notification.interval );
             }
           },
           
@@ -2614,6 +2715,7 @@
         // @link http://stackoverflow.com/a/15092773
         var text = [
             '<div id="' + blogTocId + '" style="zoom: 1; display: none;">',
+            '<div class="blogtoc_notification"></div>',
             '<div class="blogtoc_loader"></div>',
             '<div class="blogtoc_content" style="display: none;">',
             '<div class="blogtoc_header"></div>',
@@ -2640,7 +2742,8 @@
        ********************************************************************/    
       var _resetState = function( el ) {
         var _root = el.BTID,
-          _loader = _root.firstChild,
+          _notifier = _root.firstChild,
+          _loader = _nextElement( _notifier ),
           _contenter = _nextElement( _loader ),
           _header = _contenter.firstChild,
           _filter = _nextElement( _header ),
@@ -2648,6 +2751,7 @@
           _footer = _nextElement( _tabler ),
           _copyright = _nextElement( _footer );
 
+        _notifier.innerHTML = '';
         _loader.innerHTML = '';
         _header.innerHTML = '';
         _filter.innerHTML = '';
@@ -2658,6 +2762,7 @@
         // reset class
         _root.className = '';
         _contenter.className = 'blogtoc_content';
+        _notifier.className = 'blogtoc_notification';
         _loader.className = 'blogtoc_loader';
         _header.className = 'blogtoc_header';
         _filter.className = 'blogtoc_filter';
@@ -2795,6 +2900,10 @@
           options = element.BTOptions;
         }
 
+        if (element.BTConfig.liveUpdate) {
+          clearInterval( element.BTConfig.liveUpdate );
+        }
+
         _resetState( element );
         element.BTLoaded = false;
 
@@ -2921,4 +3030,4 @@
     BlogToc.addCSS('//cdn.jsdelivr.net/bootmetro/1.0.0a1/css/bootmetro-icons.min.css');
   }
 
-})();
+})( window );
