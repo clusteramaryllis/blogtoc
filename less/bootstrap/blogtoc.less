@@ -3,9 +3,21 @@ input, select, textarea {
   .box-sizing(border-box);
 }
 
+.blogtoc_notification {
+  > a {
+    margin-bottom: 5px;
+    display: block;
+    text-align: center;
+  }
+}
+
 .blogtoc_header {
   text-align: center;
-  margin-bottom: 2px;
+
+  .blogtoc_label,
+  .blogtoc_alphabet {
+    margin-bottom: 5px;
+  }
 
   select {
     .form-control();
@@ -19,7 +31,6 @@ input, select, textarea {
 
 // BlogToc Filter class
 .blogtoc_filter {
-  margin-top: 5px;
 
   select {
     .form-control();
@@ -76,7 +87,7 @@ input, select, textarea {
   }
 
   td {
-    vertical-align: middle;
+    vertical-align: middle !important;
 
     .icon {
       font-size: 16px;
