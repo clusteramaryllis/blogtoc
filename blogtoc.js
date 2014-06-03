@@ -255,8 +255,8 @@
             
             // apply classes
             _extendClass( root, opts.extendClass.blogtoc_id );
-            _extendClass( loader, opts.extendClass.blogtoc_loader );
             _extendClass( notifier, opts.extendClass.blogtoc_notification );
+            _extendClass( loader, opts.extendClass.blogtoc_loader );
             _extendClass( contenter, opts.extendClass.blogtoc_content );
             _extendClass( header, opts.extendClass.blogtoc_header );
             _extendClass( filter, opts.extendClass.blogtoc_filter );
@@ -292,9 +292,9 @@
             // setup for table header width
             config.mapperWidth = [];
             // setup for thumbnail anchor inline-css
-            config.tbwrapper = 'display:block;width:' + opts.thumbnail.size + 'px;height:'+ opts.thumbnail.size + 'px;';
+            config.tbwrapper = 'display:block;width:' + opts.thumbnail.size + 'px;height:' + opts.thumbnail.size + 'px;';
             // setup for thumbnail image inline-css
-            config.tbimg = 'width:' + opts.thumbnail.size + 'px;height:'+ opts.thumbnail.size + 'px;';
+            config.tbimg = 'width:' + opts.thumbnail.size + 'px;height:' + opts.thumbnail.size + 'px;';
             // setup for page
             config.page = 1;
             // setup for page state history
@@ -3095,7 +3095,7 @@
 // theme : bootstrap v3, @link http://getbootstrap.com/
 // author : Cluster Amaryllis
 
-(function(){
+(function( window, undefined ){
   
   var loadTheme = function( BlogToc ) {
     (function(){
@@ -3105,6 +3105,7 @@
        *****************************************************************/
       BlogToc.theme( 'bootstrap', 'css/bootstrap/bt_bootstrap.css', {
         "id": "bootstrap",
+        /*"notification": "",*/
         /*"loader": "",*/
         /*"header": "",*/
         /*"label": "",*/
@@ -3135,4 +3136,4 @@
     loadTheme( window.BlogToc );
   }
 
-})();
+})( window );

@@ -2,7 +2,7 @@
 // theme : bootstrap v3, @link http://getbootstrap.com/
 // author : Cluster Amaryllis
 
-(function(){
+(function( window, undefined ){
   
   var loadTheme = function( BlogToc ) {
     (function(){
@@ -12,6 +12,7 @@
        *****************************************************************/
       BlogToc.theme( 'bootstrap', 'css/bootstrap/bt_bootstrap.css', {
         "id": "bootstrap",
+        /*"notification": "",*/
         /*"loader": "",*/
         /*"header": "",*/
         /*"label": "",*/
@@ -42,4 +43,4 @@
     loadTheme( window.BlogToc );
   }
 
-})();
+})( window );
