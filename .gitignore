@@ -44,6 +44,9 @@ example2.html
 src/blogtoc.temp.js
 src/blogtoc.obfuscate.js
 setImmediate.js
+deferred.js
+pouchdb-1.1.0.min.js
+pouchdb-nightly.js
 
 # Komodo
 *.komodoproject
@@ -62,3 +65,4 @@ trunk
 node_modules
 _site
 img
+vendor/pouchdb
