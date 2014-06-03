@@ -666,7 +666,7 @@
                 +temp.publishDateFormat !== +config.cache.originData[0].publishDateFormat );
           },
 
-          /* Check if there's new feed
+          /* Check if there's new update
            ****************************************************************/
           checkUpdate: function() {
 
