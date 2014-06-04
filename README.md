@@ -34,7 +34,7 @@ and IE6+ (Partial)
 ## License ##
 [LICENSE](https://github.com/clusteramaryllis/blogtoc/blob/develop/LICENSE)
 
-## External Resources ##
+## External Resources & Acknowledgements ##
 BlogToc using some external service to generate image on the fly
 
 * [boxresizer](http://boxresizer.com/)
@@ -48,6 +48,11 @@ And iconic font from [Bootmetro](http://aozora.github.io/bootmetro)
 
 ## Changelog ##
 
+### 1.6.1
+* Fixed incorrect displayed data when refresh (hit F5).
+* Added live notification option when there's new post.
+* Update bootstrap to v3.1.1
+
 ### 1.6.0
 * Added dataType option (using JSONP or JSON).
 * Added RTL Support (experimental).
@@ -56,7 +61,7 @@ And iconic font from [Bootmetro](http://aozora.github.io/bootmetro)
 * Added appendQuery, chunkRequest, limit, requestCount in feed option
 * Added textToPlaceholder in search option for using placeholder instead text label
 * Remove theme standalone option (prefered using synchronous request).
-* Update bootstrap theme to v3.0.3
+* Update bootstrap to v3.0.3
 * Other theme deprecated except bootstrap.
 
 ### 1.5.0
