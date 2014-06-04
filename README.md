@@ -2,7 +2,7 @@
 
 A javascript plugin to make table of contents for blogspot using Blogger Feed API
 
-### Basic Usage ###
+## Basic Usage ##
 
 Place this code somewhere in the `<head></head>` section.
 
