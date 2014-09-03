@@ -55,7 +55,7 @@ input, select, textarea {
     }
 
     .blogtoc_query {
-      width: auto !important;
+      width: auto;
     }
   }
 
@@ -311,13 +311,7 @@ input, select, textarea {
       }
 
       .blogtoc_query {
-        &:empty:before {
-          content: attr(data-placeholder);
-        }
-
-        &:focus:empty:before {
-          content: "";
-        }
+        width: 100%;
       }
     }
   }

@@ -41,6 +41,7 @@
 }
 .bootstrap .img-responsive {
   display: block;
+  width: 100% \9;
   max-width: 100%;
   height: auto;
 }
@@ -57,6 +58,7 @@
   -o-transition: all 0.2s ease-in-out;
   transition: all 0.2s ease-in-out;
   display: inline-block;
+  width: 100% \9;
   max-width: 100%;
   height: auto;
 }
@@ -122,7 +124,7 @@
 .bootstrap .h6 .small {
   font-weight: normal;
   line-height: 1;
-  color: #999999;
+  color: #777777;
 }
 .bootstrap h1,
 .bootstrap .h1,
@@ -232,8 +234,20 @@
 .bootstrap .text-justify {
   text-align: justify;
 }
+.bootstrap .text-nowrap {
+  white-space: nowrap;
+}
+.bootstrap .text-lowercase {
+  text-transform: lowercase;
+}
+.bootstrap .text-uppercase {
+  text-transform: uppercase;
+}
+.bootstrap .text-capitalize {
+  text-transform: capitalize;
+}
 .bootstrap .text-muted {
-  color: #999999;
+  color: #777777;
 }
 .bootstrap .text-primary {
   color: #428bca;
@@ -357,7 +371,7 @@ a.bootstrap .bg-danger:hover {
 .bootstrap abbr[title],
 .bootstrap abbr[data-original-title] {
   cursor: help;
-  border-bottom: 1px dotted #999999;
+  border-bottom: 1px dotted #777777;
 }
 .bootstrap .initialism {
   font-size: 90%;
@@ -380,7 +394,7 @@ a.bootstrap .bg-danger:hover {
   display: block;
   font-size: 80%;
   line-height: 1.428571429;
-  color: #999999;
+  color: #777777;
 }
 .bootstrap blockquote footer:before,
 .bootstrap blockquote small:before,
@@ -440,6 +454,11 @@ a.bootstrap .bg-danger:hover {
   background-color: #333333;
   border-radius: 3px;
   box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.25);
+}
+.bootstrap kbd kbd {
+  padding: 0;
+  font-size: 100%;
+  box-shadow: none;
 }
 .bootstrap pre {
   display: block;
@@ -1134,7 +1153,6 @@ a.bootstrap .bg-danger:hover {
   }
 }
 .bootstrap table {
-  max-width: 100%;
   background-color: transparent;
 }
 .bootstrap th {
@@ -1142,6 +1160,7 @@ a.bootstrap .bg-danger:hover {
 }
 .bootstrap .table {
   width: 100%;
+  max-width: 100%;
   margin-bottom: 20px;
 }
 .bootstrap .table > thead > tr > th,
@@ -1325,7 +1344,7 @@ a.bootstrap .bg-danger:hover {
     width: 100%;
     margin-bottom: 15px;
     overflow-y: hidden;
-    overflow-x: scroll;
+    overflow-x: auto;
     -ms-overflow-style: -ms-autohiding-scrollbar;
     border: 1px solid #dddddd;
     -webkit-overflow-scrolling: touch;
@@ -1451,14 +1470,14 @@ a.bootstrap .bg-danger:hover {
   box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0.6);
 }
 .bootstrap .form-control::-moz-placeholder {
-  color: #999999;
+  color: #777777;
   opacity: 1;
 }
 .bootstrap .form-control:-ms-input-placeholder {
-  color: #999999;
+  color: #777777;
 }
 .bootstrap .form-control::-webkit-input-placeholder {
-  color: #999999;
+  color: #777777;
 }
 .bootstrap .form-control[disabled],
 .bootstrap .form-control[readonly],
@@ -1497,6 +1516,7 @@ textarea.bootstrap .form-control {
 }
 .bootstrap .radio,
 .bootstrap .checkbox {
+  position: relative;
   display: block;
   min-height: 20px;
   margin-top: 10px;
@@ -1513,8 +1533,9 @@ textarea.bootstrap .form-control {
 .bootstrap .radio-inline input[type="radio"],
 .bootstrap .checkbox input[type="checkbox"],
 .bootstrap .checkbox-inline input[type="checkbox"] {
-  float: left;
+  position: absolute;
   margin-left: -20px;
+  margin-top: 4px \9;
 }
 .bootstrap .radio + .radio,
 .bootstrap .checkbox + .checkbox {
@@ -1536,17 +1557,33 @@ textarea.bootstrap .form-control {
 }
 .bootstrap input[type="radio"][disabled],
 .bootstrap input[type="checkbox"][disabled],
-.bootstrap .radio[disabled],
-.bootstrap .radio-inline[disabled],
-.bootstrap .checkbox[disabled],
-.bootstrap .checkbox-inline[disabled],
+.bootstrap input[type="radio"].disabled,
+.bootstrap input[type="checkbox"].disabled,
 fieldset[disabled] .bootstrap input[type="radio"],
-fieldset[disabled] .bootstrap input[type="checkbox"],
-fieldset[disabled] .bootstrap .radio,
+fieldset[disabled] .bootstrap input[type="checkbox"] {
+  cursor: not-allowed;
+}
+.bootstrap .radio-inline.disabled,
+.bootstrap .checkbox-inline.disabled,
 fieldset[disabled] .bootstrap .radio-inline,
-fieldset[disabled] .bootstrap .checkbox,
 fieldset[disabled] .bootstrap .checkbox-inline {
   cursor: not-allowed;
+}
+.bootstrap .radio.disabled label,
+.bootstrap .checkbox.disabled label,
+fieldset[disabled] .bootstrap .radio label,
+fieldset[disabled] .bootstrap .checkbox label {
+  cursor: not-allowed;
+}
+.bootstrap .form-control-static {
+  padding-top: 7px;
+  padding-bottom: 7px;
+  margin-bottom: 0;
+}
+.bootstrap .form-control-static.input-lg,
+.bootstrap .form-control-static.input-sm {
+  padding-left: 0;
+  padding-right: 0;
 }
 .bootstrap .input-sm {
   height: 30px;
@@ -1686,9 +1723,6 @@ select[multiple].bootstrap .input-lg {
 .bootstrap .has-feedback label.sr-only ~ .form-control-feedback {
   top: 0;
 }
-.bootstrap .form-control-static {
-  margin-bottom: 0;
-}
 .bootstrap .help-block {
   display: block;
   margin-top: 5px;
@@ -1735,7 +1769,7 @@ select[multiple].bootstrap .input-lg {
   }
   .bootstrap .form-inline .radio input[type="radio"],
   .bootstrap .form-inline .checkbox input[type="checkbox"] {
-    float: none;
+    position: relative;
     margin-left: 0;
   }
   .bootstrap .form-inline .has-feedback .form-control-feedback {
@@ -1758,10 +1792,6 @@ select[multiple].bootstrap .input-lg {
   margin-left: -15px;
   margin-right: -15px;
 }
-.bootstrap .form-horizontal .form-control-static {
-  padding-top: 7px;
-  padding-bottom: 7px;
-}
 @media (min-width: 768px) {
   .bootstrap .form-horizontal .control-label {
     text-align: right;
@@ -1772,6 +1802,16 @@ select[multiple].bootstrap .input-lg {
 .bootstrap .form-horizontal .has-feedback .form-control-feedback {
   top: 0;
   right: 15px;
+}
+@media (min-width: 768px) {
+  .bootstrap .form-horizontal .form-group-lg .control-label {
+    padding-top: 14.3px;
+  }
+}
+@media (min-width: 768px) {
+  .bootstrap .form-horizontal .form-group-sm .control-label {
+    padding-top: 6px;
+  }
 }
 .bootstrap .btn {
   display: inline-block;
@@ -2097,7 +2137,7 @@ fieldset[disabled] .bootstrap .btn-link {
 fieldset[disabled] .bootstrap .btn-link:hover,
 .bootstrap .btn-link[disabled]:focus,
 fieldset[disabled] .bootstrap .btn-link:focus {
-  color: #999999;
+  color: #777777;
   text-decoration: none;
 }
 .bootstrap .btn-lg {
@@ -2121,8 +2161,6 @@ fieldset[disabled] .bootstrap .btn-link:focus {
 .bootstrap .btn-block {
   display: block;
   width: 100%;
-  padding-left: 0;
-  padding-right: 0;
 }
 .bootstrap .btn-block + .btn-block {
   margin-top: 5px;
@@ -2234,7 +2272,7 @@ tbody.bootstrap .collapse.in {
 .bootstrap .dropdown-menu > .disabled > a,
 .bootstrap .dropdown-menu > .disabled > a:hover,
 .bootstrap .dropdown-menu > .disabled > a:focus {
-  color: #999999;
+  color: #777777;
 }
 .bootstrap .dropdown-menu > .disabled > a:hover,
 .bootstrap .dropdown-menu > .disabled > a:focus {
@@ -2263,7 +2301,8 @@ tbody.bootstrap .collapse.in {
   padding: 3px 20px;
   font-size: 12px;
   line-height: 1.428571429;
-  color: #999999;
+  color: #777777;
+  white-space: nowrap;
 }
 .bootstrap .dropdown-backdrop {
   position: fixed;
@@ -2644,11 +2683,11 @@ select[multiple].bootstrap .input-group-sm > .input-group-btn > .btn {
   background-color: #eeeeee;
 }
 .bootstrap .nav > li.disabled > a {
-  color: #999999;
+  color: #777777;
 }
 .bootstrap .nav > li.disabled > a:hover,
 .bootstrap .nav > li.disabled > a:focus {
-  color: #999999;
+  color: #777777;
   text-decoration: none;
   background-color: transparent;
   cursor: not-allowed;
@@ -2906,6 +2945,8 @@ select[multiple].bootstrap .input-group-sm > .input-group-btn > .btn {
   right: 0;
   left: 0;
   z-index: 1030;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
 }
 @media (min-width: 768px) {
   .bootstrap .navbar-fixed-top,
@@ -3073,7 +3114,7 @@ select[multiple].bootstrap .input-group-sm > .input-group-btn > .btn {
   }
   .bootstrap .navbar-form .radio input[type="radio"],
   .bootstrap .navbar-form .checkbox input[type="checkbox"] {
-    float: none;
+    position: relative;
     margin-left: 0;
   }
   .bootstrap .navbar-form .has-feedback .form-control-feedback {
@@ -3236,7 +3277,7 @@ fieldset[disabled] .bootstrap .navbar-default .btn-link:focus {
   border-color: #080808;
 }
 .bootstrap .navbar-inverse .navbar-brand {
-  color: #999999;
+  color: #777777;
 }
 .bootstrap .navbar-inverse .navbar-brand:hover,
 .bootstrap .navbar-inverse .navbar-brand:focus {
@@ -3244,10 +3285,10 @@ fieldset[disabled] .bootstrap .navbar-default .btn-link:focus {
   background-color: transparent;
 }
 .bootstrap .navbar-inverse .navbar-text {
-  color: #999999;
+  color: #777777;
 }
 .bootstrap .navbar-inverse .navbar-nav > li > a {
-  color: #999999;
+  color: #777777;
 }
 .bootstrap .navbar-inverse .navbar-nav > li > a:hover,
 .bootstrap .navbar-inverse .navbar-nav > li > a:focus {
@@ -3294,7 +3335,7 @@ fieldset[disabled] .bootstrap .navbar-default .btn-link:focus {
     background-color: #080808;
   }
   .bootstrap .navbar-inverse .navbar-nav .open .dropdown-menu > li > a {
-    color: #999999;
+    color: #777777;
   }
   .bootstrap .navbar-inverse .navbar-nav .open .dropdown-menu > li > a:hover,
   .bootstrap .navbar-inverse .navbar-nav .open .dropdown-menu > li > a:focus {
@@ -3315,13 +3356,13 @@ fieldset[disabled] .bootstrap .navbar-default .btn-link:focus {
   }
 }
 .bootstrap .navbar-inverse .navbar-link {
-  color: #999999;
+  color: #777777;
 }
 .bootstrap .navbar-inverse .navbar-link:hover {
   color: #ffffff;
 }
 .bootstrap .navbar-inverse .btn-link {
-  color: #999999;
+  color: #777777;
 }
 .bootstrap .navbar-inverse .btn-link:hover,
 .bootstrap .navbar-inverse .btn-link:focus {
@@ -3349,7 +3390,7 @@ fieldset[disabled] .bootstrap .navbar-inverse .btn-link:focus {
   color: #cccccc;
 }
 .bootstrap .breadcrumb > .active {
-  color: #999999;
+  color: #777777;
 }
 .bootstrap .pagination {
   display: inline-block;
@@ -3409,7 +3450,7 @@ fieldset[disabled] .bootstrap .navbar-inverse .btn-link:focus {
 .bootstrap .pagination > .disabled > a,
 .bootstrap .pagination > .disabled > a:hover,
 .bootstrap .pagination > .disabled > a:focus {
-  color: #999999;
+  color: #777777;
   background-color: #ffffff;
   border-color: #dddddd;
   cursor: not-allowed;
@@ -3478,7 +3519,7 @@ fieldset[disabled] .bootstrap .navbar-inverse .btn-link:focus {
 .bootstrap .pager .disabled > a:hover,
 .bootstrap .pager .disabled > a:focus,
 .bootstrap .pager .disabled > span {
-  color: #999999;
+  color: #777777;
   background-color: #ffffff;
   cursor: not-allowed;
 }
@@ -3508,11 +3549,11 @@ a.bootstrap .label:focus {
   top: -1px;
 }
 .bootstrap .label-default {
-  background-color: #999999;
+  background-color: #777777;
 }
 .bootstrap .label-default[href]:hover,
 .bootstrap .label-default[href]:focus {
-  background-color: #808080;
+  background-color: #5e5e5e;
 }
 .bootstrap .label-primary {
   background-color: #428bca;
@@ -3560,7 +3601,7 @@ a.bootstrap .label:focus {
   vertical-align: baseline;
   white-space: nowrap;
   text-align: center;
-  background-color: #999999;
+  background-color: #777777;
   border-radius: 10px;
 }
 .bootstrap .badge:empty {
@@ -3672,10 +3713,12 @@ a.bootstrap .thumbnail.active {
 .bootstrap .alert > p + p {
   margin-top: 5px;
 }
-.bootstrap .alert-dismissable {
+.bootstrap .alert-dismissable,
+.bootstrap .alert-dismissible {
   padding-right: 35px;
 }
-.bootstrap .alert-dismissable .close {
+.bootstrap .alert-dismissable .close,
+.bootstrap .alert-dismissible .close {
   position: relative;
   top: -2px;
   right: -21px;
@@ -3725,6 +3768,14 @@ a.bootstrap .thumbnail.active {
 .bootstrap .alert-danger .alert-link {
   color: #843534;
 }
+@-webkit-keyframes progress-bar-stripes {
+  from {
+    background-position: 40px 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
 @keyframes progress-bar-stripes {
   from {
     background-position: 40px 0;
@@ -3757,13 +3808,15 @@ a.bootstrap .thumbnail.active {
   -o-transition: width 0.6s ease;
   transition: width 0.6s ease;
 }
-.bootstrap .progress-striped .progress-bar {
+.bootstrap .progress-striped .progress-bar,
+.bootstrap .progress-bar-striped {
   background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
   background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
   background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
   background-size: 40px 40px;
 }
-.bootstrap .progress.active .progress-bar {
+.bootstrap .progress.active .progress-bar,
+.bootstrap .progress-bar.active {
   -webkit-animation: progress-bar-stripes 2s linear infinite;
   -o-animation: progress-bar-stripes 2s linear infinite;
   animation: progress-bar-stripes 2s linear infinite;
@@ -3773,7 +3826,7 @@ a.bootstrap .thumbnail.active {
   min-width: 30px;
 }
 .bootstrap .progress-bar[aria-valuenow="0"] {
-  color: #999999;
+  color: #777777;
   min-width: 30px;
   background-color: transparent;
   background-image: none;
@@ -3882,7 +3935,7 @@ a.bootstrap .thumbnail.active {
 .bootstrap .list-group-item.disabled:hover,
 .bootstrap .list-group-item.disabled:focus {
   background-color: #eeeeee;
-  color: #999999;
+  color: #777777;
 }
 .bootstrap .list-group-item.disabled .list-group-item-heading,
 .bootstrap .list-group-item.disabled:hover .list-group-item-heading,
@@ -3892,7 +3945,7 @@ a.bootstrap .thumbnail.active {
 .bootstrap .list-group-item.disabled .list-group-item-text,
 .bootstrap .list-group-item.disabled:hover .list-group-item-text,
 .bootstrap .list-group-item.disabled:focus .list-group-item-text {
-  color: #999999;
+  color: #777777;
 }
 .bootstrap .list-group-item.active,
 .bootstrap .list-group-item.active:hover,
@@ -3904,7 +3957,13 @@ a.bootstrap .thumbnail.active {
 }
 .bootstrap .list-group-item.active .list-group-item-heading,
 .bootstrap .list-group-item.active:hover .list-group-item-heading,
-.bootstrap .list-group-item.active:focus .list-group-item-heading {
+.bootstrap .list-group-item.active:focus .list-group-item-heading,
+.bootstrap .list-group-item.active .list-group-item-heading > small,
+.bootstrap .list-group-item.active:hover .list-group-item-heading > small,
+.bootstrap .list-group-item.active:focus .list-group-item-heading > small,
+.bootstrap .list-group-item.active .list-group-item-heading > .small,
+.bootstrap .list-group-item.active:hover .list-group-item-heading > .small,
+.bootstrap .list-group-item.active:focus .list-group-item-heading > .small {
   color: inherit;
 }
 .bootstrap .list-group-item.active .list-group-item-text,
@@ -4064,8 +4123,12 @@ a.bootstrap .list-group-item-danger.active:focus {
 .bootstrap .panel-heading + .list-group .list-group-item:first-child {
   border-top-width: 0;
 }
+.bootstrap .list-group + .panel-footer {
+  border-top-width: 0;
+}
 .bootstrap .panel > .table,
-.bootstrap .panel > .table-responsive > .table {
+.bootstrap .panel > .table-responsive > .table,
+.bootstrap .panel > .panel-collapse > .table {
   margin-bottom: 0;
 }
 .bootstrap .panel > .table:first-child,
@@ -4195,7 +4258,7 @@ a.bootstrap .list-group-item-danger.active:focus {
 .bootstrap .panel-group .panel-heading {
   border-bottom: 0;
 }
-.bootstrap .panel-group .panel-heading + .panel-collapse .panel-body {
+.bootstrap .panel-group .panel-heading + .panel-collapse > .panel-body {
   border-top: 1px solid #dddddd;
 }
 .bootstrap .panel-group .panel-footer {
@@ -4215,6 +4278,10 @@ a.bootstrap .list-group-item-danger.active:focus {
 .bootstrap .panel-default > .panel-heading + .panel-collapse > .panel-body {
   border-top-color: #dddddd;
 }
+.bootstrap .panel-default > .panel-heading .badge {
+  color: #f5f5f5;
+  background-color: #333333;
+}
 .bootstrap .panel-default > .panel-footer + .panel-collapse > .panel-body {
   border-bottom-color: #dddddd;
 }
@@ -4228,6 +4295,10 @@ a.bootstrap .list-group-item-danger.active:focus {
 }
 .bootstrap .panel-primary > .panel-heading + .panel-collapse > .panel-body {
   border-top-color: #428bca;
+}
+.bootstrap .panel-primary > .panel-heading .badge {
+  color: #428bca;
+  background-color: #ffffff;
 }
 .bootstrap .panel-primary > .panel-footer + .panel-collapse > .panel-body {
   border-bottom-color: #428bca;
@@ -4243,6 +4314,10 @@ a.bootstrap .list-group-item-danger.active:focus {
 .bootstrap .panel-success > .panel-heading + .panel-collapse > .panel-body {
   border-top-color: #d6e9c6;
 }
+.bootstrap .panel-success > .panel-heading .badge {
+  color: #dff0d8;
+  background-color: #3c763d;
+}
 .bootstrap .panel-success > .panel-footer + .panel-collapse > .panel-body {
   border-bottom-color: #d6e9c6;
 }
@@ -4256,6 +4331,10 @@ a.bootstrap .list-group-item-danger.active:focus {
 }
 .bootstrap .panel-info > .panel-heading + .panel-collapse > .panel-body {
   border-top-color: #bce8f1;
+}
+.bootstrap .panel-info > .panel-heading .badge {
+  color: #d9edf7;
+  background-color: #31708f;
 }
 .bootstrap .panel-info > .panel-footer + .panel-collapse > .panel-body {
   border-bottom-color: #bce8f1;
@@ -4271,6 +4350,10 @@ a.bootstrap .list-group-item-danger.active:focus {
 .bootstrap .panel-warning > .panel-heading + .panel-collapse > .panel-body {
   border-top-color: #faebcc;
 }
+.bootstrap .panel-warning > .panel-heading .badge {
+  color: #fcf8e3;
+  background-color: #8a6d3b;
+}
 .bootstrap .panel-warning > .panel-footer + .panel-collapse > .panel-body {
   border-bottom-color: #faebcc;
 }
@@ -4284,6 +4367,10 @@ a.bootstrap .list-group-item-danger.active:focus {
 }
 .bootstrap .panel-danger > .panel-heading + .panel-collapse > .panel-body {
   border-top-color: #ebccd1;
+}
+.bootstrap .panel-danger > .panel-heading .badge {
+  color: #f2dede;
+  background-color: #a94442;
 }
 .bootstrap .panel-danger > .panel-footer + .panel-collapse > .panel-body {
   border-bottom-color: #ebccd1;
@@ -4340,8 +4427,7 @@ button.bootstrap .close {
 }
 .bootstrap .modal {
   display: none;
-  overflow: auto;
-  overflow-y: scroll;
+  overflow: hidden;
   position: fixed;
   top: 0;
   right: 0;
@@ -4352,20 +4438,20 @@ button.bootstrap .close {
   outline: 0;
 }
 .bootstrap .modal.fade .modal-dialog {
-  -webkit-transform: translate(0, -25%);
-  -ms-transform: translate(0, -25%);
-  -o-transform: translate(0, -25%);
-  transform: translate(0, -25%);
+  -webkit-transform: translate3d(0, -25%, 0);
+  transform: translate3d(0, -25%, 0);
   -webkit-transition: -webkit-transform 0.3s ease-out;
   -moz-transition: -moz-transform 0.3s ease-out;
   -o-transition: -o-transform 0.3s ease-out;
   transition: transform 0.3s ease-out;
 }
 .bootstrap .modal.in .modal-dialog {
-  -webkit-transform: translate(0, 0);
-  -ms-transform: translate(0, 0);
-  -o-transform: translate(0, 0);
-  transform: translate(0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+}
+.bootstrap .modal-open .modal {
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 .bootstrap .modal-dialog {
   position: relative;
@@ -4736,7 +4822,7 @@ button.bootstrap .close {
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 .bootstrap .carousel-control.left {
-  background-image: -webkit-linear-gradient(left, color-stop(rgba(0, 0, 0, 0.5) 0%), color-stop(rgba(0, 0, 0, 0.0001) 100%));
+  background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.0001) 100%);
   background-image: -o-linear-gradient(left, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.0001) 100%);
   background-image: linear-gradient(to right, rgba(0, 0, 0, 0.5) 0%, rgba(0, 0, 0, 0.0001) 100%);
   background-repeat: repeat-x;
@@ -4745,7 +4831,7 @@ button.bootstrap .close {
 .bootstrap .carousel-control.right {
   left: auto;
   right: 0;
-  background-image: -webkit-linear-gradient(left, color-stop(rgba(0, 0, 0, 0.0001) 0%), color-stop(rgba(0, 0, 0, 0.5) 100%));
+  background-image: -webkit-linear-gradient(left, rgba(0, 0, 0, 0.0001) 0%, rgba(0, 0, 0, 0.5) 100%);
   background-image: -o-linear-gradient(left, rgba(0, 0, 0, 0.0001) 0%, rgba(0, 0, 0, 0.5) 100%);
   background-image: linear-gradient(to right, rgba(0, 0, 0, 0.0001) 0%, rgba(0, 0, 0, 0.5) 100%);
   background-repeat: repeat-x;
@@ -4945,6 +5031,8 @@ button.bootstrap .close {
 }
 .bootstrap .affix {
   position: fixed;
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
 }
 @-ms-viewport {
   width: device-width;
@@ -5201,14 +5289,14 @@ button.bootstrap .close {
   box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0.6);
 }
 .bootstrap .blogtoc_header select::-moz-placeholder {
-  color: #999999;
+  color: #777777;
   opacity: 1;
 }
 .bootstrap .blogtoc_header select:-ms-input-placeholder {
-  color: #999999;
+  color: #777777;
 }
 .bootstrap .blogtoc_header select::-webkit-input-placeholder {
-  color: #999999;
+  color: #777777;
 }
 .bootstrap .blogtoc_header select[disabled],
 .bootstrap .blogtoc_header select[readonly],
@@ -5249,14 +5337,14 @@ textarea.bootstrap .blogtoc_header select {
   box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, 0.6);
 }
 .bootstrap .blogtoc_filter select::-moz-placeholder {
-  color: #999999;
+  color: #777777;
   opacity: 1;
 }
 .bootstrap .blogtoc_filter select:-ms-input-placeholder {
-  color: #999999;
+  color: #777777;
 }
 .bootstrap .blogtoc_filter select::-webkit-input-placeholder {
-  color: #999999;
+  color: #777777;
 }
 .bootstrap .blogtoc_filter select[disabled],
 .bootstrap .blogtoc_filter select[readonly],
@@ -5277,11 +5365,13 @@ textarea.bootstrap .blogtoc_filter select {
 }
 .bootstrap .blogtoc_filter .blogtoc_search {
   float: right;
-  width: auto !important;
 }
 .bootstrap .blogtoc_filter .blogtoc_search span {
   font-weight: normal;
   margin-right: 5px;
+}
+.bootstrap .blogtoc_filter .blogtoc_search .blogtoc_query {
+  width: auto;
 }
 .bootstrap .blogtoc_filter .bt-form-inline input,
 .bootstrap .blogtoc_filter .bt-form-inline select {
@@ -5354,7 +5444,7 @@ textarea.bootstrap .blogtoc_filter select {
   text-align: center;
   margin: 5px 0;
   font-size: 85%;
-  color: #999999;
+  color: #777777;
 }
 .bootstrap.bt-rtl .blogtoc_display {
   float: right;
@@ -5478,11 +5568,8 @@ textarea.bootstrap .blogtoc_filter select {
     top: -9999px;
     left: -9999px;
   }
-  .bootstrap .blogtoc_search label .blogtoc_query:empty:before {
-    content: attr(data-placeholder);
-  }
-  .bootstrap .blogtoc_search label .blogtoc_query:focus:empty:before {
-    content: "";
+  .bootstrap .blogtoc_search label .blogtoc_query {
+    width: 100%;
   }
   .bootstrap .blogtoc_table {
     display: block;
