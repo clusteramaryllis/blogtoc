@@ -6,7 +6,7 @@
     
     (function() {
 
-      var VERSION = '1.6.1';
+      var VERSION = '1.6.2';
 
       var BASE_URL = '//blogtoc2.googlecode.com/svn/trunk/' + VERSION + '/';
 
@@ -26,7 +26,7 @@
         whitespaceRegex = /(^\s+|\s{2,}|\s+$)/g, // remove whitespace
         stripHtmlRegex = /(<([^>]+)>)/ig, // strip html tags
         removeScriptRegex = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, // remove script 
-        noSortRegex = /^(index|thumbnail|label)$/i, // don't sorting
+        noSortRegex = /^(index|label)$/i, // don't sorting
         noGenerateRegex = /^(actualImage|authorThumbnail|authorUrl|badge|category|commentURL|fullSummary|publishDateFormat|titleURL|thumbConfig|updateDateFormat)$/i; // don't generate
 
       var themes = {},
@@ -44,7 +44,7 @@
       
         var _parent = element,
           opts, config, feed,
-          root, notifier, loader, contenter, header, filter, tabler, footer, resulter, paging, copyright;
+          root, notifier, loader, content, header, filter, tabler, footer, resulter, paging, copyright;
 
         var _alpha, _contentType;
         
@@ -168,7 +168,8 @@
               },
               sorting: { 
                 key: 'title', 
-                order: 'ascending'
+                order: 'ascending',
+                disable: []
               },
               summary: {
                 wordLimit: 200
@@ -181,11 +182,11 @@
                 authorWidthPoint : 10.5,
                 commentWidthPoint : 11,
                 labelWidthPoint: 24,
-                publishDateWidthPoint : 12.5,
-                summaryWidthPoint : 25,
-                thumbnailWidthPoint : 7,
-                titleWidthPoint : 26,
-                updateDateWidthPoint : 12.5
+                publishDateWidthPoint: 12.5,
+                summaryWidthPoint: 25,
+                thumbnailWidthPoint: 7,
+                titleWidthPoint: 26,
+                updateDateWidthPoint: 12.5
               },
               theme: {
                 setup: defaultTheme
@@ -238,8 +239,8 @@
             root = _parent.BTID;
             notifier = root.firstChild;
             loader = _nextElement( notifier );
-            contenter = _nextElement( loader );
-            header = contenter.firstChild;
+            content = _nextElement( loader );
+            header = content.firstChild;
             filter = _nextElement( header );
             tabler = _nextElement( filter );
             footer = _nextElement( tabler );
@@ -249,7 +250,7 @@
             _extendClass( root, opts.extendClass.blogtoc_id );
             _extendClass( notifier, opts.extendClass.blogtoc_notification );
             _extendClass( loader, opts.extendClass.blogtoc_loader );
-            _extendClass( contenter, opts.extendClass.blogtoc_content );
+            _extendClass( content, opts.extendClass.blogtoc_content );
             _extendClass( header, opts.extendClass.blogtoc_header );
             _extendClass( filter, opts.extendClass.blogtoc_filter );
             _extendClass( tabler, opts.extendClass.blogtoc_table );
@@ -494,7 +495,7 @@
                 // setTimeout( function() {
                 _setImmediate( function() {
 
-                  var entry = jfeed.entry[i];
+                  var entry = jfeed.entry[ i ];
 
                   // post title section, removing white space
                   obj.title = entry.title.$t.replace( whitespaceRegex, '' );
@@ -554,6 +555,11 @@
                       obj.thumbnail = _BTMakeThumbnail( obj.actualImage, size, server );
                     }
                   }
+
+                  // store thumbnail element
+                  obj.thumbElmt = new Image();
+                  obj.thumbElmt.crossOrigin = '';
+                  obj.thumbElmt.src = obj.thumbnail;
                   
                   // title & replies URL section
                   for ( var k = 0; k < entry.link.length; k++ ) {
@@ -732,7 +738,7 @@
               sortFn;
 
             // show data
-            contenter.style.display = 'block';
+            content.style.display = 'block';
 
             // label section
             _self.makeLabel( feed.label, 'showLabel', 'cloudLabel', 'setup', 'blogtoc_label', klass.blogtoc_label, labelFn );
@@ -784,7 +790,8 @@
             filter.appendChild( div );
             
             var mLen = config.mapper.length, mData,
-              tableChild, thead, tr, th, node, span;
+              tableChild, thead, tr, th, node, span,
+              thLang;
             
             // thead section
             
@@ -799,14 +806,16 @@
               sortFn = "BlogToc.sort('"+ mData +"', document.getElementById('"+ root.id +"')); return false;";
               
               th = _createElement( 'th', { width: config.mapperWidth[ j ] });
+              thLang = opts.language.custom[ mData ] ? opts.language.custom[ mData ] : mData;
+
               
               if ( noGenerateRegex.test( mData ) ) {
                 continue;
-              } else if ( noSortRegex.test( mData ) ) {
-                node = document.createTextNode( opts.language.custom[ mData ] );
+              } else if ( noSortRegex.test( mData ) || _inArray( mData, opts.sorting.disable ) ) {
+                node = document.createTextNode( thLang );
               } else {
                 span = _createElement( 'span', null, null, 'icon-menu' );
-                node = _createElement( 'a', { href: 'javascript:void(0)', onclick: sortFn }, opts.language.custom[ mData ] );
+                node = _createElement( 'a', { href: 'javascript:void(0)', onclick: sortFn }, thLang );
                 
                 node.appendChild( span );
                 
@@ -815,7 +824,7 @@
               }
               
               // populate sorting order cache
-              config.order[mData] = null;
+              config.order[ mData ] = null;
               
               th.appendChild( node );
               tr.appendChild( th );
@@ -2197,7 +2206,7 @@
       };
 
       /* JSON.parse
-       * @param : <string> data
+       * @param : <string>data
        * https://github.com/jquery/jquery/blob/1.9.1/src/core.js
        ********************************************************************/
       var _parseJSON = function( data ) {
@@ -2227,7 +2236,60 @@
           }
         }
 
-        throw new SyntaxError( 'JSON.parse' );
+        throw new SyntaxError('JSON.parse');
+      };
+
+      /* Get RGB value of images
+       * @param : <node>img
+       * http://stackoverflow.com/a/2541680/2863460
+       ********************************************************************/
+      var _getAverageRGB = function( img ) {
+        var blockSize = 5, // only visit every 5 pixels
+         defaultRGB = { r: 0, g: 0, b: 0 }, // for non-supporting envs
+         canvas = document.createElement('canvas'),
+         context = canvas.getContext && canvas.getContext('2d'),
+         data, width, height,
+         i = -4,
+         length,
+         rgb = { r: 0, g: 0, b: 0 },
+         count = 0;
+            
+        if ( !context ) {
+          return defaultRGB;
+        }
+        
+        height = canvas.height = img.naturalHeight || img.offsetHeight || img.height;
+        width = canvas.width = img.naturalWidth || img.offsetWidth || img.width;
+        
+        try {
+          context.drawImage( img, 0, 0 );  
+        } catch ( e ) {
+          /* image not loaded yet */
+          return defaultRGB;
+        }
+        
+        try {
+          data = context.getImageData( 0, 0, width, height );
+        } catch( e ) {
+          /* security error, img on diff domain */
+          return defaultRGB;
+        }
+        
+        length = data.data.length;
+        
+        while ( ( i += blockSize * 4 ) < length ) {
+          ++count;
+          rgb.r += data.data[ i ];
+          rgb.g += data.data[ i+1 ];
+          rgb.b += data.data[ i+2 ];
+        }
+        
+        // ~~ used to floor values
+        rgb.r = ~~( rgb.r / count );
+        rgb.g = ~~( rgb.g / count );
+        rgb.b = ~~( rgb.b / count );
+        
+        return rgb;
       };
 
       /* very simple append string
@@ -2276,15 +2338,15 @@
         return def;
       };
 
-      /* Opposite of extends, lol don't know the appropiate name to call this
+      /* Opposite of extends
        * @param  : <object>def (Default options)
        * @param  : <object>config (User's options)
        ********************************************************************/
-      var _pretends = function( def, config ) {
+      var _degrade = function( def, config ) {
         for (var key in config) {
           if ( config.hasOwnProperty( key ) ) {
             if ( typeof config[ key ] === 'object' ) { 
-              def[ key ] = _pretends( def[ key ], config[ key ] );
+              def[ key ] = _degrade( def[ key ], config[ key ] );
             } else {
               // boolean & number aren't count
               if( typeof def[ key ] !== 'boolean' &&
@@ -2298,7 +2360,7 @@
         return def;
       };
 
-      /* Opposite of extends, lol don't know the appropiate name to call this
+      /* Page records initialization
        * @param  : <array>template
        * @param  : <number/string>def
        * @param  : <number>count
@@ -2312,7 +2374,8 @@
           temp = [];
         
         for ( ; i < len; i++ ) {
-          // check if a number @link http://stackoverflow.com/a/1830844
+          // check if a number 
+          // @link http://stackoverflow.com/a/1830844
           if ( _isNumber( template[ i ] ) ) {
             temp.push( { num: template[ i ], name: template[ i ] } );
           } else {
@@ -2320,7 +2383,8 @@
           }
         }
 
-        // Sort number first then string @link http://stackoverflow.com/a/19276824/2863460
+        // Sort number first then string 
+        // @link http://stackoverflow.com/a/19276824/2863460
         temp = temp.sort(function ( x, y ) {
           return !_isNumber( x.name ) ? 1 : x.num - y.num;
         });
@@ -2572,7 +2636,7 @@
        * @param  : <JSObject>option
        ********************************************************************/ 
       var _BTBuildLang = function( def, lang, option ) {
-        _pretends( option, lang[ def ].options );
+        _degrade( option, lang[ def ].options );
       };
 
       /* Build Theme Starter
@@ -2690,6 +2754,15 @@
           fn = function( a, b ) {
             return a[ key + 'Format' ] - b[ key + 'Format' ];
           };
+        } else if ( key === 'thumbnail' ) {
+          fn = function( a, b ) {
+            var aRgb = _getAverageRGB( a.thumbElmt ),
+             bRgb = _getAverageRGB( b.thumbElmt ),
+             aDec = ( aRgb.r << 16 ) + ( aRgb.g << 8 ) + aRgb.b,
+             bDec = ( bRgb.r << 16 ) + ( bRgb.g << 8 ) + bRgb.b;
+
+            return aDec - bDec;
+          };
         } else if ( typeof data[0][ key ] === 'string' ) { // sorting by string
           fn = function( a, b ) {
             return a[ key ].toLowerCase() > b[ key ].toLowerCase() ? 1 : -1;
@@ -2744,8 +2817,8 @@
         var _root = el.BTID,
           _notifier = _root.firstChild,
           _loader = _nextElement( _notifier ),
-          _contenter = _nextElement( _loader ),
-          _header = _contenter.firstChild,
+          _content = _nextElement( _loader ),
+          _header = _content.firstChild,
           _filter = _nextElement( _header ),
           _tabler = _nextElement( _filter ),
           _footer = _nextElement( _tabler ),
@@ -2761,7 +2834,7 @@
 
         // reset class
         _root.className = '';
-        _contenter.className = 'blogtoc_content';
+        _content.className = 'blogtoc_content';
         _notifier.className = 'blogtoc_notification';
         _loader.className = 'blogtoc_loader';
         _header.className = 'blogtoc_header';
@@ -2772,7 +2845,7 @@
 
         _root.style.display = 'block';
         _loader.style.display = 'block';
-        _contenter.style.display = 'none';
+        _content.style.display = 'none';
       };
       
       /* Test the connection image on the fly service
