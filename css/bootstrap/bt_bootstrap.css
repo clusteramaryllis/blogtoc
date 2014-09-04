@@ -5329,6 +5329,7 @@ textarea.bootstrap .blogtoc_header select {
   -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
   transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
   width: auto;
+  vertical-align: baseline;
 }
 .bootstrap .blogtoc_filter select:focus {
   border-color: #66afe9;
@@ -5372,6 +5373,7 @@ textarea.bootstrap .blogtoc_filter select {
 }
 .bootstrap .blogtoc_filter .blogtoc_search .blogtoc_query {
   width: auto;
+  vertical-align: baseline;
 }
 .bootstrap .blogtoc_filter .bt-form-inline input,
 .bootstrap .blogtoc_filter .bt-form-inline select {
