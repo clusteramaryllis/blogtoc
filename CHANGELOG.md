@@ -1,7 +1,7 @@
 ## Changelog ##
 
 ### 1.6.2
-* Added sort by thumbnail color (experimental).
+* Disable sorting by author (cause issues when sorting large data)
 * Added disable in sorting option to disable sorting in certain component.
 * Fixed CSS
 * Update bootstrap to v3.2.0

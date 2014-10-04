@@ -1,5 +1,5 @@
 /**!
-* BlogToc v1.6.1
+* BlogToc v1.6.2
 * Copyright 2014 Cluster Amaryllis
 * Licensed in (https://github.com/clusteramaryllis/blogtoc/blob/develop/LICENSE)
 * 
@@ -14,7 +14,7 @@
     
     (function() {
 
-      var VERSION = '1.6.1';
+      var VERSION = '1.6.2';
 
       var BASE_URL = '//blogtoc2.googlecode.com/svn/trunk/' + VERSION + '/';
 
@@ -34,8 +34,8 @@
         whitespaceRegex = /(^\s+|\s{2,}|\s+$)/g, // remove whitespace
         stripHtmlRegex = /(<([^>]+)>)/ig, // strip html tags
         removeScriptRegex = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, // remove script 
-        noSortRegex = /^(index|label)$/i, // don't sorting
-        noGenerateRegex = /^(actualImage|authorThumbnail|authorUrl|badge|category|commentURL|fullSummary|publishDateFormat|titleURL|thumbConfig|updateDateFormat)$/i; // don't generate
+        noSortRegex = /^(index|thumbnail|author|label)$/i, // don't sorting
+        noGenerateRegex = /^(actualImage|authorThumbnail|authorUrl|badge|category|commentURL|fullSummary|publishDateFormat|titleURL|updateDateFormat)$/i; // don't generate
 
       var themes = {},
         languages = {};
@@ -514,8 +514,8 @@
                     upDate = entry.updated.$t.substring( 0, 10 ).split('-'),
                     upTime = entry.updated.$t.substring( 11, 19 ).split(':');
 
-                  obj.publishDateFormat = _makeDate( pbDate,pbTime );
-                  obj.updateDateFormat  = _makeDate( upDate,upTime );
+                  obj.publishDateFormat = _makeDate( pbDate, pbTime );
+                  obj.updateDateFormat  = _makeDate( upDate, upTime );
                   obj.publishDate = render( obj.publishDateFormat, opts );
                   obj.updateDate  = render( obj.updateDateFormat, opts );
 
@@ -537,11 +537,9 @@
                   
                   // thumbnails section
                   var imgSrc;
-                  
-                  obj.thumbConfig = {};
 
                   // check for default blog thumbnail entry
-                  // if it's not found find <img> tag in summary
+                  // if can't find <img> tag in summary
                   if ( 'media$thumbnail' in entry ) { 
                     obj.thumbnail = entry.media$thumbnail.url;
                     obj.actualImage = obj.thumbnail.replace( thumbRegex, 's0' );
@@ -565,9 +563,9 @@
                   }
 
                   // store thumbnail element
-                  obj.thumbElmt = new Image();
+                  /*obj.thumbElmt = new Image();
                   obj.thumbElmt.crossOrigin = '';
-                  obj.thumbElmt.src = obj.thumbnail;
+                  obj.thumbElmt.src = obj.thumbnail;*/
                   
                   // title & replies URL section
                   for ( var k = 0; k < entry.link.length; k++ ) {
@@ -2251,7 +2249,7 @@
        * @param : <node>img
        * http://stackoverflow.com/a/2541680/2863460
        ********************************************************************/
-      var _getAverageRGB = function( img ) {
+      /*var _getAverageRGB = function( img ) {
         var blockSize = 5, // only visit every 5 pixels
          defaultRGB = { r: 0, g: 0, b: 0 }, // for non-supporting envs
          canvas = document.createElement('canvas'),
@@ -2272,14 +2270,14 @@
         try {
           context.drawImage( img, 0, 0 );  
         } catch ( e ) {
-          /* image not loaded yet */
+          // image not loaded yet 
           return defaultRGB;
         }
         
         try {
           data = context.getImageData( 0, 0, width, height );
         } catch( e ) {
-          /* security error, img on diff domain */
+          // security error, img on diff domain 
           return defaultRGB;
         }
         
@@ -2298,7 +2296,7 @@
         rgb.b = ~~( rgb.b / count );
         
         return rgb;
-      };
+      };*/
 
       /* very simple append string
        * @param  : <string>def
@@ -2762,7 +2760,7 @@
           fn = function( a, b ) {
             return a[ key + 'Format' ] - b[ key + 'Format' ];
           };
-        } else if ( key === 'thumbnail' ) {
+        } /*else if ( key === 'thumbnail' ) {
           fn = function( a, b ) {
             var aRgb = _getAverageRGB( a.thumbElmt ),
              bRgb = _getAverageRGB( b.thumbElmt ),
@@ -2771,7 +2769,7 @@
 
             return aDec - bDec;
           };
-        } else if ( typeof data[0][ key ] === 'string' ) { // sorting by string
+        }*/ else if ( typeof data[0][ key ] === 'string' ) { // sorting by string
           fn = function( a, b ) {
             return a[ key ].toLowerCase() > b[ key ].toLowerCase() ? 1 : -1;
           };
