@@ -111,7 +111,7 @@
                 setupAlphabet: 'All',
                 alphabetAllText: 'All',
                 cloudAlphabetLabel: false,
-                symbolicAlphabetFilter: '^[^A-Z]', // /^[0-9\-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/i, experimental
+                symbolicAlphabetFilter: /^[0-9$-\/:-?{-~!"^_`\[\]]/i,
                 alphabetMember: alphabet
               },
               language: {
@@ -1301,7 +1301,7 @@
                 alphaRegex;
                 
               if ( val === '#' ) { // symbolic
-                alphaRegex = new RegExp( opts.label.symbolicAlphabetFilter, 'i' );
+                alphaRegex = opts.label.symbolicAlphabetFilter;
               } else { // alphabetic
                 alphaRegex = new RegExp( '^' + val, 'i' );
               }
