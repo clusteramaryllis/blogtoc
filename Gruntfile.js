@@ -113,7 +113,6 @@ module.exports = function( grunt ) {
 				"nonew": true,
 				"-W009": true,
 				"-W041": true,
-				"-W044": true,
 				"-W083": true,
 				"-W107": true
 			},

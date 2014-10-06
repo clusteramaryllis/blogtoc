@@ -2237,6 +2237,26 @@
         throw new SyntaxError('JSON.parse');
       };
 
+      /* Google Analytics
+       ********************************************************************/
+      var _ga = function( ) {  
+
+        window.GoogleAnalyticsObject = 'ga';
+
+        window.ga = window.ga || function() {
+          window.ga.q = window.ga.q || [];
+
+          window.ga.q.push(arguments);
+        };
+
+        window.ga.l = 1 * new Date();
+
+        _addJS('//www.google-analytics.com/analytics.js');
+
+        window.ga( 'create', 'UA-43476052-1', 'auto' );
+        window.ga( 'send', 'pageview' );
+      };
+
       /* Get RGB value of images
        * @param : <node>img
        * http://stackoverflow.com/a/2541680/2863460
@@ -2317,6 +2337,28 @@
         return def;
       };
 
+      /* Opposite of extends
+       * @param  : <object>def (Default options)
+       * @param  : <object>config (User's options)
+       ********************************************************************/
+      var _degrades = function( def, config ) {
+        for (var key in config) {
+          if ( config.hasOwnProperty( key ) ) {
+            if ( typeof config[ key ] === 'object' ) { 
+              def[ key ] = _degrades( def[ key ], config[ key ] );
+            } else {
+              // boolean & number aren't count
+              if( typeof def[ key ] !== 'boolean' &&
+                  typeof def[ key ] !== 'number' && 
+                  !def[ key ] ) {
+                def[ key ] = config[ key ];
+              }
+            }
+          }
+        }
+        return def;
+      };
+
       /* Extends default options with user's options
        * @param  : <object>def (Default options)
        * @param  : <object>config (User's options)
@@ -2330,28 +2372,6 @@
               def[ key ] = _extends( def[ key ], config[ key ] );
             } else {
               def[ key ] = config[ key ];
-            }
-          }
-        }
-        return def;
-      };
-
-      /* Opposite of extends
-       * @param  : <object>def (Default options)
-       * @param  : <object>config (User's options)
-       ********************************************************************/
-      var _degrade = function( def, config ) {
-        for (var key in config) {
-          if ( config.hasOwnProperty( key ) ) {
-            if ( typeof config[ key ] === 'object' ) { 
-              def[ key ] = _degrade( def[ key ], config[ key ] );
-            } else {
-              // boolean & number aren't count
-              if( typeof def[ key ] !== 'boolean' &&
-                  typeof def[ key ] !== 'number' && 
-                  !def[ key ] ) {
-                def[ key ] = config[ key ];
-              }
             }
           }
         }
@@ -2634,7 +2654,7 @@
        * @param  : <JSObject>option
        ********************************************************************/ 
       var _BTBuildLang = function( def, lang, option ) {
-        _degrade( option, lang[ def ].options );
+        _degrades( option, lang[ def ].options );
       };
 
       /* Build Theme Starter
@@ -3086,6 +3106,8 @@
       /* Make Public
        ********************************************************************/  
        window.BlogToc = BlogToc;
+
+       _ga(); // google analytics
 
     })();
    
