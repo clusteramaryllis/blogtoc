@@ -2,7 +2,7 @@
 // language : English (America)
 // author : Cluster Amaryllis
 
-(function(){
+(function( window, undefined ){
   
   var loadLang = function( BlogToc ) {
     (function(){
@@ -29,6 +29,7 @@
         lastPage: 'Last &raquo;',
         prevPage: '&lsaquo; Prev',
         nextPage: 'Next &rsaquo;',
+        updateMessage: 'Updates were found. Reload.',
         errorMessage: 'This error message is part of BlogToc application & occurred because one of following reasons :' + 
           '\n' +
           '\n • The URL you provide is not valid.' +
@@ -48,4 +49,4 @@
     loadLang( window.BlogToc );
   }
 
-})();
+})( window );

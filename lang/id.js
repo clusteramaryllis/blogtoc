@@ -2,7 +2,7 @@
 // language : Bahasa Indonesia
 // author : Cluster Amaryllis
 
-(function(){
+(function( window, undefined ){
   
   var loadLang = function( BlogToc ) {
     (function(){
@@ -29,6 +29,7 @@
         lastPage: 'Terakhir &raquo;',
         prevPage: '&lsaquo; Sebelum',
         nextPage: 'Sesudah &rsaquo;',
+        updateMessage: 'Update ditemukan. Muat ulang.',
         errorMessage: 'Pesan error ini adalah bagian dari aplikasi BlogToc & terjadi karena salah satu sebab, diantaranya :' + 
           '\n' +
           '\n • URL yang Anda sediakan tidak valid.' +
@@ -48,4 +49,4 @@
     loadLang( window.BlogToc );
   }
 
-})();
+})( window );

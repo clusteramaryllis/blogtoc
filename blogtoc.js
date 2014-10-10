@@ -1,12 +1,12 @@
 /**!
-* BlogToc v1.6.0
+* BlogToc v1.6.2
 * Copyright 2014 Cluster Amaryllis
 * Licensed in (https://github.com/clusteramaryllis/blogtoc/blob/develop/LICENSE)
 * 
 * A javascript plugin to make table of contents for blogspot using Blogger Feed API.
 */
 
-!(function() {
+!(function( window, undefined ) {
 
   'use strict';
 
@@ -14,7 +14,7 @@
     
     (function() {
 
-      var VERSION = '1.6.0';
+      var VERSION = '1.6.2';
 
       var BASE_URL = '//blogtoc2.googlecode.com/svn/trunk/' + VERSION + '/';
 
@@ -34,8 +34,8 @@
         whitespaceRegex = /(^\s+|\s{2,}|\s+$)/g, // remove whitespace
         stripHtmlRegex = /(<([^>]+)>)/ig, // strip html tags
         removeScriptRegex = /<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, // remove script 
-        noSortRegex = /^(index|thumbnail|label)$/i, // don't sorting
-        noGenerateRegex = /^(actualImage|authorThumbnail|authorUrl|badge|category|commentURL|fullSummary|publishDateFormat|titleURL|thumbConfig|updateDateFormat)$/i; // don't generate
+        noSortRegex = /^(index|thumbnail|author|label)$/i, // don't sorting
+        noGenerateRegex = /^(actualImage|authorThumbnail|authorUrl|badge|category|commentURL|fullSummary|publishDateFormat|titleURL|updateDateFormat)$/i; // don't generate
 
       var themes = {},
         languages = {};
@@ -52,7 +52,7 @@
       
         var _parent = element,
           opts, config, feed,
-          root, loader, contenter, header, filter, tabler, footer, resulter, paging, copyright;
+          root, notifier, loader, content, header, filter, tabler, footer, resulter, paging, copyright;
 
         var _alpha, _contentType;
         
@@ -111,7 +111,7 @@
                 setupAlphabet: 'All',
                 alphabetAllText: 'All',
                 cloudAlphabetLabel: false,
-                symbolicAlphabetFilter: '^[^A-Z]', // /^[0-9\-!$%^&*()_+|~=`{}\[\]:";'<>?,.\/]/i, experimental
+                symbolicAlphabetFilter: /^[0-9$-\/:-?{-~!"^_`\[\]]/i,
                 alphabetMember: alphabet
               },
               language: {
@@ -130,6 +130,10 @@
                   return '<span class="label">' + language + '</span>';
                 }
               },
+              notification: {
+                enabled: false,
+                interval: 60 * 1 * 1000
+              },
               number: {
                 render: function( idx ) {
                   return idx;
@@ -141,7 +145,7 @@
                 showPrevPage: true,
                 showFirstPage: true,
                 showLastPage: true,
-                showNumber: true,
+                showNumber: true
               },
               postLabel: {
                 separator: '',
@@ -172,7 +176,8 @@
               },
               sorting: { 
                 key: 'title', 
-                order: 'ascending'
+                order: 'ascending',
+                disable: []
               },
               summary: {
                 wordLimit: 200
@@ -185,11 +190,11 @@
                 authorWidthPoint : 10.5,
                 commentWidthPoint : 11,
                 labelWidthPoint: 24,
-                publishDateWidthPoint : 12.5,
-                summaryWidthPoint : 25,
-                thumbnailWidthPoint : 7,
-                titleWidthPoint : 26,
-                updateDateWidthPoint : 12.5
+                publishDateWidthPoint: 12.5,
+                summaryWidthPoint: 25,
+                thumbnailWidthPoint: 7,
+                titleWidthPoint: 26,
+                updateDateWidthPoint: 12.5
               },
               theme: {
                 setup: defaultTheme
@@ -218,6 +223,7 @@
               cache: {},
               iotf: {},
               iterate: 0,
+              liveUpdate: false,
               order: {},
               registeredEvent: {},
               searchRegex: null,
@@ -239,9 +245,10 @@
             
             // save necessary element
             root = _parent.BTID;
-            loader = root.firstChild;
-            contenter = _nextElement( loader );
-            header = contenter.firstChild;
+            notifier = root.firstChild;
+            loader = _nextElement( notifier );
+            content = _nextElement( loader );
+            header = content.firstChild;
             filter = _nextElement( header );
             tabler = _nextElement( filter );
             footer = _nextElement( tabler );
@@ -249,8 +256,9 @@
             
             // apply classes
             _extendClass( root, opts.extendClass.blogtoc_id );
+            _extendClass( notifier, opts.extendClass.blogtoc_notification );
             _extendClass( loader, opts.extendClass.blogtoc_loader );
-            _extendClass( contenter, opts.extendClass.blogtoc_content );
+            _extendClass( content, opts.extendClass.blogtoc_content );
             _extendClass( header, opts.extendClass.blogtoc_header );
             _extendClass( filter, opts.extendClass.blogtoc_filter );
             _extendClass( tabler, opts.extendClass.blogtoc_table );
@@ -263,10 +271,12 @@
             if ( opts.rightToLeft ) {
               root.setAttribute( 'dir', 'rtl' );
               _extendClass( root, 'bt-rtl' );
+            } else {
+              root.setAttribute( 'dir', 'ltr' );
             }
 
             // content type base on feed type
-            _contentType = opts.feed.type === "default" ? "content" : "summary";
+            _contentType = opts.feed.type === 'default' ? 'content' : 'summary';
 
             // cache the request
             config.cache.req = new Array();
@@ -283,9 +293,9 @@
             // setup for table header width
             config.mapperWidth = [];
             // setup for thumbnail anchor inline-css
-            config.tbwrapper = 'display:block;width:' + opts.thumbnail.size + 'px;height:'+ opts.thumbnail.size + 'px;';
+            config.tbwrapper = 'display:block;width:' + opts.thumbnail.size + 'px;height:' + opts.thumbnail.size + 'px;';
             // setup for thumbnail image inline-css
-            config.tbimg = 'width:' + opts.thumbnail.size + 'px;height:'+ opts.thumbnail.size + 'px;';
+            config.tbimg = 'width:' + opts.thumbnail.size + 'px;height:' + opts.thumbnail.size + 'px;';
             // setup for page
             config.page = 1;
             // setup for page state history
@@ -397,7 +407,7 @@
             };
 
             // jsonp ?
-            var jsonp = !!~opts.dataType.toLowerCase().indexOf('jsonp'),
+            var jsonp = opts.dataType.toLowerCase() === 'jsonp',
               dataType, req, count;
 
             dataType = jsonp ? 'json-in-script' : 'json';
@@ -490,9 +500,10 @@
               
               var saveFeed = function() {
               
-                setTimeout( function() {
+                // setTimeout( function() {
+                _setImmediate( function() {
 
-                  var entry = jfeed.entry[i];
+                  var entry = jfeed.entry[ i ];
 
                   // post title section, removing white space
                   obj.title = entry.title.$t.replace( whitespaceRegex, '' );
@@ -503,8 +514,8 @@
                     upDate = entry.updated.$t.substring( 0, 10 ).split('-'),
                     upTime = entry.updated.$t.substring( 11, 19 ).split(':');
 
-                  obj.publishDateFormat = _makeDate( pbDate,pbTime );
-                  obj.updateDateFormat  = _makeDate( upDate,upTime );
+                  obj.publishDateFormat = _makeDate( pbDate, pbTime );
+                  obj.updateDateFormat  = _makeDate( upDate, upTime );
                   obj.publishDate = render( obj.publishDateFormat, opts );
                   obj.updateDate  = render( obj.updateDateFormat, opts );
 
@@ -526,11 +537,9 @@
                   
                   // thumbnails section
                   var imgSrc;
-                  
-                  obj.thumbConfig = {};
 
                   // check for default blog thumbnail entry
-                  // if it's not found find <img> tag in summary
+                  // if can't find <img> tag in summary
                   if ( 'media$thumbnail' in entry ) { 
                     obj.thumbnail = entry.media$thumbnail.url;
                     obj.actualImage = obj.thumbnail.replace( thumbRegex, 's0' );
@@ -552,6 +561,11 @@
                       obj.thumbnail = _BTMakeThumbnail( obj.actualImage, size, server );
                     }
                   }
+
+                  // store thumbnail element
+                  /*obj.thumbElmt = new Image();
+                  obj.thumbElmt.crossOrigin = '';
+                  obj.thumbElmt.src = obj.thumbnail;*/
                   
                   // title & replies URL section
                   for ( var k = 0; k < entry.link.length; k++ ) {
@@ -611,18 +625,104 @@
                   // the end of total blog post, 
                   // build user interface & hide loader
                   if ( config.iterate >=  count ) {
+
+                    // store original data
+                    config.cache.originData = _BTSort( data, 'publishDate' ).slice(0).reverse();
+
                     setTimeout( function() {
                       loader.style.display = 'none';
                       _self.buildUI();
-                    }, 1000 );
+                    }, 500 );
                   }
-                }, 1 );
+                // }, 0 );
+                }, 0 );
               }; 
               
               saveFeed();
             }
 
           }, 
+
+          /* Check if there's new feed
+           ****************************************************************/
+          checkFeed: function( json ) {
+
+            var _self = this;
+            
+            // object and array => value by reference
+            var jfeed = json.feed, temp = {};
+
+            if ( 'openSearch$totalResults' in jfeed ) {
+              temp.count = jfeed.openSearch$totalResults.$t;
+            }
+
+            if ( jfeed.entry[0] ) {
+              var entry = jfeed.entry[0],
+                pbDate = entry.published.$t.substring( 0, 10 ).split('-'),
+                pbTime = entry.published.$t.substring( 11, 19 ).split(':');
+
+              temp.publishDateFormat = _makeDate( pbDate, pbTime );
+            }
+
+            // check if there is first post
+            config.isUpdated = config.cache.originData[0] &&
+              ( temp.count !== feed.count || 
+                +temp.publishDateFormat !== +config.cache.originData[0].publishDateFormat );
+          },
+
+          /* Check if there's new update
+           ****************************************************************/
+          checkUpdate: function() {
+
+            var _self = this;
+
+            // json callback
+            window[ 'BTCUJSONCallback_' + root.id ] = function ( json ) {
+              _self.checkFeed( json );
+            };
+
+            // jsonp ?
+            var jsonp = opts.dataType.toLowerCase() === 'jsonp',
+              dataType, url = opts.url.replace( httpRegex, '' ),
+              newUrl, doFn, scriptID;
+
+            dataType = jsonp ? 'json-in-script' : 'json';
+            newUrl = 'http://' + url + 
+              '/feeds/posts/'+ opts.feed.type +
+              '/?' +
+              'max-results=1&' +
+              'alt=' + dataType + '&';
+
+            doFn = function() {
+              if ( config.isUpdated ) {
+
+                // if using _createElement, the event handler gone
+                var anchor = '<a href="javascript:void(0)" ' +
+                  'onclick="BlogToc.reset(document.getElementById(\''+ root.id +'\').parentNode); return false;">' +
+                  '<span class="icon-spin"></span> ' + opts.language.custom.updateMessage +
+                  '</a>';
+
+                notifier.innerHTML = anchor;
+              }
+            };
+
+            if ( jsonp ) {
+              newUrl += 'callback=BTCUJSONCallback_' + root.id;
+              scriptID = url + '_' + _uniqueNumber();
+
+              _addJS( newUrl, scriptID, function() {
+                _removeElement( _getId( scriptID ) );
+                doFn();
+              });
+            } else {
+              _ajaxRequest( newUrl, function( req ) {
+                json = _parseJSON( req.responseText );
+                _self.checkFeed( json );
+
+                doFn();
+              });
+            }
+          },          
           
           /* Build the starter user interface
            ****************************************************************/
@@ -644,7 +744,7 @@
               sortFn;
 
             // show data
-            contenter.style.display = 'block';
+            content.style.display = 'block';
 
             // label section
             _self.makeLabel( feed.label, 'showLabel', 'cloudLabel', 'setup', 'blogtoc_label', klass.blogtoc_label, labelFn );
@@ -696,7 +796,8 @@
             filter.appendChild( div );
             
             var mLen = config.mapper.length, mData,
-              tableChild, thead, tr, th, node, span;
+              tableChild, thead, tr, th, node, span,
+              thLang;
             
             // thead section
             
@@ -711,14 +812,16 @@
               sortFn = "BlogToc.sort('"+ mData +"', document.getElementById('"+ root.id +"')); return false;";
               
               th = _createElement( 'th', { width: config.mapperWidth[ j ] });
+              thLang = opts.language.custom[ mData ] ? opts.language.custom[ mData ] : mData;
+
               
               if ( noGenerateRegex.test( mData ) ) {
                 continue;
-              } else if ( noSortRegex.test( mData ) ) {
-                node = document.createTextNode( opts.language.custom[ mData ] );
+              } else if ( noSortRegex.test( mData ) || _inArray( mData, opts.sorting.disable ) ) {
+                node = document.createTextNode( thLang );
               } else {
                 span = _createElement( 'span', null, null, 'icon-menu' );
-                node = _createElement( 'a', { href: 'javascript:void(0)', onclick: sortFn }, opts.language.custom[ mData ] );
+                node = _createElement( 'a', { href: 'javascript:void(0)', onclick: sortFn }, thLang );
                 
                 node.appendChild( span );
                 
@@ -727,7 +830,7 @@
               }
               
               // populate sorting order cache
-              config.order[mData] = null;
+              config.order[ mData ] = null;
               
               th.appendChild( node );
               tr.appendChild( th );
@@ -827,6 +930,13 @@
             for ( var k = 0, elm, rLen = config.cache.req.length; k < rLen; k++ ) {
               elm = _getId( config.cache.req[ k ] );
               if ( elm ) { _removeElement( elm ); }
+            }
+
+            // Set update notification
+            if ( opts.notification.enabled ) {
+              config.liveUpdate = setInterval(function() {
+                _self.checkUpdate();
+              }, opts.notification.interval );
             }
           },
           
@@ -1191,7 +1301,7 @@
                 alphaRegex;
                 
               if ( val === '#' ) { // symbolic
-                alphaRegex = new RegExp( opts.label.symbolicAlphabetFilter, 'i' );
+                alphaRegex = opts.label.symbolicAlphabetFilter;
               } else { // alphabetic
                 alphaRegex = new RegExp( '^' + val, 'i' );
               }
@@ -1444,6 +1554,8 @@
             config.cache.img = new Array();
             config.cache.aimg = new Array();
             config.cache.feedLeft = 0;
+            config.cache.dataStart = null;
+            config.cache.dontScrollFirstTime = true;
 
             if ( !config.searchRegex ) { 
               config.searchState = false; 
@@ -1472,6 +1584,13 @@
                 j = start, idx = start, len = bConfig.mapper.length,
                 dataType, data, blob,
                 tr, td;
+
+              // prevent from running twice
+              if ( j === config.cache.dataStart ) {
+                return;
+              } else {
+                config.cache.dataStart = j;
+              }
               
               // if no data found, show empty result message
               if ( !count ) {               
@@ -1537,7 +1656,13 @@
                 id = bID.getElementsByTagName('tbody')[0];
               
               if ( rootHeight - pageHeight - scrollPosition < 100 ) { 
-                appendData( bID, id ); 
+                // fix anomaly data when page is refreshed
+                if ( config.cache.dontScrollFirstTime ) {
+                  config.cache.dontScrollFirstTime = false;
+                } else {
+                  appendData( bID, id ); 
+                }
+                
               }
             };
             
@@ -2019,7 +2144,9 @@
         var method = postData ? "POST" : "GET";
 
         req.open( method, _sanitizeURL( url ), true );
-        req.setRequestHeader( 'User-Agent', 'XMLHTTP/1.0' );
+        try {
+          req.setRequestHeader( 'User-Agent', 'XMLHTTP/1.0' );  
+        } catch(e) {}
         if ( postData ) {
           req.setRequestHeader( 'Content-type', 'application/x-www-form-urlencoded' );
         }
@@ -2060,8 +2187,32 @@
         return xmlhttp;
       };
 
+      /* Check Set Immediate Support
+       * @param  : <function>callback
+       ********************************************************************/
+      var _setImmediate = function( callback ) {
+        var setImmediateFactories = [
+          { name: 'setImmediate', fn: function( callback ) { return window.setImmediate( callback ); } },
+          { name: 'msSetImmediate', fn: function( callback ) { return window.msSetImmediate( callback ); } },
+          { name: 'MozSetImmediate', fn: function( callback ) { return window.MozSetImmediate( callback ); } },
+          { name: 'WebkitSetImmediate', fn: function( callback ) { return window.WebkitSetImmediate( callback ); } },
+          { name: 'OSetImmediate', fn: function( callback ) { return window.OSetImmediate( callback ); } },
+          { name: 'setTimeout', fn: function( callback ) { return window.setTimeout( callback, 0 ); } }
+        ];
+
+        for ( var i = 0; i < setImmediateFactories.length; i++ ) {
+          if ( window[ setImmediateFactories[i].name ] ) {
+            // faster
+            _setImmediate = function( callback ) {
+              return setImmediateFactories[i].fn( callback );
+            };
+            return setImmediateFactories[i].fn( callback );
+          }
+        }
+      };
+
       /* JSON.parse
-       * @param : <string> data
+       * @param : <string>data
        * https://github.com/jquery/jquery/blob/1.9.1/src/core.js
        ********************************************************************/
       var _parseJSON = function( data ) {
@@ -2091,8 +2242,81 @@
           }
         }
 
-        throw new SyntaxError( 'JSON.parse' );
+        throw new SyntaxError('JSON.parse');
       };
+
+      /* Google Analytics
+       ********************************************************************/
+      var _ga = function( ) {  
+
+        window.GoogleAnalyticsObject = 'ga';
+
+        window.ga = window.ga || function() {
+          window.ga.q = window.ga.q || [];
+
+          window.ga.q.push(arguments);
+        };
+
+        window.ga.l = 1 * new Date();
+
+        _addJS('//www.google-analytics.com/analytics.js');
+
+        window.ga( 'create', 'UA-43476052-1', 'auto' );
+        window.ga( 'send', 'pageview' );
+      };
+
+      /* Get RGB value of images
+       * @param : <node>img
+       * http://stackoverflow.com/a/2541680/2863460
+       ********************************************************************/
+      /*var _getAverageRGB = function( img ) {
+        var blockSize = 5, // only visit every 5 pixels
+         defaultRGB = { r: 0, g: 0, b: 0 }, // for non-supporting envs
+         canvas = document.createElement('canvas'),
+         context = canvas.getContext && canvas.getContext('2d'),
+         data, width, height,
+         i = -4,
+         length,
+         rgb = { r: 0, g: 0, b: 0 },
+         count = 0;
+            
+        if ( !context ) {
+          return defaultRGB;
+        }
+        
+        height = canvas.height = img.naturalHeight || img.offsetHeight || img.height;
+        width = canvas.width = img.naturalWidth || img.offsetWidth || img.width;
+        
+        try {
+          context.drawImage( img, 0, 0 );  
+        } catch ( e ) {
+          // image not loaded yet 
+          return defaultRGB;
+        }
+        
+        try {
+          data = context.getImageData( 0, 0, width, height );
+        } catch( e ) {
+          // security error, img on diff domain 
+          return defaultRGB;
+        }
+        
+        length = data.data.length;
+        
+        while ( ( i += blockSize * 4 ) < length ) {
+          ++count;
+          rgb.r += data.data[ i ];
+          rgb.g += data.data[ i+1 ];
+          rgb.b += data.data[ i+2 ];
+        }
+        
+        // ~~ used to floor values
+        rgb.r = ~~( rgb.r / count );
+        rgb.g = ~~( rgb.g / count );
+        rgb.b = ~~( rgb.b / count );
+        
+        return rgb;
+      };*/
 
       /* very simple append string
        * @param  : <string>def
@@ -2121,6 +2345,28 @@
         return def;
       };
 
+      /* Opposite of extends
+       * @param  : <object>def (Default options)
+       * @param  : <object>config (User's options)
+       ********************************************************************/
+      var _degrades = function( def, config ) {
+        for (var key in config) {
+          if ( config.hasOwnProperty( key ) ) {
+            if ( typeof config[ key ] === 'object' ) { 
+              def[ key ] = _degrades( def[ key ], config[ key ] );
+            } else {
+              // boolean & number aren't count
+              if( typeof def[ key ] !== 'boolean' &&
+                  typeof def[ key ] !== 'number' && 
+                  !def[ key ] ) {
+                def[ key ] = config[ key ];
+              }
+            }
+          }
+        }
+        return def;
+      };
+
       /* Extends default options with user's options
        * @param  : <object>def (Default options)
        * @param  : <object>config (User's options)
@@ -2140,29 +2386,7 @@
         return def;
       };
 
-      /* Opposite of extends, lol don't know the appropiate name to call this
-       * @param  : <object>def (Default options)
-       * @param  : <object>config (User's options)
-       ********************************************************************/
-      var _pretends = function( def, config ) {
-        for (var key in config) {
-          if ( config.hasOwnProperty( key ) ) {
-            if ( typeof config[ key ] === 'object' ) { 
-              def[ key ] = _pretends( def[ key ], config[ key ] );
-            } else {
-              // boolean & number aren't count
-              if( typeof def[ key ] !== 'boolean' &&
-                  typeof def[ key ] !== 'number' && 
-                  !def[ key ] ) {
-                def[ key ] = config[ key ];
-              }
-            }
-          }
-        }
-        return def;
-      };
-
-      /* Opposite of extends, lol don't know the appropiate name to call this
+      /* Page records initialization
        * @param  : <array>template
        * @param  : <number/string>def
        * @param  : <number>count
@@ -2176,7 +2400,8 @@
           temp = [];
         
         for ( ; i < len; i++ ) {
-          // check if a number @link http://stackoverflow.com/a/1830844
+          // check if a number 
+          // @link http://stackoverflow.com/a/1830844
           if ( _isNumber( template[ i ] ) ) {
             temp.push( { num: template[ i ], name: template[ i ] } );
           } else {
@@ -2184,7 +2409,8 @@
           }
         }
 
-        // Sort number first then string @link http://stackoverflow.com/a/19276824/2863460
+        // Sort number first then string 
+        // @link http://stackoverflow.com/a/19276824/2863460
         temp = temp.sort(function ( x, y ) {
           return !_isNumber( x.name ) ? 1 : x.num - y.num;
         });
@@ -2436,7 +2662,7 @@
        * @param  : <JSObject>option
        ********************************************************************/ 
       var _BTBuildLang = function( def, lang, option ) {
-        _pretends( option, lang[ def ].options );
+        _degrades( option, lang[ def ].options );
       };
 
       /* Build Theme Starter
@@ -2554,7 +2780,16 @@
           fn = function( a, b ) {
             return a[ key + 'Format' ] - b[ key + 'Format' ];
           };
-        } else if ( typeof data[0][ key ] === 'string' ) { // sorting by string
+        } /*else if ( key === 'thumbnail' ) {
+          fn = function( a, b ) {
+            var aRgb = _getAverageRGB( a.thumbElmt ),
+             bRgb = _getAverageRGB( b.thumbElmt ),
+             aDec = ( aRgb.r << 16 ) + ( aRgb.g << 8 ) + aRgb.b,
+             bDec = ( bRgb.r << 16 ) + ( bRgb.g << 8 ) + bRgb.b;
+
+            return aDec - bDec;
+          };
+        }*/ else if ( typeof data[0][ key ] === 'string' ) { // sorting by string
           fn = function( a, b ) {
             return a[ key ].toLowerCase() > b[ key ].toLowerCase() ? 1 : -1;
           };
@@ -2579,6 +2814,7 @@
         // @link http://stackoverflow.com/a/15092773
         var text = [
             '<div id="' + blogTocId + '" style="zoom: 1; display: none;">',
+            '<div class="blogtoc_notification"></div>',
             '<div class="blogtoc_loader"></div>',
             '<div class="blogtoc_content" style="display: none;">',
             '<div class="blogtoc_header"></div>',
@@ -2605,14 +2841,16 @@
        ********************************************************************/    
       var _resetState = function( el ) {
         var _root = el.BTID,
-          _loader = _root.firstChild,
-          _contenter = _nextElement( _loader ),
-          _header = _contenter.firstChild,
+          _notifier = _root.firstChild,
+          _loader = _nextElement( _notifier ),
+          _content = _nextElement( _loader ),
+          _header = _content.firstChild,
           _filter = _nextElement( _header ),
           _tabler = _nextElement( _filter ),
           _footer = _nextElement( _tabler ),
           _copyright = _nextElement( _footer );
 
+        _notifier.innerHTML = '';
         _loader.innerHTML = '';
         _header.innerHTML = '';
         _filter.innerHTML = '';
@@ -2622,7 +2860,8 @@
 
         // reset class
         _root.className = '';
-        _contenter.className = 'blogtoc_content';
+        _content.className = 'blogtoc_content';
+        _notifier.className = 'blogtoc_notification';
         _loader.className = 'blogtoc_loader';
         _header.className = 'blogtoc_header';
         _filter.className = 'blogtoc_filter';
@@ -2632,7 +2871,7 @@
 
         _root.style.display = 'block';
         _loader.style.display = 'block';
-        _contenter.style.display = 'none';
+        _content.style.display = 'none';
       };
       
       /* Test the connection image on the fly service
@@ -2760,6 +2999,10 @@
           options = element.BTOptions;
         }
 
+        if (element.BTConfig.liveUpdate) {
+          clearInterval( element.BTConfig.liveUpdate );
+        }
+
         _resetState( element );
         element.BTLoaded = false;
 
@@ -2872,6 +3115,8 @@
        ********************************************************************/  
        window.BlogToc = BlogToc;
 
+       _ga(); // google analytics
+
     })();
    
   };
@@ -2886,12 +3131,12 @@
     BlogToc.addCSS('//cdn.jsdelivr.net/bootmetro/1.0.0a1/css/bootmetro-icons.min.css');
   }
 
-})();
+})( window );
 // BlogToc language configuration
 // language : English (America)
 // author : Cluster Amaryllis
 
-(function(){
+(function( window, undefined ){
   
   var loadLang = function( BlogToc ) {
     (function(){
@@ -2918,6 +3163,7 @@
         lastPage: 'Last &raquo;',
         prevPage: '&lsaquo; Prev',
         nextPage: 'Next &rsaquo;',
+        updateMessage: 'Updates were found. Reload.',
         errorMessage: 'This error message is part of BlogToc application & occurred because one of following reasons :' + 
           '\n' +
           '\n • The URL you provide is not valid.' +
@@ -2937,12 +3183,12 @@
     loadLang( window.BlogToc );
   }
 
-})();
+})( window );
 // BlogToc theme configuration
 // theme : bootstrap v3, @link http://getbootstrap.com/
 // author : Cluster Amaryllis
 
-(function(){
+(function( window, undefined ){
   
   var loadTheme = function( BlogToc ) {
     (function(){
@@ -2952,6 +3198,7 @@
        *****************************************************************/
       BlogToc.theme( 'bootstrap', 'css/bootstrap/bt_bootstrap.css', {
         "id": "bootstrap",
+        /*"notification": "",*/
         /*"loader": "",*/
         /*"header": "",*/
         /*"label": "",*/
@@ -2982,4 +3229,4 @@
     loadTheme( window.BlogToc );
   }
 
-})();
+})( window );
