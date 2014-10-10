@@ -98,7 +98,7 @@ module.exports = function( grunt ) {
 		},
 		concat: {
 			release: {
-				src: [ 'src/<%= pkg.name %>.js', 'lang/en-US.js', 'theme/bt_bootstrap.js' ],
+				src: [ 'src/<%= pkg.name %>.js', 'lang/en-US.js', 'theme/bt_bootstrap.js', 'src/ga.js' ],
 				dest: '<%= pkg.name %>.js'
 			},
 			color: colorScheme

@@ -111,7 +111,9 @@
                 setupAlphabet: 'All',
                 alphabetAllText: 'All',
                 cloudAlphabetLabel: false,
-                symbolicAlphabetFilter: /^[0-9$-\/:-?{-~!"^_`\[\]]/i,
+                symbolicAlphabetFilter: function() { 
+                  return (/^[0-9$-\/:-?{-~!"^_`\[\]]/i);
+                },
                 alphabetMember: alphabet
               },
               language: {
@@ -1301,7 +1303,7 @@
                 alphaRegex;
                 
               if ( val === '#' ) { // symbolic
-                alphaRegex = opts.label.symbolicAlphabetFilter;
+                alphaRegex = opts.label.symbolicAlphabetFilter();
               } else { // alphabetic
                 alphaRegex = new RegExp( '^' + val, 'i' );
               }
@@ -2245,26 +2247,6 @@
         throw new SyntaxError('JSON.parse');
       };
 
-      /* Google Analytics
-       ********************************************************************/
-      var _ga = function( ) {  
-
-        window.GoogleAnalyticsObject = 'ga';
-
-        window.ga = window.ga || function() {
-          window.ga.q = window.ga.q || [];
-
-          window.ga.q.push(arguments);
-        };
-
-        window.ga.l = 1 * new Date();
-
-        _addJS('//www.google-analytics.com/analytics.js');
-
-        window.ga( 'create', 'UA-43476052-1', 'auto' );
-        window.ga( 'send', 'pageview' );
-      };
-
       /* Get RGB value of images
        * @param : <node>img
        * http://stackoverflow.com/a/2541680/2863460
@@ -2509,12 +2491,12 @@
         
         // @google-link http://carlo.zottmann.org/2013/04/14/google-image-resizer/ :)
         var request = {
-          boxresizer: "http://proxy.boxresizer.com/convert?" + 
-            "resize=" + prop + "x" + prop + "&" +
-            "source=" + img,
           mobify: "http://ir0.mobify.com/jpg100" + 
             "/" + prop + "/" + prop +
             "/" + img,
+          boxresizer: "http://proxy.boxresizer.com/convert?" + 
+            "resize=" + prop + "x" + prop + "&" +
+            "source=" + img,
           sencha: "http://src.sencha.io" + 
             "/" + prop + "/" + prop + 
             "/" + img,
@@ -2883,8 +2865,8 @@
           img = new Image();
         
         var cdn = [
-          [ "boxresizer", "http://proxy.boxresizer.com/convert?resize=1x1&source=" + imgTest ],
           [ "mobify", "http://ir0.mobify.com/jpg1/1/1/" + imgTest ],
+          [ "boxresizer", "http://proxy.boxresizer.com/convert?resize=1x1&source=" + imgTest ],
           [ "google", "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?url=" + imgTest + "&container=focus&resize_w=1&resize_h=1" ],
           [ "sencha", "http://src.sencha.io/1/1/" + imgTest ],
         ];
@@ -3115,8 +3097,6 @@
        ********************************************************************/  
        window.BlogToc = BlogToc;
 
-       _ga(); // google analytics
-
     })();
    
   };
@@ -3230,3 +3210,10 @@
   }
 
 })( window );
+(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+ga('create', 'UA-43476052-1', 'auto');
+ga('send', 'pageview');
