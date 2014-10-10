@@ -1,0 +1,18 @@
+---
+layout: default
+title: BlogToc
+slug: changelog
+---
+
+{% capture changelog %}
+{% include changelog.md %}
+{% endcapture %}
+{{ changelog | unindent | markdownify }}
+
+<script>
+	// Angular App
+  var docApp = angular.module('docApp', ['ui.select2', 'ui.bootstrap'/*, 'toggle-switch'*/], function($interpolateProvider) {
+      $interpolateProvider.startSymbol('[[');
+      $interpolateProvider.endSymbol(']]');
+  });
+</script>

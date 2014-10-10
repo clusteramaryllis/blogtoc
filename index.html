@@ -31,6 +31,11 @@ slug: index
 {% endcapture %}
 {{ readme | unindent | markdownify }}
 
+<div class="row-fluid">
+	<hr>
+	See <a href="changelog.html">changelog</a>	
+</div>
+
 <script>
 	// Angular App
   var docApp = angular.module('docApp', ['ui.select2', 'ui.bootstrap'/*, 'toggle-switch'*/], function($interpolateProvider) {

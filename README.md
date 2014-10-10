@@ -2,7 +2,7 @@
 
 A javascript plugin to make table of contents for blogspot using Blogger Feed API
 
-### Basic Usage ###
+## Basic Usage ##
 
 Place this code somewhere in the `<head></head>` section.
 
@@ -34,7 +34,7 @@ and IE6+ (Partial)
 ## License ##
 [LICENSE](https://github.com/clusteramaryllis/blogtoc/blob/develop/LICENSE)
 
-## External Resources ##
+## External Resources & Acknowledgements ##
 BlogToc using some external service to generate image on the fly
 
 * [boxresizer](http://boxresizer.com/)
@@ -45,19 +45,3 @@ BlogToc using some external service to generate image on the fly
 User interface using [Twitter Bootstrap](http://getbootstrap.com/)
 
 And iconic font from [Bootmetro](http://aozora.github.io/bootmetro)
-
-## Changelog ##
-
-### 1.6.0
-* Added dataType option (using JSONP or JSON).
-* Added RTL Support (experimental).
-* Added number option for parsing the number in index column, pagination, page report.
-* Added alphabetMember and symbolicAlphabetFilter for determine the alphabet filter (experimental, still buggy).
-* Added appendQuery, chunkRequest, limit, requestCount in feed option
-* Added textToPlaceholder in search option for using placeholder instead text label
-* Remove theme standalone option (prefered using synchronous request).
-* Update bootstrap theme to v3.0.3
-* Other theme deprecated except bootstrap.
-
-### 1.5.0
-* First Release
