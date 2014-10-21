@@ -2975,7 +2975,9 @@
 
         if ( newOption ) {
           if ( !options ) {
-            options = {};
+            options = {
+              blogtocId: null
+            };
           } 
         } else {
           options = element.BTOptions;
