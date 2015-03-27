@@ -1,6 +1,6 @@
 /**!
-* BlogToc v1.6.2
-* Copyright 2014 Cluster Amaryllis
+* BlogToc v1.6.3
+* Copyright 2015 Cluster Amaryllis
 * Licensed in (https://github.com/clusteramaryllis/blogtoc/blob/develop/LICENSE)
 * 
 * A javascript plugin to make table of contents for blogspot using Blogger Feed API.
