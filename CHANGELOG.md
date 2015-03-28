@@ -1,5 +1,10 @@
 ## Changelog ##
 
+### 1.6.3
+* Improve security
+* Some tweaking
+* Update bootstrap to v3.3.4
+
 ### 1.6.2
 * Disable sorting by author (cause issues when sorting large data)
 * Added disable in sorting option to disable sorting in certain component.
@@ -23,4 +28,4 @@
 * Other theme deprecated except bootstrap.
 
 ### 1.5.0
-* First Release
+* First stable release

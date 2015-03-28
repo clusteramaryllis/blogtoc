@@ -14,7 +14,10 @@ all copies or substantial portions of the Software.
 (http://clusteramaryllisblog.blogspot.com/2013/10/blogspot-table-of-contents-blogtoc.html)
 in any kind of form and visible to user.
 
-3. For commercial use or purpose, must include the copyright notice that found on each header file.
+3. For commercial use or purpose, must include the script described in directory src/ga.js from
+the current application path. The content of the script also forbidden to change or modify.
+
+4. For commercial use or purpose, must include the copyright notice that found on each header file.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
