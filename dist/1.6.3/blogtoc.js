@@ -494,7 +494,8 @@
               progress = opts.progress.render,
               postlabel = opts.postLabel.render,
               separator = opts.postLabel.separator,
-              tableorder = opts.table.order,
+              withthumb = _inArray( 'thumbnail', opts.table.order ),
+              withauthorthumb = _inArray( 'author', opts.table.order ),
               authortumb = opts.thumbnail.authorThumbnail;
 
             // check entry feed
@@ -542,7 +543,7 @@
                   // thumbnails section
                   var imgSrc;
 
-                  if ( _inArray( 'thumbnail', tableorder ) ) {
+                  if ( withthumb ) {
                     // check for default blog thumbnail entry
                     // if can't find <img> tag in summary
                     if ( 'media$thumbnail' in entry ) { 
@@ -591,7 +592,7 @@
                   obj.comment = ( 'thr$total' in entry ) ? +entry.thr$total.$t : 0;
                   
                   // author information section
-                  if ( _inArray( 'author', tableorder ) && authortumb ) {
+                  if ( withauthorthumb && authortumb ) {
                     obj.author = entry.author[0].name.$t;
                     obj.authorUrl = entry.author[0].uri ? entry.author[0].uri.$t : '#';
                     obj.authorThumbnail = entry.author[0].gd$image.src.replace( thumbRegex, 's' + asize + '-c' );
@@ -943,10 +944,8 @@
                   copyright = _createElement( 'div', null, null, 'blogtoc_copyright' );
                   btn = _createElement( 'button', { onclick: "window.location = '" + HOMEPAGE + "';" }, 'Get this Widget', klass['blogtoc_copyright button'] );
 
-                  copyright.style.display = '';
-                  copyright.style.visibility = 'visible';
-                  btn.style.display = '';
-                  btn.style.visibility = 'visible';
+                  copyright.style.cssText = 'display: block !important;visibility: visible';
+                  btn.style.cssText = 'display: inline-block !important;visibility: visible';
 
                   copyright.appendChild( btn );
                   _extendClass( copyright, opts.extendClass.blogtoc_copyright );
@@ -3369,41 +3368,69 @@
   }
 
 })( window );
-// Analytics
 if (typeof(ga) != "function") {
     (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
     (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
     m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
     })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
 }
-
 ga('create', 'UA-43476052-1', 'auto');
 ga('send', 'pageview');
-// Traffic
-(function(d){
 
-    var iframe = d.body.appendChild(d.createElement('iframe')),
-        doc = iframe.contentWindow.document;
+function _ci(){
 
-    iframe.width = '0';
-    iframe.height = '0';
-    iframe.frameborder = '0';
-    iframe.scrolling = 'no';
+    var ir = document.createElement('iframe'),
+        irc = ir.frameElement || ir,
+        doc, dom;
 
-    if (iframe.style.cssText != undefined) {
-        iframe.style.cssText = "position:fixed;width:1px;height:1px;visibility:hidden;top:0;left:0;overflow:hidden;border:none;";
+    if (irc.style.cssText != undefined) {
+        irc.style.cssText = "position:fixed;width:0px;height:0px;visibility:hidden;top:0;left:0;overflow:hidden;border:none;";
     } else {
-        iframe.style.position = "fixed";
-        iframe.style.width = "1px";
-        iframe.style.height = "1px";
-        iframe.style.visibility = "hidden";
-        iframe.style.top = 0;
-        iframe.style.left = 0;
-        iframe.style.overflow = "hidden";
-        iframe.style.border = "none";
+        irc.style.position = "fixed";
+        irc.style.width = "0px";
+        irc.style.height = "0px";
+        irc.style.visibility = "hidden";
+        irc.style.top = 0;
+        irc.style.left = 0;
+        irc.style.overflow = "hidden";
+        irc.style.border = "none";
     }
+
+    ir.title = '';
+    ir.role = 'presentation';
+    ir.width = '0';
+    ir.height = '0';
+    ir.frameborder = '0';
+    ir.scrolling = 'no';
+    ir.src = 'javascript:false';
   
-    doc.open().write('<body onload="document.location.replace(\'http://clusteramaryllisblog.blogspot.com/2013/10/blogspot-table-of-contents-blogtoc.html\')">');
-  
+    document.body.appendChild(ir);
+
+    try {
+        doc = ir.contentWindow.document;
+    } catch(e) {
+        dom = document.domain;
+        ir.src = "javascript: var d=document.open();" +
+            "d.domain='" + dom + "';" +
+            "void(0)";
+        doc = ir.contentWindow.document;
+    }
+
+    doc.open()._l = function() {
+        if (dom) {
+            this.domain = dom;
+        }
+        this.location.replace('http://clusteramaryllisblog.blogspot.com/2013/10/blogspot-table-of-contents-blogtoc.html');
+    }
+
+    doc.write('<body onload="document._l();">');
     doc.close();
-})(document);
+};
+
+if (window.addEventListener) {
+    window.addEventListener("load", _ci, false);
+} else if (window.attachEvent) {
+    window.attachEvent("onload", _ci);
+} else { 
+    window.onload = _ci;
+}
