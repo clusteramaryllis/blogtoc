@@ -7,7 +7,7 @@ A javascript plugin to make table of contents for blogspot using Blogger Feed AP
 Place this code somewhere in the `<head></head>` section.
 
 ```html
-<script type="text/javascript" src="//blogtoc2.googlecode.com/svn/trunk/blogtoc.min.js"></script>
+<script type="text/javascript" src="//clusteramaryllis.github.io/blogtoc/dist/1.6.3/blogtoc.min.js"></script>
 ```
 
 Then add these codes below in your blog page or post
