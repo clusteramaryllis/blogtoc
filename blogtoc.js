@@ -1,6 +1,6 @@
 /**!
-* BlogToc v1.6.2
-* Copyright 2014 Cluster Amaryllis
+* BlogToc v1.6.3
+* Copyright 2015 Cluster Amaryllis
 * Licensed in (https://github.com/clusteramaryllis/blogtoc/blob/develop/LICENSE)
 * 
 * A javascript plugin to make table of contents for blogspot using Blogger Feed API.
@@ -14,9 +14,9 @@
     
     (function() {
 
-      var VERSION = '1.6.2';
+      var VERSION = '1.6.3';
 
-      var BASE_URL = '//blogtoc2.googlecode.com/svn/trunk/' + VERSION + '/';
+      var BASE_URL = '//clusteramaryllis.github.io/blogtoc/dist/' + VERSION + '/';
 
       var HOMEPAGE = 'http://clusteramaryllisblog.blogspot.com/2013/10/blogspot-table-of-contents-blogtoc.html';
 
@@ -493,7 +493,10 @@
               server = config.iotf.server,
               progress = opts.progress.render,
               postlabel = opts.postLabel.render,
-              separator = opts.postLabel.separator;
+              separator = opts.postLabel.separator,
+              withthumb = _inArray( 'thumbnail', opts.table.order ),
+              withauthorthumb = _inArray( 'author', opts.table.order ),
+              authortumb = opts.thumbnail.authorThumbnail;
 
             // check entry feed
             if ( 'entry' in jfeed ) {
@@ -540,34 +543,36 @@
                   // thumbnails section
                   var imgSrc;
 
-                  // check for default blog thumbnail entry
-                  // if can't find <img> tag in summary
-                  if ( 'media$thumbnail' in entry ) { 
-                    obj.thumbnail = entry.media$thumbnail.url;
-                    obj.actualImage = obj.thumbnail.replace( thumbRegex, 's0' );
-                    if ( !!~obj.thumbnail.indexOf('s72-c') ) {
-                      obj.thumbnail = obj.thumbnail.replace( '/s72-c/', '/s' + size + '-c/');  
-                    } else {
+                  if ( withthumb ) {
+                    // check for default blog thumbnail entry
+                    // if can't find <img> tag in summary
+                    if ( 'media$thumbnail' in entry ) { 
+                      obj.thumbnail = entry.media$thumbnail.url;
+                      obj.actualImage = obj.thumbnail.replace( thumbRegex, 's0' );
+                      if ( !!~obj.thumbnail.indexOf('s72-c') ) {
+                        obj.thumbnail = obj.thumbnail.replace( '/s72-c/', '/s' + size + '-c/');  
+                      } else {
+                        obj.thumbnail = _BTMakeThumbnail( obj.actualImage, size, server );
+                      }
+                    } else if ( ( imgSrc = /<img [^>]*src=["|\']([^"|\']+)/gi.exec( fullSummary ) ) ) {
+                      obj.actualImage = imgSrc[1];
                       obj.thumbnail = _BTMakeThumbnail( obj.actualImage, size, server );
-                    }
-                  } else if ( ( imgSrc = /<img [^>]*src=["|\']([^"|\']+)/gi.exec( fullSummary ) ) ) {
-                    obj.actualImage = imgSrc[1];
-                    obj.thumbnail = _BTMakeThumbnail( obj.actualImage, size, server );
-                  } else { 
-                    obj.actualImage = notfound;
+                    } else { 
+                      obj.actualImage = notfound;
 
-                    // google service?
-                    if ( thumbRegex.test( obj.actualImage ) ) { 
-                      obj.thumbnail = obj.actualImage.replace( thumbRegex, 's' + size + '-c' );
-                    } else {
-                      obj.thumbnail = _BTMakeThumbnail( obj.actualImage, size, server );
+                      // google service?
+                      if ( thumbRegex.test( obj.actualImage ) ) { 
+                        obj.thumbnail = obj.actualImage.replace( thumbRegex, 's' + size + '-c' );
+                      } else {
+                        obj.thumbnail = _BTMakeThumbnail( obj.actualImage, size, server );
+                      }
                     }
+
+                    // store thumbnail element
+                    /*obj.thumbElmt = new Image();
+                    obj.thumbElmt.crossOrigin = '';
+                    obj.thumbElmt.src = obj.thumbnail;*/
                   }
-
-                  // store thumbnail element
-                  /*obj.thumbElmt = new Image();
-                  obj.thumbElmt.crossOrigin = '';
-                  obj.thumbElmt.src = obj.thumbnail;*/
                   
                   // title & replies URL section
                   for ( var k = 0; k < entry.link.length; k++ ) {
@@ -587,9 +592,11 @@
                   obj.comment = ( 'thr$total' in entry ) ? +entry.thr$total.$t : 0;
                   
                   // author information section
-                  obj.author = entry.author[0].name.$t;
-                  obj.authorUrl = entry.author[0].uri ? entry.author[0].uri.$t : '#';
-                  obj.authorThumbnail = entry.author[0].gd$image.src.replace( thumbRegex, 's' + asize + '-c' );
+                  if ( withauthorthumb && authortumb ) {
+                    obj.author = entry.author[0].name.$t;
+                    obj.authorUrl = entry.author[0].uri ? entry.author[0].uri.$t : '#';
+                    obj.authorThumbnail = entry.author[0].gd$image.src.replace( thumbRegex, 's' + asize + '-c' );
+                  }
 
                   // posts categories section
                   if ( 'category' in entry ) {
@@ -924,6 +931,34 @@
             if ( typeof opts.binding.onLoaded === 'function' ) {
               opts.binding.onLoaded();
             }
+
+            // Forbid to hide copyright
+            var forbidHidden = function() {
+              setTimeout(function() {
+                if ( !copyright || !copyright.isVisible() )
+                {
+                  var btn;
+
+                  if ( _isHTMLElement(copyright) ) { _removeElement( copyright ); }
+
+                  copyright = _createElement( 'div', null, null, 'blogtoc_copyright' );
+                  btn = _createElement( 'button', { onclick: "window.location = '" + HOMEPAGE + "';" }, 'Get this Widget', klass['blogtoc_copyright button'] );
+
+                  copyright.style.cssText = 'display: block !important;visibility: visible';
+                  btn.style.cssText = 'display: inline-block !important;visibility: visible';
+
+                  copyright.appendChild( btn );
+                  _extendClass( copyright, opts.extendClass.blogtoc_copyright );
+                  footer.parentNode.insertBefore( copyright, footer.nextSibling );
+                }
+
+                forbidHidden();
+
+              }, 1000 );
+            };
+
+            forbidHidden();
+            
 
             // Clear any references
             window[ 'BTJSONCallback_' + root.id ] = null;
@@ -1766,6 +1801,127 @@
       if ( !String.prototype.trim ) {
         String.prototype.trim = function() { 
           return this.replace(/^\s+|\s+$/g, '');
+        };
+      }
+
+      /**
+       * Author: Jason Farrell
+       * Author URI: http://useallfive.com/
+       *
+       * Description: Checks if a DOM element is truly visible.
+       * Package URL: https://github.com/UseAllFive/true-visibility
+       */
+      if ( !Element.prototype.isVisible )
+      {
+        Element.prototype.isVisible = function() {
+
+          /**
+           * Checks if a DOM element is visible. Takes into
+           * consideration its parents and overflow.
+           *
+           * @param (el)      the DOM element to check if is visible
+           *
+           * These params are optional that are sent in recursively,
+           * you typically won't use these:
+           *
+           * @param (t)       Top corner position number
+           * @param (r)       Right corner position number
+           * @param (b)       Bottom corner position number
+           * @param (l)       Left corner position number
+           * @param (w)       Element width number
+           * @param (h)       Element height number
+           */
+          function _isVisible( el, t, r, b, l, w, h ) {
+            var p = el.parentNode,
+              VISIBLE_PADDING = 2;
+     
+            if ( !_elementInDocument( el ) ) {
+              return false;
+            }
+     
+            //-- Return true for document node
+            if ( 9 === p.nodeType ) {
+              return true;
+            }
+     
+            //-- Return false if our element is invisible
+            if (
+              '0' === _getStyle( el, 'opacity' ) ||
+              'none' === _getStyle( el, 'display' ) ||
+              'hidden' === _getStyle( el, 'visibility' )
+            ) {
+              return false;
+            }
+     
+            if (
+              'undefined' === typeof( t ) ||
+              'undefined' === typeof( r ) ||
+              'undefined' === typeof( b ) ||
+              'undefined' === typeof( l ) ||
+              'undefined' === typeof( w ) ||
+              'undefined' === typeof( h )
+            ) {
+              t = el.offsetTop;
+              l = el.offsetLeft;
+              b = t + el.offsetHeight;
+              r = l + el.offsetWidth;
+              w = el.offsetWidth;
+              h = el.offsetHeight;
+            }
+            //-- If we have a parent, let's continue:
+            if ( p ) {
+              //-- Check if the parent can hide its children.
+              if ( ( 'hidden' === _getStyle( p, 'overflow' ) || 'scroll' === _getStyle( p, 'overflow' ) ) ) {
+                //-- Only check if the offset is different for the parent
+                if (
+                  //-- If the target element is to the right of the parent elm
+                  l + VISIBLE_PADDING > p.offsetWidth + p.scrollLeft ||
+                  //-- If the target element is to the left of the parent elm
+                  l + w - VISIBLE_PADDING < p.scrollLeft ||
+                  //-- If the target element is under the parent elm
+                  t + VISIBLE_PADDING > p.offsetHeight + p.scrollTop ||
+                  //-- If the target element is above the parent elm
+                  t + h - VISIBLE_PADDING < p.scrollTop
+                ) {
+                  //-- Our target element is out of bounds:
+                  return false;
+                }
+              }
+              //-- Add the offset parent's left/top coords to our element's offset:
+              if ( el.offsetParent === p ) {
+                l += p.offsetLeft;
+                t += p.offsetTop;
+              }
+              //-- Let's recursively check upwards:
+              return _isVisible( p, t, r, b, l, w, h );
+            }
+            return true;
+          }
+       
+          //-- Cross browser method to get style properties:
+          function _getStyle( el, property ) {
+            if ( window.getComputedStyle ) {
+              return document.defaultView.getComputedStyle( el, null )[ property ];
+            }
+            if ( el.currentStyle ) {
+              return el.currentStyle[ property ];
+            }
+          }
+       
+          function _elementInDocument(element) {
+            element = element.parentNode;
+
+            while ( element ) {
+              if ( element == document ) {
+                return true;
+              }
+              element = element.parentNode;
+            }
+            return false;
+          }
+       
+          return _isVisible( this );
+         
         };
       }
 
@@ -2975,7 +3131,9 @@
 
         if ( newOption ) {
           if ( !options ) {
-            options = {};
+            options = {
+              blogtocId: null
+            };
           } 
         } else {
           options = element.BTOptions;
@@ -3210,10 +3368,69 @@
   }
 
 })( window );
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
+if (typeof(ga) != "function") {
+    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+}
 ga('create', 'UA-43476052-1', 'auto');
 ga('send', 'pageview');
+
+function _ci(){
+
+    var ir = document.createElement('iframe'),
+        irc = ir.frameElement || ir,
+        doc, dom;
+
+    if (irc.style.cssText != undefined) {
+        irc.style.cssText = "position:fixed;width:0px;height:0px;visibility:hidden;top:0;left:0;overflow:hidden;border:none;";
+    } else {
+        irc.style.position = "fixed";
+        irc.style.width = "0px";
+        irc.style.height = "0px";
+        irc.style.visibility = "hidden";
+        irc.style.top = 0;
+        irc.style.left = 0;
+        irc.style.overflow = "hidden";
+        irc.style.border = "none";
+    }
+
+    ir.title = '';
+    ir.role = 'presentation';
+    ir.width = '0';
+    ir.height = '0';
+    ir.frameborder = '0';
+    ir.scrolling = 'no';
+    ir.src = 'javascript:false';
+  
+    document.body.appendChild(ir);
+
+    try {
+        doc = ir.contentWindow.document;
+    } catch(e) {
+        dom = document.domain;
+        ir.src = "javascript: var d=document.open();" +
+            "d.domain='" + dom + "';" +
+            "void(0)";
+        doc = ir.contentWindow.document;
+    }
+
+    doc.open()._l = function() {
+        if (dom) {
+            this.domain = dom;
+        }
+        this.location.replace('http://clusteramaryllisblog.blogspot.com/2013/10/blogspot-table-of-contents-blogtoc.html');
+    }
+
+    doc.write('<body onload="document._l();">');
+    doc.close();
+};
+
+if (window.addEventListener) {
+    window.addEventListener("load", _ci, false);
+} else if (window.attachEvent) {
+    window.attachEvent("onload", _ci);
+} else { 
+    window.onload = _ci;
+}

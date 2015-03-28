@@ -1,5 +1,5 @@
 appName: BlogToc
-appVersion: "1.6.2"
+appVersion: "1.6.3"
 
 markdown: redcarpet
 pygment: true
