@@ -486,7 +486,8 @@
               progress = opts.progress.render,
               postlabel = opts.postLabel.render,
               separator = opts.postLabel.separator,
-              tableorder = opts.table.order,
+              withthumb = _inArray( 'thumbnail', opts.table.order ),
+              withauthorthumb = _inArray( 'author', opts.table.order ),
               authortumb = opts.thumbnail.authorThumbnail;
 
             // check entry feed
@@ -534,7 +535,7 @@
                   // thumbnails section
                   var imgSrc;
 
-                  if ( _inArray( 'thumbnail', tableorder ) ) {
+                  if ( withthumb ) {
                     // check for default blog thumbnail entry
                     // if can't find <img> tag in summary
                     if ( 'media$thumbnail' in entry ) { 
@@ -583,7 +584,7 @@
                   obj.comment = ( 'thr$total' in entry ) ? +entry.thr$total.$t : 0;
                   
                   // author information section
-                  if ( _inArray( 'author', tableorder ) && authortumb ) {
+                  if ( withauthorthumb && authortumb ) {
                     obj.author = entry.author[0].name.$t;
                     obj.authorUrl = entry.author[0].uri ? entry.author[0].uri.$t : '#';
                     obj.authorThumbnail = entry.author[0].gd$image.src.replace( thumbRegex, 's' + asize + '-c' );
@@ -935,10 +936,8 @@
                   copyright = _createElement( 'div', null, null, 'blogtoc_copyright' );
                   btn = _createElement( 'button', { onclick: "window.location = '" + HOMEPAGE + "';" }, 'Get this Widget', klass['blogtoc_copyright button'] );
 
-                  copyright.style.display = '';
-                  copyright.style.visibility = 'visible';
-                  btn.style.display = '';
-                  btn.style.visibility = 'visible';
+                  copyright.style.cssText = 'display: block !important;visibility: visible';
+                  btn.style.cssText = 'display: inline-block !important;visibility: visible';
 
                   copyright.appendChild( btn );
                   _extendClass( copyright, opts.extendClass.blogtoc_copyright );

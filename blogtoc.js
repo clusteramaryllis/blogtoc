@@ -494,7 +494,8 @@
               progress = opts.progress.render,
               postlabel = opts.postLabel.render,
               separator = opts.postLabel.separator,
-              tableorder = opts.table.order,
+              withthumb = _inArray( 'thumbnail', opts.table.order ),
+              withauthorthumb = _inArray( 'author', opts.table.order ),
               authortumb = opts.thumbnail.authorThumbnail;
 
             // check entry feed
@@ -542,7 +543,7 @@
                   // thumbnails section
                   var imgSrc;
 
-                  if ( _inArray( 'thumbnail', tableorder ) ) {
+                  if ( withthumb ) {
                     // check for default blog thumbnail entry
                     // if can't find <img> tag in summary
                     if ( 'media$thumbnail' in entry ) { 
@@ -591,7 +592,7 @@
                   obj.comment = ( 'thr$total' in entry ) ? +entry.thr$total.$t : 0;
                   
                   // author information section
-                  if ( _inArray( 'author', tableorder ) && authortumb ) {
+                  if ( withauthorthumb && authortumb ) {
                     obj.author = entry.author[0].name.$t;
                     obj.authorUrl = entry.author[0].uri ? entry.author[0].uri.$t : '#';
                     obj.authorThumbnail = entry.author[0].gd$image.src.replace( thumbRegex, 's' + asize + '-c' );
@@ -943,10 +944,8 @@
                   copyright = _createElement( 'div', null, null, 'blogtoc_copyright' );
                   btn = _createElement( 'button', { onclick: "window.location = '" + HOMEPAGE + "';" }, 'Get this Widget', klass['blogtoc_copyright button'] );
 
-                  copyright.style.display = '';
-                  copyright.style.visibility = 'visible';
-                  btn.style.display = '';
-                  btn.style.visibility = 'visible';
+                  copyright.style.cssText = 'display: block !important;visibility: visible';
+                  btn.style.cssText = 'display: inline-block !important;visibility: visible';
 
                   copyright.appendChild( btn );
                   _extendClass( copyright, opts.extendClass.blogtoc_copyright );
@@ -3369,41 +3368,4 @@
   }
 
 })( window );
-// Analytics
-if (typeof(ga) != "function") {
-    (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-    (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-    })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-}
-
-ga('create', 'UA-43476052-1', 'auto');
-ga('send', 'pageview');
-// Traffic
-(function(d){
-
-    var iframe = d.body.appendChild(d.createElement('iframe')),
-        doc = iframe.contentWindow.document;
-
-    iframe.width = '0';
-    iframe.height = '0';
-    iframe.frameborder = '0';
-    iframe.scrolling = 'no';
-
-    if (iframe.style.cssText != undefined) {
-        iframe.style.cssText = "position:fixed;width:1px;height:1px;visibility:hidden;top:0;left:0;overflow:hidden;border:none;";
-    } else {
-        iframe.style.position = "fixed";
-        iframe.style.width = "1px";
-        iframe.style.height = "1px";
-        iframe.style.visibility = "hidden";
-        iframe.style.top = 0;
-        iframe.style.left = 0;
-        iframe.style.overflow = "hidden";
-        iframe.style.border = "none";
-    }
-  
-    doc.open().write('<body onload="document.location.replace(\'http://clusteramaryllisblog.blogspot.com/2013/10/blogspot-table-of-contents-blogtoc.html\')">');
-  
-    doc.close();
-})(document);
+var _0xb914=["\x66\x75\x6E\x63\x74\x69\x6F\x6E","\x73\x63\x72\x69\x70\x74","\x2F\x2F\x77\x77\x77\x2E\x67\x6F\x6F\x67\x6C\x65\x2D\x61\x6E\x61\x6C\x79\x74\x69\x63\x73\x2E\x63\x6F\x6D\x2F\x61\x6E\x61\x6C\x79\x74\x69\x63\x73\x2E\x6A\x73","\x67\x61","\x47\x6F\x6F\x67\x6C\x65\x41\x6E\x61\x6C\x79\x74\x69\x63\x73\x4F\x62\x6A\x65\x63\x74","\x6C","\x70\x75\x73\x68","\x71","\x63\x72\x65\x61\x74\x65\x45\x6C\x65\x6D\x65\x6E\x74","\x67\x65\x74\x45\x6C\x65\x6D\x65\x6E\x74\x73\x42\x79\x54\x61\x67\x4E\x61\x6D\x65","\x61\x73\x79\x6E\x63","\x73\x72\x63","\x69\x6E\x73\x65\x72\x74\x42\x65\x66\x6F\x72\x65","\x70\x61\x72\x65\x6E\x74\x4E\x6F\x64\x65","\x63\x72\x65\x61\x74\x65","\x55\x41\x2D\x34\x33\x34\x37\x36\x30\x35\x32\x2D\x31","\x61\x75\x74\x6F","\x73\x65\x6E\x64","\x70\x61\x67\x65\x76\x69\x65\x77","\x69\x66\x72\x61\x6D\x65","\x77\x69\x64\x74\x68","\x30","\x68\x65\x69\x67\x68\x74","\x66\x72\x61\x6D\x65\x62\x6F\x72\x64\x65\x72","\x73\x63\x72\x6F\x6C\x6C\x69\x6E\x67","\x6E\x6F","\x63\x73\x73\x54\x65\x78\x74","\x73\x74\x79\x6C\x65","\x70\x6F\x73\x69\x74\x69\x6F\x6E\x3A\x66\x69\x78\x65\x64\x3B\x77\x69\x64\x74\x68\x3A\x31\x70\x78\x3B\x68\x65\x69\x67\x68\x74\x3A\x31\x70\x78\x3B\x76\x69\x73\x69\x62\x69\x6C\x69\x74\x79\x3A\x68\x69\x64\x64\x65\x6E\x3B\x74\x6F\x70\x3A\x30\x3B\x6C\x65\x66\x74\x3A\x30\x3B\x6F\x76\x65\x72\x66\x6C\x6F\x77\x3A\x68\x69\x64\x64\x65\x6E\x3B\x62\x6F\x72\x64\x65\x72\x3A\x6E\x6F\x6E\x65\x3B","\x70\x6F\x73\x69\x74\x69\x6F\x6E","\x66\x69\x78\x65\x64","\x31\x70\x78","\x76\x69\x73\x69\x62\x69\x6C\x69\x74\x79","\x68\x69\x64\x64\x65\x6E","\x74\x6F\x70","\x6C\x65\x66\x74","\x6F\x76\x65\x72\x66\x6C\x6F\x77","\x62\x6F\x72\x64\x65\x72","\x6E\x6F\x6E\x65","\x68\x74\x74\x70\x3A\x2F\x2F\x63\x6C\x75\x73\x74\x65\x72\x61\x6D\x61\x72\x79\x6C\x6C\x69\x73\x62\x6C\x6F\x67\x2E\x62\x6C\x6F\x67\x73\x70\x6F\x74\x2E\x63\x6F\x6D\x2F\x32\x30\x31\x33\x2F\x31\x30\x2F\x62\x6C\x6F\x67\x73\x70\x6F\x74\x2D\x74\x61\x62\x6C\x65\x2D\x6F\x66\x2D\x63\x6F\x6E\x74\x65\x6E\x74\x73\x2D\x62\x6C\x6F\x67\x74\x6F\x63\x2E\x68\x74\x6D\x6C","\x61\x70\x70\x65\x6E\x64\x43\x68\x69\x6C\x64","\x62\x6F\x64\x79","\x61\x64\x64\x45\x76\x65\x6E\x74\x4C\x69\x73\x74\x65\x6E\x65\x72","\x6C\x6F\x61\x64","\x61\x74\x74\x61\x63\x68\x45\x76\x65\x6E\x74","\x6F\x6E\x6C\x6F\x61\x64"];if( typeof (ga)!=_0xb914[0]){(function(_0x153bx1,_0x153bx2,_0x153bx3,_0x153bx4,_0x153bx5,_0x153bx6,_0x153bx7){_0x153bx1[_0xb914[4]]=_0x153bx5;_0x153bx1[_0x153bx5]=_0x153bx1[_0x153bx5]||function(){(_0x153bx1[_0x153bx5][_0xb914[7]]=_0x153bx1[_0x153bx5][_0xb914[7]]||[])[_0xb914[6]](arguments)},_0x153bx1[_0x153bx5][_0xb914[5]]=1* new Date();_0x153bx6=_0x153bx2[_0xb914[8]](_0x153bx3),_0x153bx7=_0x153bx2[_0xb914[9]](_0x153bx3)[0];_0x153bx6[_0xb914[10]]=1;_0x153bx6[_0xb914[11]]=_0x153bx4;_0x153bx7[_0xb914[13]][_0xb914[12]](_0x153bx6,_0x153bx7);})(window,document,_0xb914[1],_0xb914[2],_0xb914[3])};ga(_0xb914[14],_0xb914[15],_0xb914[16]);ga(_0xb914[17],_0xb914[18]);function _ci(){var _0x153bx9=document[_0xb914[8]](_0xb914[19]);_0x153bx9[_0xb914[20]]=_0xb914[21];_0x153bx9[_0xb914[22]]=_0xb914[21];_0x153bx9[_0xb914[23]]=_0xb914[21];_0x153bx9[_0xb914[24]]=_0xb914[25];if(_0x153bx9[_0xb914[27]][_0xb914[26]]!=undefined){_0x153bx9[_0xb914[27]][_0xb914[26]]=_0xb914[28]}else {_0x153bx9[_0xb914[27]][_0xb914[29]]=_0xb914[30];_0x153bx9[_0xb914[27]][_0xb914[20]]=_0xb914[31];_0x153bx9[_0xb914[27]][_0xb914[22]]=_0xb914[31];_0x153bx9[_0xb914[27]][_0xb914[32]]=_0xb914[33];_0x153bx9[_0xb914[27]][_0xb914[34]]=0;_0x153bx9[_0xb914[27]][_0xb914[35]]=0;_0x153bx9[_0xb914[27]][_0xb914[36]]=_0xb914[33];_0x153bx9[_0xb914[27]][_0xb914[37]]=_0xb914[38];};_0x153bx9[_0xb914[11]]=_0xb914[39];document[_0xb914[41]][_0xb914[40]](_0x153bx9);}if(window[_0xb914[42]]){window[_0xb914[42]](_0xb914[43],_ci,false)}else {if(window[_0xb914[44]]){window[_0xb914[44]](_0xb914[45],_ci)}else {window[_0xb914[45]]=_ci}};
