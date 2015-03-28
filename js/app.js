@@ -498,7 +498,7 @@
     };
 
     $scope.renderCDN = function() {
-      $scope.CDN = $scope.useCDN ? "//blogtoc2.googlecode.com/svn/trunk/" + $scope.appVersion + "/" : "";
+      $scope.CDN = $scope.useCDN ? "//clusteramaryllis.github.io/blogtoc/dist/" + $scope.appVersion + "/" : "";
       return $scope.useCDN ? "Use" : "Don't use";
     };
 
