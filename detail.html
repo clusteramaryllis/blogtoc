@@ -3,7 +3,6 @@ layout: showcase
 title: Details.
 description: A helpdesk.
 ---
-{% raw %}
 <div class="row-fluid">
 <div class="span12">
   <h1>{{ page.title }}</h1>
@@ -11,6 +10,7 @@ description: A helpdesk.
   <hr>
   <h3 id="html-markup">BlogToc HTML Markup</h3>
   <hr>
+{% raw %}
   <p>Illustration markup:</p>
   <table class="table table-bordered table-striped">
   <tr><th>Markup</th><th>Description</th></tr>
@@ -122,6 +122,7 @@ description: A helpdesk.
   &lt;/div&gt;
 &lt;/div&gt;
 </pre>
+{% endraw %}
   <hr>
   <h3 id="theme-bundle">Creating Theme Bundle</h3>
   <hr>
@@ -195,4 +196,3 @@ BlogToc(element).build({
 </div>
 </div>
 <script>prettyPrint();</script>
-{% endraw %}
