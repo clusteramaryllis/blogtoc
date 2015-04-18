@@ -15,7 +15,7 @@ description: A helpdesk.
   <table class="table table-bordered table-striped">
   <tr><th>Markup</th><th>Description</th></tr>
   <tr>
-  <td><code>{{ ... }}</code></td><td>contain the value of the BlogToc options. <em>e.g.</em> if you specified <code>{ blogtocId: 'my_blogtoc' }</code>, the 'my_blogtoc' will be applied to [blogtocId]</td></tr>
+  <td><code>{{ ... }}</code></td><td>contain the value of the BlogToc options. <em>e.g.</em> if you specified <code>{ blogtocId: 'my_blogtoc' }</code>, the 'my_blogtoc' will be applied to {{blogtocId}}</td></tr>
   <tr><td><code>{! if ( ~condition ) !} ~statement {! endif !}</code></td><td>conditional statement.</td></tr>
   <tr><td><code>{! for( ~condition ) !} ~statement {! endfor !}</code></td><td>looping statement.</td></tr>
   <tr><td><code>{\ continued \}</code></td><td>The above html markup could be rendered more than one</td></tr>
@@ -126,7 +126,7 @@ description: A helpdesk.
   <hr>
   <h3 id="theme-bundle">Creating Theme Bundle</h3>
   <hr>
-  <p>Theme bundle is javascript file contains pre-configurations setting for theming BlogToc</p>
+  <p>Theme bundle is javascript file contains pre-configuration setting for theming BlogToc</p>
   <h5>Basic markup</h5>
   <hr>
 <pre class="prettyprint linenums">
