@@ -67,7 +67,7 @@
     },
     other: {
       boot: "if( elem.className.lastIndexOf('progress') === -1 ) { \n\telem.className += ' progress'; \n} \n\nif( ( div = elem.firstChild ) ) { \n\tdiv.style.width = progress + '%'; \n} else { \n\tdiv = document.createElement('div'); \n\tdiv.className = 'bar'; \n\tdiv.style.width = progress + '%'; elem.appendChild(div); \n}",
-      img: "var img; \n\nif ( !( img = elem.getElementsByTagName('img')[0] ) ) { \n\telem.innerHTML = '<div style=\"text-align: center\">' + \n\t'<img src=\"http://clusteramaryllis.github.io/img/Triplex.gif\" />' + \n\t'<div>'; \n}"
+      img: "var img; \n\nif ( !( img = elem.getElementsByTagName('img')[0] ) ) { \n\telem.innerHTML = '<div style=\"text-align: center\">' + \n\t'<img src=\"http://clusteramaryllis.github.io/blogtoc/img/Triplex.gif\" />' + \n\t'<div>'; \n}"
     }
   },
   // store default data

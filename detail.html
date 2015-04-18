@@ -136,7 +136,7 @@ description: A helpdesk.
     (function(){
 
       BlogToc.theme( 'theme_name', 'path/or/url/to/file.css', {
-        // the extendClass option shorthand
+        // the shorthand of extendClass options
       });
 
     })();
@@ -151,7 +151,7 @@ description: A helpdesk.
   <h5><em>Example :</em></h5>
 <pre class="prettyprint linenums">
 // BlogToc theme configuration
-// theme : gotham, @link http://www.gothamcity.com/
+// theme : gotham
 // author : Bruce Wayne
 // filename : gotham.js
 
@@ -166,7 +166,7 @@ description: A helpdesk.
         "table": "alfred",
         "footer": "batman",
         "pagination": "joker"
-        // The all options in extendClass options can goes here, 
+        // All the options in extendClass can go here, 
         // make sure you declare it without using "blogtoc_" keyword, because it's already shorthanded.
       });
 
@@ -192,7 +192,74 @@ BlogToc(element).build({
 });
 </pre>
   <p>The next step is you might consider to add your theme bundle to our <a href="https://github.com/clusteramaryllis/blogtoc">github</a> repository ;)</p>
-  <h4></h4>
+  <hr>
+  <h3 id="translation-bundle">Creating Translation Bundle</h3>
+  <hr>
+  <p>Translation bundle is javascript file contains pre-configuration setting for translate BlogToc to another language</p>
+  <h5>Basic markup</h5>
+  <hr>
+<pre class="prettyprint linenums">
+(function(){
+  
+  var loadLang = function( BlogToc ) {
+    (function(){
+
+      BlogToc.language( 'language_code', {
+        // the custom language options
+      });
+
+    })();
+  };
+
+  if ( typeof window !== 'undefined' && window.BlogToc ) {
+    loadLang( window.BlogToc );
+  }
+
+})();
+</pre>
+  <h5><em>Example :</em></h5>
+<pre class="prettyprint linenums">
+// BlogToc language configuration
+// language : Bahasa Jawa
+// author : Ki Joko Bodo
+// filename : jv.js
+
+(function( window, undefined ){
+  
+  var loadLang = function( BlogToc ) {
+    (function(){
+
+      BlogToc.language( 'jv', {
+        labelAll: 'Kabeh',
+        newLabel: 'Anyar',
+        index: '#',
+        thumbnail: 'Piguran',
+        title: 'Irah-irahan',
+        author: 'Empu',
+        comment: 'Unen-unen'
+        // All the options in language.custom can go here, 
+    })();
+  };
+
+  if ( typeof window !== 'undefined' && window.BlogToc ) {
+    loadLang( window.BlogToc );
+  }
+
+})( window );
+</pre>
+  <p>And then you save the file as <code>jv.js</code></p>
+  <h5><em>Example to use it :</em></h5>
+<pre class="prettyprint linenums">
+// load your translation bundle first
+BlogToc.addJS('jv.js');
+
+BlogToc(element).build({
+  language: {
+    setup: "jv" // must be a language code in your translation bundle
+  }
+});
+</pre>
+  <p>The next step is you might consider to add your translation bundle to our <a href="https://github.com/clusteramaryllis/blogtoc">github</a> repository ;)</p>
 </div>
 </div>
 <script>prettyPrint();</script>
