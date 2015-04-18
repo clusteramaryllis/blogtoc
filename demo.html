@@ -40,7 +40,7 @@ slug: demo
               </label>
               <input type="text" id="bt-url" name="bt-url" class="span12" ng-model="preModel.url" ng-blur="initBlogUrl()">
               <p class="help-block">
-                Your blogspot URL, <b>without</b> <code>http://</code> or <code>trailing slash</code> <i>e.g.</i> <br>
+                Your blogspot URL, <b>without</b> <code>http://</code> or <code>trailing slash</code> <i>e.g:</i> <br>
                 <span class="badge badge-info">googleblog.blogspot.com</span>
               </p>
               </form>
@@ -116,7 +116,7 @@ slug: demo
               </select>
               <p class="help-block">
                 The request method we're gonna using, either <code>JSONP</code> or <code>JSON</code>.
-                In this demo the <code>JSON</code> method will not going to work because the request must at the same domain of the blog url. (See <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Same_origin_policy_for_JavaScript">Cross Domain Origin Policy</a>)<br>
+                In this demo the <code>JSON</code> method will not going to work because the request must be at the same domain of the blog url. (See <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Same_origin_policy_for_JavaScript">Cross Domain Origin Policy</a>)<br>
                 <ul>
                   <li><code>JSONP</code> send asynchronous request by using <code>&lt;script&gt;</code> tag.</li>
                   <li><code>JSON</code> send request via ajax.</li>
@@ -143,7 +143,7 @@ slug: demo
               </label>
               <input type="text" id="bt-date-day" name="bt-date-day" ng-model="preModel.date.day" ui-select2="select2Options.dateDay" class="span12">
               <p class="help-block">
-                List of days. You can change the value. <i>e.g.</i> <code>Sun</code>,<code>Mon</code>,<code>Tue</code>,etc... (Days in 3 letter format) or any days name in your current language. But remember(!) the order are absolute, starting from <code>Sunday</code> to <code>Saturday</code>.
+                List of days. You can change the value. <i>e.g:</i> <code>Sun</code>,<code>Mon</code>,<code>Tue</code>,etc... (Days in 3 letter format) or any days name in your current language. But remember (!) the order are absolute, starting from <code>Sunday</code> to <code>Saturday</code>.
               </p>
               <!-- date month -->
               <label for="bt-date-month">
@@ -159,12 +159,12 @@ slug: demo
               </label>
               <div class="ui-ace-textarea" ui-ace="{mode: 'javascript'}" ng-model="preModel.date.renderDateText"></div>
               <p class="help-block">
-                Format the displayed date. A callback function that requires 2 parameters ( <code>date</code> & <code>option</code> ) =>
+                Format how the date displayed. A callback function that requires 2 parameters ( <code>date</code> &amp; <code>option</code> ) =&gt;
 <pre class="prettyprint">
 callback( date, option ) {
 // format the date...
 }</pre>
-                <code>option</code> is the user options and <code>date</code> is <a href="//developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date">JavaScript date object</a>. The example above will likely output => <br><i>Friday, August 30 2013</i>
+                <code>option</code> is the user options and <code>date</code> is <a href="//developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Date">JavaScript date object</a>. The example above will likely output =&gt; <br><i>Friday, August 30 2013</i>
               </p>
               </form>
             </div>
@@ -187,7 +187,7 @@ callback( date, option ) {
               </label>
               <input type="text" id="bt-display-setup" name="bt-display-setup" ng-model="preModel.display.setup" class="span4" typeahead="dst for dst in displayTemp | filter:$viewValue">
               <p class="help-block">
-                The initial setup how many records will be displayed (Must be a number or string value that indicates displaying all records).
+                The initial setup how many records will be displayed (Either a number, or string that represents to display all records).
               </span>
               <!-- display template -->
               <label for="bt-display-template">
@@ -195,7 +195,7 @@ callback( date, option ) {
               </label>
               <input type="text" id="bt-display-template" name="bt-display-template" ng-model="preModel.display.template" ui-select2="select2Options.displayTemplate" class="span12">
               <p class="help-block">
-                The initial template of records group, You can change the value according to your own preferences. The <i>string</i> type value <code>"All"</code> will be treated as for displaying all records).
+                The initial template for list of records, You can change the value according to your own preference. The word <code>"All"</code> is marked as all records.
               </span>
               </form>
             </div>
@@ -213,7 +213,7 @@ callback( date, option ) {
             <div class="accordion-inner">
               <form>
               <p>
-                The main purpose of this option is mostly for custom styling by adding additional class to the structure of DOM that the widget generate.
+                The main purpose of this option is mostly for custom styling by adding additional class to the structure of DOM that the widget generates.
               </p>
               <div ng-repeat="extend in junk.extendClass">
                 <label for="bt-extend-[[ extend[0] ]]">
@@ -246,13 +246,13 @@ callback( date, option ) {
               </label>
               <textarea class="btn-block" id="bt-feed-append-query" name="bt-feed-append-query" ng-model="preModel.feed.appendQuery"></textarea>
               <p class="help-block">
-                Query parameter to be added when fetching the blogspot feed. e.g. :
+                Query parameter to be added when fetching the blogspot feed. e.g:
                 <code>&amp;updated-min=2008-03-16T00:00:00</code><br>
                 <code>&amp;updated-max=2008-03-24T23:59:59</code><br>
                 <code>&amp;orderby=updated</code> 
                 (See <a href="https://developers.google.com/blogger/docs/2.0/reference#Parameters">Blogger feed reference</a></code>).
                 <br>
-                <span class="badge badge-warning">Notes</span> Do not use these forbidden query parameters => <code>start-index</code>, <code>max-results</code>, <code>alt</code>, <code>callback</code>. It will give unexpected response.
+                <span class="badge badge-warning">Notes</span> Do not use these forbidden query parameters =&gt; <code>start-index</code>, <code>max-results</code>, <code>alt</code>, <code>callback</code>. It will give unexpected response.
               </p>  
               <!-- feed chunk request -->
               <label for="bt-feed-chunk-request">
@@ -260,7 +260,7 @@ callback( date, option ) {
               </label>
               <input type="text" class="number span11" id="bt-feed-chunk-request" name="bt-feed-chunk-request" ng-model="preModel.feed.chunkRequest" min="1">
               <p class="help-block">
-                Split how many request will be sent to fetch blogspot feed at one time.
+                Split how many requests will be sent to fetch blogspot feed at one time.
               </p>
               <!-- feed limit -->
               <label for="bt-feed-limit">
@@ -268,7 +268,7 @@ callback( date, option ) {
               </label>
               <input type="text" class="number span11" id="bt-feed-limit" name="bt-feed-limit" ng-model="preModel.feed.limit" min="0">
               <p class="help-block">
-                Limit How many post will be fetched. Set to <code>0</code> to fetch all posts.
+                Limit how many posts will be fetched. Set to <code>0</code> to fetch all posts.
               </p>
               <!-- feed request count -->
               <label for="bt-feed-request-count">
@@ -276,7 +276,7 @@ callback( date, option ) {
               </label>
               <input type="text" class="number span11" id="bt-feed-request-count" name="bt-feed-request-count" ng-model="preModel.feed.requestCount" min="1" max="500">
               <p class="help-block">
-                Set the max-results value. Max value is <b>500</b> and Min value is <b>1</b>.
+                Set the max-results value. Maximum value is <b>500</b>, and minimum value is <b>1</b>.
               </p>
               <!-- feed type -->
               <label for="bt-feed-type">
@@ -340,7 +340,7 @@ callback( date, option ) {
                 <input type="checkbox" name="bt-label-include-label-all" ng-model="preModel.label.includeLabelAll" ng-disabled="!showLabelState"> [[preModel.label.includeLabelAll]]
               </label>
               <p class="help-block">
-                Include or not the special label that will display all posts.
+                Include or not the "special label" that will display all posts.
               </p>
               <!-- label all text -->
               <label for="bt-label-all-text">
@@ -348,7 +348,7 @@ callback( date, option ) {
               </label>
               <input type="text" id="bt-label-all-text" name="bt-label-all-text" class="span3" ng-model="preModel.label.allText" ng-disabled="!showLabelState || !preModel.label.includeLabelAll" ng-init="fillLabelState()" ng-change="fillLabelState()">
               <p class="help-block">
-                The post label name that will display all posts.
+                Name of post label that will display all posts.
               </p>
               <!-- label setup -->
               <label for="bt-label-setup">
@@ -356,7 +356,7 @@ callback( date, option ) {
               </label>
               <input type="text" id="bt-label-setup" name="bt-label-setup" class="span3" ng-model="preModel.label.setup" ng-disabled="!showLabelState || !preModel.label.includeLabelAll" typeahead="lbl for lbl in labelState | filter:$viewValue">
               <p class="help-block">
-                The post label that will be pointed as default at the very start.
+                The post label that is choosen as default at the very start.
               </p>
               <!-- label cloud label -->
               <label for="bt-label-cloud-label">
@@ -394,7 +394,7 @@ callback( date, option ) {
               </label>
               <input type="text" id="bt-label-all-alphabet-text" name="bt-label-all-alphabet-text" class="span3" ng-model="preModel.label.alphabetAllText" disabled="!showAlphabetLabelState || !preModel.label.includeAlphabetLabelAll" ng-init="fillAlphabetLabelState()" ng-change="fillAlphabetLabelState()">
               <p class="help-block">
-                The alphabet label name that will display all posts.
+                Name of alphabet label that will display all posts.
               </p>
               <!-- label setup alphabet -->
               <label for="bt-label-setup-alphabet">
@@ -402,7 +402,7 @@ callback( date, option ) {
               </label>
               <input type="text" id="bt-label-setup-alphabet" name="bt-label-setup-alphabet" class="span3" ng-model="preModel.label.setupAlphabet" ng-disabled="!showAlphabetLabelState || !preModel.label.includeAlphabetLabelAll" typeahead="albl for albl in alphabetLabelState | filter:$viewValue">
               <p class="help-block">
-                The alphabet label that will be pointed as default at the very start.
+                The alphabet label that is choosen as default at the very start.
               </p>
               <!-- label cloud label -->
               <label for="bt-label-cloud-alphabet-label">
@@ -463,7 +463,7 @@ callback( date, option ) {
                 <span class="label label-inverse">Custom</span>
               </label>
               <p>
-                Overriding the current language based on your preferences. Checkout the <a href="//github.com/clusteramaryllis/blogtoc/tree/master/lang">language library</a> for more detail. Leave the field empty if you want to use the default settings.
+                Overriding the current language based on your preferences. Checkout the <a href="//github.com/clusteramaryllis/blogtoc/tree/master/lang">language library</a> for more detail. Leave the field empty if you want to use the default setting.
               </p>
               <div class="row-fluid">
                 <div class="span1"></div>
@@ -483,9 +483,9 @@ callback( date, option ) {
                   </label>
                   <input type="text" id="bt-language-custom-result" name="bt-language-custom-result" ng-model="preModel.language.custom.result">
                   <p class="help-block">
-                    Overriding the language for <code>result</code>. There's some language parsing which described : <br>
-                    <code>{begin}</code> will be parsing to the first index number of the current showing records.<br>
-                    <code>{end}</code> will be parsing to the last index number of the current showing records.<br>
+                    Overriding the language for <code>result</code>. There's some language parsing which is described : <br>
+                    <code>{begin}</code> will be parsing to the first index number of the current visible records.<br>
+                    <code>{end}</code> will be parsing to the last index number of the current visible records.<br>
                     <code>{total}</code> will be parsing to the total records (means total posts).<br>
                     <i>e.g Showing <b>{begin}</b> to <b>{end}</b> out of <b>{total}</b>.</i> <br>
                     will be parsing to<br>
@@ -547,7 +547,7 @@ callback( date, option ) {
               </label>
               <input type="text" class="number span11" id="bt-new-badge-setup" name="bt-new-badge-setup" ng-model="preModel.newBadge.setup">
               <p class="help-block">
-                The initial setup how many <span class="badge badge-info">New</span> badge will be glued to the newest published post (Must be a number).
+                The initial setup how many <span class="badge badge-info">New</span> badges will be glued to the newest published post (Must be a number).
               </p>
               <!-- new badge render -->
               <label for="bt-new-badge-render">
@@ -555,7 +555,7 @@ callback( date, option ) {
               </label>
               <div class="ui-ace-textarea" ui-ace="{mode: 'javascript'}" ng-model="preModel.newBadge.renderBadgeText"></div>
               <p class="help-block">
-                Format the displayed <span class="badge badge-info">New</span> badge. A callback function that requires 1 parameters ( <code>language</code> ) =>
+                Format how the <span class="badge badge-info">New</span> badge displayed. A callback function that requires 1 parameter ( <code>language</code> ) =&gt;
 <pre class="prettyprint">
 callback( language ) {
 // display the label
@@ -585,7 +585,7 @@ callback( language ) {
                 <input type="checkbox" name="bt-notification-enabled" ng-model="preModel.notification.enabled" > [[preModel.notification.enabled]]
               </label>
               <p class="help-block">
-                Enabled of disabled notification (Useful when you want to show notification to user if there's new post published/updated).
+                Enabled of disabled notification (Useful when you want to show notification to user if there's new published/updated post).
               </p>
               <!-- notification interval -->
               <label for="bt-notification-interval">
@@ -616,7 +616,7 @@ callback( language ) {
               </label>
               <div class="ui-ace-textarea" ui-ace="{mode: 'javascript'}" ng-model="preModel.number.renderNumberText"></div>
               <p class="help-block">
-                Format the number in index column, pagination, and page report. A callback function with one parameter ( <code>idx</code> ) =>
+                Format the number in index column, pagination, and page report. A callback function with 1 parameter ( <code>idx</code> ) =&gt;
 <pre class="prettyprint">
 callback( idx ) {
 // format the number
@@ -687,7 +687,7 @@ callback( idx ) {
               </label>
               <div class="ui-ace-textarea" ui-ace="{mode: 'javascript'}" ng-model="preModel.postLabel.renderPostLabelText"></div>
               <p class="help-block">
-                Wrapping each post label with custom html. A callback function that requires 1 parameters ( <code>label</code> ) =>
+                Wrapping each post label with custom html. A callback function that requires 1 parameter ( <code>label</code> ) =&gt;
 <pre class="prettyprint">
 callback( label ) {
 // wrap each label
@@ -721,12 +721,12 @@ callback( label ) {
               <button class="btn btn-block" ng-click="imgExample($event)">Example using animated image loader from</button>
               <button class="btn btn-block" ng-click="defaultExample($event)">Reset Default Example</button>
               <p class="help-block">
-                Customize your waiting progress animation. A callback function that requires 2 parameters ( <code>elem</code> & <code>progress</code> ) =>
+                Customize the waiting progress animation. A callback function that requires 2 parameters ( <code>elem</code> &amp; <code>progress</code> ) =&gt;
 <pre class="prettyprint">
 callback( elem, progress ) {
 // animate your waiting progress
 }</pre>
-                <code>elem</code> is the element that the progress will be apended and <code>progress</code> is percentage value of progress (the text of current loading).
+                <code>elem</code> is the element which the progress will be apended and <code>progress</code> is percentage value of the progress (the text of current loading).
               </p>
               </form>
             </div>
@@ -774,7 +774,7 @@ callback( elem, progress ) {
               </label>
               <div class="ui-ace-textarea" ui-ace="{mode: 'javascript'}" ng-model="preModel.search.renderSearchText"></div>
               <p class="help-block">
-                Marking the the string result that match with searching query. A callback function that requires 1 parameters ( <code>match</code> ) =>
+                Marking the the string result that match with searching query. A callback function that requires 1 parameter ( <code>match</code> ) =&gt;
 <pre class="prettyprint">
 callback( match ) {
 // marking the matching query
@@ -835,7 +835,7 @@ callback( match ) {
               </label>
               <input type="text" class="number span11" id="bt-summary" name="bt-summary" ng-model="preModel.summary.wordLimit">
               <p class="help-block">
-                Limit the summary text of your blog post (Must be a number).
+                Limit the text summary of your blog post (Must be a number).
               </p>
               </form>
             </div>
@@ -858,7 +858,7 @@ callback( match ) {
               </label>
               <input type="text" id="bt-table-order" name="bt-table-order" ui-select2="select2Options.tableOrder" class="span12" ng-model="preModel.table.order">
               <p class="help-block">
-                The order of data that will display in table
+                The order of data that will be displayed in table
               </p>
               <div ng-repeat="order in preModel.table.order">
                 <label for="bt-table-[[ order ]]">
@@ -892,7 +892,7 @@ callback( match ) {
                 <input type="checkbox" name="bt-theme-built" ng-model="builtInMode" ng-change="resetStandalone()"> [[builtInMode]]
               </label>
               <p class="help-block">
-                Using built in theme or your own custom theme
+                Choose between using the built-in theme, or your own custom theme.
               </p>
               <!-- theme setup -->
               <label for="bt-theme-default">
@@ -902,11 +902,11 @@ callback( match ) {
               <!-- theme setup -->
               <input type="text" id="bt-theme-custom" name="bt-theme-custom" ng-model="preModel.theme.setup" ng-disabled="builtInMode" class="span12">
               <p class="help-block">
-                For now we only provide <a href="http://getbootstrap.com/" target="_blank">Twitter bootstrap</a> as our basic theme.
+                At the current state, this widget only provides <a href="//getbootstrap.com/" target="_blank">Twitter Bootstrap</a> as the basic theme.
                 <br>
                 If you use your custom theme. You might be have to write your own CSS for customing. <br>
-                You might consider to add your own custom theme to become one of our built theme by contributing on <a href="https://github.com/clusteramaryllis/blogtoc" target="_blank">github</a> page.
-                More information about <a href="http://clusteramaryllis.github.io/blogtoc/gallery-1.html" target="_blank">custom theme example</a> and <a href="http://clusteramaryllis.github.io/blogtoc/detail.html#theme-bundle" target="_blank">how to create theme bundle</a>
+                You might consider to add your own custom theme to become one of our built-in theme by contributing on <a href="//github.com/clusteramaryllis/blogtoc" target="_blank">github</a> page.
+                More information about <a href="//clusteramaryllis.github.io/blogtoc/gallery-1.html" target="_blank">custom theme example</a> and <a href="//clusteramaryllis.github.io/blogtoc/detail.html#theme-bundle" target="_blank">how to create theme bundle</a>
               </p>
               </form>
             </div>
@@ -953,7 +953,7 @@ callback( match ) {
               </label>
               <input type="text" class="number span11" id="bt-thumbnail-size" name="bt-thumbnail-size" ng-model="preModel.thumbnail.size">
               <p class="help-block">
-                The thumbnail dimension size found in the blog post.
+                The thumbnail dimension size that was found in the blog post.
               </p>
               <!-- thumbnail author size -->
               <label for="bt-thumbnail-author-size">
@@ -961,7 +961,7 @@ callback( match ) {
               </label>
               <input type="text" class="number span11" id="bt-thumbnail-author-size" name="bt-thumbnail-author-size" ng-model="preModel.thumbnail.authorSize">
               <p class="help-block">
-                The thumbnail dimension size for the author who publish the post.
+                The thumbnail dimension size for the author who publishes the post.
               </p>
               <!-- thumbnail author thumbnail -->
               <label for="bt-thumbnail-author-thumb">
@@ -971,7 +971,7 @@ callback( match ) {
                 <input type="checkbox" name="bt-thumbnail-author-thumb" ng-model="preModel.thumbnail.authorThumbnail"> [[preModel.thumbnail.authorThumbnail]]
               </label>
               <p class="help-block">
-                Show or hide the author thumbnail.
+                Show or Hide the author thumbnail.
               </p>
               </form>
             </div>
