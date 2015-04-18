@@ -14,7 +14,7 @@ description: A helpdesk.
   <table class="table table-bordered table-striped" ng-non-bindable>
   <tr><th>Markup</th><th>Description</th></tr>
   <tr>
-  <td><code>{{ ... }}</code></td><td>contain the value of the BlogToc options. <em>e.g.</em> if you specified <code>{ blogtocId: 'my_blogtoc' }</code>, the 'my_blogtoc' will be applied to [blogtocId]</td></tr>
+  <td><code>{{{ ... }}}</code></td><td>contain the value of the BlogToc options. <em>e.g.</em> if you specified <code>{ blogtocId: 'my_blogtoc' }</code>, the 'my_blogtoc' will be applied to [blogtocId]</td></tr>
   <tr><td><code>{! if ( ~condition ) !} ~statement {! endif !}</code></td><td>conditional statement.</td></tr>
   <tr><td><code>{! for( ~condition ) !} ~statement {! endfor !}</code></td><td>looping statement.</td></tr>
   <tr><td><code>{\ continued \}</code></td><td>The above html markup could be rendered more than one</td></tr>
@@ -25,95 +25,95 @@ description: A helpdesk.
   <h5>When BlogToc is built (with or without user's option), it will generate some HTML markup as shown below</h5>
   <hr>
 <pre class="prettyprint linenums" ng-non-bindable>
-&lt;div id=&quot;{{blogtocId}}&quot; class=&quot;{{extendClass.blogtoc_id}}&quot;&gt;
-  &lt;div class=&quot;blogtoc_loader {{extendClass.blogtoc_loader}}&quot;&gt;
-   {{progress.render()}}
+&lt;div id=&quot;{{{blogtocId}}}&quot; class=&quot;{{{extendClass.blogtoc_id}}}&quot;&gt;
+  &lt;div class=&quot;blogtoc_loader {{{extendClass.blogtoc_loader}}}&quot;&gt;
+   {{{progress.render()}}}
   &lt;/div&gt;
   &lt;div class=&quot;blogtoc_notification&quot;&gt;&lt;/div&gt;
-  &lt;div class=&quot;blogtoc_content {{extendClass.blogtoc_content}}&quot;&gt;
-    &lt;div class=&quot;blogtoc_header {{extendClass.blogtoc_header}}&quot;&gt;
-      {! if ( {{label.showLabel}} is true ) !}
-        {! if ( {{label.cloudLabel}} is false ) !}
-        &lt;select class=&quot;blogtoc_label {{extendClass.blogtoc_label}}&quot;&gt;
-          &lt;option value=&quot;{{label.setup}}&quot;&gt;{{label.setup}}&lt;/option&gt;
+  &lt;div class=&quot;blogtoc_content {{{extendClass.blogtoc_content}}}&quot;&gt;
+    &lt;div class=&quot;blogtoc_header {{{extendClass.blogtoc_header}}}&quot;&gt;
+      {! if ( {{{label.showLabel}}} is true ) !}
+        {! if ( {{{label.cloudLabel}}} is false ) !}
+        &lt;select class=&quot;blogtoc_label {{{extendClass.blogtoc_label}}}&quot;&gt;
+          &lt;option value=&quot;{{{label.setup}}}&quot;&gt;{{{label.setup}}}&lt;/option&gt;
           &lt;option value=&quot;...&quot;&gt;...&lt;/option&gt;
           {\ continued \}
         &lt;/select&gt; 
         {! endif !}
-        {! if ( {{label.cloudLabel}} is true ) !}
-        &lt;button class=&quot;blogtoc_label {{extendClass.blogtoc_label}} {{extendClass.blogtoc_btn}}&quot;&gt;{{label.setup}}&lt;/button&gt; 
-        &lt;button class=&quot;blogtoc_label {{extendClass.blogtoc_label}} {{extendClass.blogtoc_btn}}&quot;&gt;...&lt;/button&gt; 
+        {! if ( {{{label.cloudLabel}}} is true ) !}
+        &lt;button class=&quot;blogtoc_label {{{extendClass.blogtoc_label}}} {{{extendClass.blogtoc_btn}}}&quot;&gt;{{{label.setup}}}&lt;/button&gt; 
+        &lt;button class=&quot;blogtoc_label {{{extendClass.blogtoc_label}}} {{{extendClass.blogtoc_btn}}}&quot;&gt;...&lt;/button&gt; 
         {\ continued \}
         {! endif !}
       {! endif !}
-      {! if ( {{label.showAlphabetLabel}} is true ) !}
-        {! if ( {{label.cloudAlphabetLabel}} is false ) !}
-        &lt;select class=&quot;blogtoc_alphabet {{extendClass.blogtoc_alphabet}}&quot;&gt;
-          &lt;option value=&quot;{{label.setupAlphabet}}&quot;&gt;{{label.setupAlphabet}}&lt;/option&gt;
+      {! if ( {{{label.showAlphabetLabel}}} is true ) !}
+        {! if ( {{{label.cloudAlphabetLabel}}} is false ) !}
+        &lt;select class=&quot;blogtoc_alphabet {{{extendClass.blogtoc_alphabet}}}&quot;&gt;
+          &lt;option value=&quot;{{{label.setupAlphabet}}}&quot;&gt;{{{label.setupAlphabet}}}&lt;/option&gt;
           &lt;option value=&quot;...&quot;&gt;...&lt;/option&gt;
           {\ continued \}
         &lt;/select&gt;
         {! endif !}
-        {! if ( {{label.cloudAlphabetLabel}} is true ) !}
-        &lt;button class=&quot;blogtoc_alphabet {{extendClass.blogtoc_alphabet}} {{extendClass.blogtoc_btn}}&quot;&gt;{{label.setupAlphabet}}&lt;/button&gt;
-        &lt;button class=&quot;blogtoc_alphabet {{extendClass.blogtoc_alphabet}} {{extendClass.blogtoc_btn}}&quot;&gt;...&lt;/button&gt;
+        {! if ( {{{label.cloudAlphabetLabel}}} is true ) !}
+        &lt;button class=&quot;blogtoc_alphabet {{{extendClass.blogtoc_alphabet}}} {{{extendClass.blogtoc_btn}}}&quot;&gt;{{{label.setupAlphabet}}}&lt;/button&gt;
+        &lt;button class=&quot;blogtoc_alphabet {{{extendClass.blogtoc_alphabet}}} {{{extendClass.blogtoc_btn}}}&quot;&gt;...&lt;/button&gt;
         {\ continued \}
         {! endif !}
       {! endif !}
     &lt;/div&gt;
-    &lt;div class=&quot;blogtoc_filter {{extendClass.blogtoc_filter}}&quot;&gt;
-      &lt;div class=&quot;blogtoc_display {{extendClass.blogtoc_display}}&quot;&gt;
+    &lt;div class=&quot;blogtoc_filter {{{extendClass.blogtoc_filter}}}&quot;&gt;
+      &lt;div class=&quot;blogtoc_display {{{extendClass.blogtoc_display}}}&quot;&gt;
         &lt;label&gt;
           &lt;select&gt;&lt;/select&gt;
           {\ continued \}
-          &lt;span&gt;{{language.display}}&lt;/span&gt;
+          &lt;span&gt;{{{language.display}}}&lt;/span&gt;
         &lt;/label&gt;
       &lt;/div&gt;
-      &lt;div class=&quot;blogtoc_search {{extendClass.blogtoc_search}}&quot;&gt;
+      &lt;div class=&quot;blogtoc_search {{{extendClass.blogtoc_search}}}&quot;&gt;
         &lt;label&gt;
-          &lt;span&gt;{{language.search}}&lt;/span&gt;
-          &lt;input type=&quot;text&quot; class=&quot;blogtoc_query {{extendClass.blogtoc_query}}&quot;&gt;
+          &lt;span&gt;{{{language.search}}}&lt;/span&gt;
+          &lt;input type=&quot;text&quot; class=&quot;blogtoc_query {{{extendClass.blogtoc_query}}}&quot;&gt;
         &lt;/label&gt;
       &lt;/div&gt;
     &lt;/div&gt;
-    &lt;table class=&quot;blogtoc_table {{extendClass.blogtoc_table}}&quot;&gt;
-      {! if ( {{table.showHeader}} is true ) !}
+    &lt;table class=&quot;blogtoc_table {{{extendClass.blogtoc_table}}}&quot;&gt;
+      {! if ( {{{table.showHeader}}} is true ) !}
       &lt;thead&gt;
         &lt;tr&gt;
-          {! for ( data in {{table.order}} ) !}
-          &lt;th&gt;{{language[data]}}&lt;/th&gt;
+          {! for ( data in {{{table.order}}} ) !}
+          &lt;th&gt;{{{language[data]}}}&lt;/th&gt;
           {! endfor !}
         &lt;/tr&gt;
       &lt;/thead&gt;
       {! endif !}
       &lt;tbody&gt;
         &lt;tr&gt;
-          {! for ( data in {{table.order}} ) !}
+          {! for ( data in {{{table.order}}} ) !}
           &lt;td&gt;...&lt;/td&gt;
           {! endfor !}
         &lt;/tr&gt;
         {\ continued \}
       &lt;/tbody&gt;
     &lt;/table&gt;
-    &lt;div class=&quot;blogtoc_footer {{extendClass.blogtoc_footer}}&quot;&gt;
-      &lt;div class=&quot;blogtoc_result {{extendClass.blogtoc_result}}&quot;&gt;{{language.result}}&lt;/div&gt;
-      &lt;div class=&quot;blogtoc_pagination {{extendClass.blogtoc_pagination}}&quot;&gt;
-        &lt;ul class=&quot;{{extendClass['blogtoc_pagination ul']}}&quot;&gt;
-          {! if ( {{pagination.showFirstPage}} is true ) !}
-          &lt;li class=&quot;blogtoc_first_page&quot;&gt;{{language.FirstPage}}&lt;/li&gt;
+    &lt;div class=&quot;blogtoc_footer {{{extendClass.blogtoc_footer}}}&quot;&gt;
+      &lt;div class=&quot;blogtoc_result {{{extendClass.blogtoc_result}}}&quot;&gt;{{{language.result}}}&lt;/div&gt;
+      &lt;div class=&quot;blogtoc_pagination {{{extendClass.blogtoc_pagination}}}&quot;&gt;
+        &lt;ul class=&quot;{{{extendClass['blogtoc_pagination ul']}}}&quot;&gt;
+          {! if ( {{{pagination.showFirstPage}}} is true ) !}
+          &lt;li class=&quot;blogtoc_first_page&quot;&gt;{{{language.FirstPage}}}&lt;/li&gt;
           {! endif !}
-          {! if ( {{pagination.showPrevPage}} is true ) !}
-          &lt;li class=&quot;blogtoc_prev_page&quot;&gt;{{language.PrevPage}}&lt;/li&gt;
+          {! if ( {{{pagination.showPrevPage}}} is true ) !}
+          &lt;li class=&quot;blogtoc_prev_page&quot;&gt;{{{language.PrevPage}}}&lt;/li&gt;
           {! endif !}
-          &lt;!-- &lt;li class=&quot;{{extendClass['blogtoc_pagination disabled']}}&quot;&gt;...&lt;/li&gt; --&gt;
-          &lt;!-- &lt;li class=&quot;{{extendClass['blogtoc_pagination active']}}&quot;&gt;...&lt;/li&gt; --&gt;
+          &lt;!-- &lt;li class=&quot;{{{extendClass['blogtoc_pagination disabled']}}}&quot;&gt;...&lt;/li&gt; --&gt;
+          &lt;!-- &lt;li class=&quot;{{{extendClass['blogtoc_pagination active']}}}&quot;&gt;...&lt;/li&gt; --&gt;
           &lt;li class=&quot;blogtoc_responsive_hide&quot;&gt;...&lt;/li&gt;
           {\ continued \}
-          {! if ( {{pagination.showNextPage}} is true ) !}
-          &lt;li class=&quot;blogtoc_next_page&quot;&gt;{{language.NextPage}}&lt;/li&gt;
+          {! if ( {{{pagination.showNextPage}}} is true ) !}
+          &lt;li class=&quot;blogtoc_next_page&quot;&gt;{{{language.NextPage}}}&lt;/li&gt;
           {! endif !}
-          {! if ( {{pagination.showLastPage}} is true ) !}
-          &lt;li class=&quot;blogtoc_last_page&quot;&gt;{{language.LastPage}}&lt;/li&gt;
+          {! if ( {{{pagination.showLastPage}}} is true ) !}
+          &lt;li class=&quot;blogtoc_last_page&quot;&gt;{{{language.LastPage}}}&lt;/li&gt;
           {! endif !}
         &lt;/ul&gt;
       &lt;/div&gt;
