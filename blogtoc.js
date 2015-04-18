@@ -3251,6 +3251,8 @@
         return this;
       };
 
+      BlogToc.HOMEPAGE = HOMEPAGE;
+
       /* Make Public
        ********************************************************************/  
        window.BlogToc = BlogToc;
