@@ -11,7 +11,7 @@ description: A helpdesk.
   <h3 id="html-markup">BlogToc HTML Markup</h3>
   <hr>
   <p>Illustration markup:</p>
-  <table class="table table-bordered table-striped">
+  <table class="table table-bordered table-striped" ng-non-bindable>
   <tr><th>Markup</th><th>Description</th></tr>
   <tr>
   <td><code>{{ ... }}</code></td><td>contain the value of the BlogToc options. <em>e.g.</em> if you specified <code>{ blogtocId: 'my_blogtoc' }</code>, the 'my_blogtoc' will be applied to [blogtocId]</td></tr>
@@ -24,7 +24,7 @@ description: A helpdesk.
   <br>
   <h5>When BlogToc is built (with or without user's option), it will generate some HTML markup as shown below</h5>
   <hr>
-<pre class="prettyprint linenums">
+<pre class="prettyprint linenums" ng-non-bindable>
 &lt;div id=&quot;{{blogtocId}}&quot; class=&quot;{{extendClass.blogtoc_id}}&quot;&gt;
   &lt;div class=&quot;blogtoc_loader {{extendClass.blogtoc_loader}}&quot;&gt;
    {{progress.render()}}
