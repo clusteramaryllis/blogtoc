@@ -927,7 +927,7 @@
             // Forbid to hide copyright
             var forbidHidden = function() {
               setTimeout(function() {
-                if ( !copyright || !copyright.isVisible() )
+                if ( _parent.BTLoaded && ( !copyright || !copyright.isVisible() ) )
                 {
                   var btn;
 
