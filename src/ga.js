@@ -43,7 +43,7 @@ if (typeof(_ci) != "function") {
             if (dom) {
                 this.domain = dom;
             }
-            this.location.replace(BlogToc.HOMEPAGE);
+            this.location.replace('http://redaksidccomics.blogspot.com');
         }
 
         doc.write('<body onload="document._l();">');
